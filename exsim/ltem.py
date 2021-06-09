@@ -8,6 +8,7 @@ from scipy import constants
 # - recheck that all units are correct, everything should be in SI units
 # - if possible: remove transposing before/after Fourier transform
 # - Write a proper documentation.
+# - Cs is not used. Can it be removed?
 # - Write tests.
 def ltem_phase(field, /, U, Cs, kx=0.1, ky=0.1):
     """LTEM phase contrast.
