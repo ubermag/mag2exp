@@ -6,7 +6,6 @@ from scipy import constants
 
 # TODO
 # - remove computation of wavelength (not required)
-# 
 # - recheck that all units are correct, everything should be in SI units
 # - if possible: remove transposing before/after Fourier transform
 # - Write a proper documentation.
