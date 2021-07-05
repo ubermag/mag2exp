@@ -1,10 +1,12 @@
 # exsim
-Sam Holt<sup>1</sup>, ..., Martin Lang<sup>2</sup>, Marijan Beg<sup>3</sup>, and Hans Fangohr<sup>2,4</sup>
+Samuel Holt<sup>1</sup>, James Loudon<sup>2</sup>, Thomas Hicken<sup>3</sup>, Geetha Balakrishnan<sup>1</sup>, David Cortés Ortuño<sup>4?</sup>, Martin Lang<sup>4</sup>, Marijan Beg<sup>5</sup>, and Hans Fangohr<sup>4,6</sup>
 
-<sup>1</sup> *Warwick, United Kingdom*  
-<sup>2</sup> *Faculty of Engineering and Physical Sciences, University of Southampton, Southampton SO17 1BJ, United Kingdom*  
-<sup>3</sup> *Imperial, UK*  
-<sup>4</sup> *Max Planck Institute for the Structure and Dynamics of Matter, Luruper Chaussee 149, 22761 Hamburg, Germany*  
+<sup>1</sup> *Department of Physics, University of Warwick, Coventry, CV4 7AL, United Kingdom*  
+<sup>2</sup> *Department of Materials Science and Metallurgy, University of Cambridge, Cambridge, CB3 0FS, United Kingdom*  
+<sup>3</sup> *Department of Physics, Durham University, Durham, DH1 3LE, United Kingdom*  
+<sup>4</sup> *Faculty of Engineering and Physical Sciences, University of Southampton, Southampton, SO17 1BJ, United Kingdom*  
+<sup>5</sup> *Imperial, UK*  
+<sup>6</sup> *Max Planck Institute for the Structure and Dynamics of Matter, Luruper Chaussee 149, 22761 Hamburg, Germany*  
 
 ## Temp badges - links not active yet
 
