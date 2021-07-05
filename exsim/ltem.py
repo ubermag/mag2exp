@@ -5,11 +5,9 @@ from scipy import constants
 
 
 # TODO
-# - remove computation of wavelength (not required)
 # - recheck that all units are correct, everything should be in SI units
 # - if possible: remove transposing before/after Fourier transform
 # - Write a proper documentation.
-# - Cs is not used. Can it be removed?
 # - Write tests.
 def ltem_phase(field, /, U, Cs, kx=0.1, ky=0.1):
     """LTEM phase contrast.
@@ -18,10 +16,6 @@ def ltem_phase(field, /, U, Cs, kx=0.1, ky=0.1):
     ----------
     field : df.Field
         Magnetisation field.
-    U : numbers.Real
-        Accelerating voltage of electrons in V.
-    Cs : numbers.Real
-        Spherical aberration coefficient
     kx : numbers.Real, optional
         Tikhonov filter radius in x in pixels.
     ky : numbers.Real, optional
@@ -41,9 +35,6 @@ def ltem_phase(field, /, U, Cs, kx=0.1, ky=0.1):
     const = 1j * field.mesh.region.edges[2] / (
         2 * constants.codata.value('mag. flux quantum'))
     m_sat = np.max(field.norm.array) * mm.consts.mu0
-
-    wavelength = _relativistic_wavelength(U)
-    print(f'The electron beam has a wavelength of {wavelength * 1e9:.2e} nm.')
 
     mx_projection = np.transpose(field.orientation.x.project('z').array.squeeze())
     my_projection = np.transpose(field.orientation.y.project('z').array.squeeze())
@@ -70,6 +61,46 @@ def ltem_phase(field, /, U, Cs, kx=0.1, ky=0.1):
     # TODO create df.Field from ft_phase and update return values
     # ft_phase_field = df.Field()
     return phase_field, ft_phase  # TODO replace ft_phase with ft_phase_field
+
+
+def ltem_defocus_image(phase, /, U, Cs, df=0.2):
+    """Defocused image.
+
+    Parameters
+    ----------
+    phase : discretisedfield.Field
+        LTEM phase
+    U : numbers.Real
+        Accelerating voltage of electrons in V.
+    Cs : numbers.Real
+        Spherical aberration coefficient
+    df : numbers.Real
+        <explanation>
+
+    Returns
+    -------
+
+    """
+    wavefn = np.exp(phase.array * 1j)
+    ft_wavefn = np.fft.fft2(wavefn)
+
+    freq_comp_rows = np.fft.fftfreq(ft_wavefn.shape[0], d=phase.mesh.dx)
+    freq_comp_cols = np.fft.fftfrex(ft_wavefn.shape[1], d=phase.mesh.dy)
+    xs_ft, ys_ft = np.meshgrid(freq_comp_rows, freq_comp_cols, indexing='xy')
+
+    ksquare_ft = xs_ft**2 + ys_ft**2
+
+    intensity_cts = ctf(df, ksquare_ft, ft_wavefn, U, Cs)
+    # TODO create df.field to return
+    return intensity_cts
+
+
+def ctf(df, ft_wf_k2, ft_wavefn, wavelength, Cs):
+    cts = -0.5 * wavelength * df * ft_wf_k2 + 0.25 * wavelength**3 * Cs * ft_wf_k2**2
+    ft_def_wf_cts = ft_wavefn * np.exp(2*np.pi * cts * 1j)
+    def_wf_cts = np.fft.ift2(ft_def_wf_cts)
+    intensity_cts = def_wf_cts.conjugate() * def_wf_cts
+    return intensity_cts.real
 
 
 def _relativistic_wavelength(U):
