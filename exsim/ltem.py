@@ -36,8 +36,8 @@ def ltem_phase(field, /, U, Cs, kx=0.1, ky=0.1):
         2 * constants.codata.value('mag. flux quantum'))
     m_sat = np.max(field.norm.array) * mm.consts.mu0
 
-    mx_projection = np.transpose(field.orientation.x.project('z').array.squeeze())
-    my_projection = np.transpose(field.orientation.y.project('z').array.squeeze())
+    mx_projection = field.orientation.x.project('z').array.squeeze()
+    my_projection = field.orientation.y.project('z').array.squeeze()
 
     ft_mx = np.fft.fft2(mx_projection, axes=(-2, -1))
     ft_my = np.fft.fft2(my_projection, axes=(-2, -1))
@@ -45,7 +45,7 @@ def ltem_phase(field, /, U, Cs, kx=0.1, ky=0.1):
     freq_comp_rows = np.fft.fftfreq(ft_mx.shape[0], d=field.mesh.dx)
     freq_comp_cols = np.fft.fftfreq(ft_mx.shape[1], d=field.mesh.dy)
 
-    xs_ft, ys_ft = np.meshgrid(freq_comp_rows, freq_comp_cols, indexing='xy')
+    xs_ft, ys_ft = np.meshgrid(freq_comp_rows, freq_comp_cols, indexing='ij')
     dx_ft = abs(freq_comp_rows[0] - freq_comp_rows[1])
     dy_ft = abs(freq_comp_cols[0] - freq_comp_cols[1])
 
@@ -56,8 +56,7 @@ def ltem_phase(field, /, U, Cs, kx=0.1, ky=0.1):
     phase = np.fft.ifft2(ft_phase).real
 
     phase_field = df.Field(field.mesh.plane('z'), dim=1,
-                           value=np.transpose(phase).reshape(
-                               (*field.mesh.n[:2], 1, 1)))
+                           value=phase.reshape((*field.mesh.n[:2], 1, 1)))
     # TODO create df.Field from ft_phase and update return values
     # ft_phase_field = df.Field()
     return phase_field, ft_phase  # TODO replace ft_phase with ft_phase_field
