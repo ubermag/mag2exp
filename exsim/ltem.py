@@ -4,12 +4,7 @@ import micromagneticmodel as mm
 from scipy import constants
 
 
-# TODO
-# - recheck that all units are correct, everything should be in SI units
-# - if possible: remove transposing before/after Fourier transform
-# - Write a proper documentation.
-# - Write tests.
-def ltem_phase(field, /, U, Cs, kx=0.1, ky=0.1):
+def ltem_phase(field, /, kx=0.1, ky=0.1):
     """LTEM phase contrast.
 
     Parameters
@@ -32,37 +27,19 @@ def ltem_phase(field, /, U, Cs, kx=0.1, ky=0.1):
     -------
     ...
     """
-    const = 1j * field.mesh.region.edges[2] / (
-        2 * constants.codata.value('mag. flux quantum'))
-    m_sat = np.max(field.norm.array) * mm.consts.mu0
+    m_int = (field * df.dz).integral(direction='z')
+    m_ft = m_int.fft2()
 
-    mx_projection = field.orientation.x.project('z').array.squeeze()
-    my_projection = field.orientation.y.project('z').array.squeeze()
-
-    ft_mx = np.fft.fft2(mx_projection, axes=(-2, -1))
-    ft_my = np.fft.fft2(my_projection, axes=(-2, -1))
-
-    freq_comp_rows = np.fft.fftfreq(ft_mx.shape[0], d=field.mesh.dx)
-    freq_comp_cols = np.fft.fftfreq(ft_mx.shape[1], d=field.mesh.dy)
-
-    xs_ft, ys_ft = np.meshgrid(freq_comp_rows, freq_comp_cols, indexing='ij')
-    dx_ft = abs(freq_comp_rows[0] - freq_comp_rows[1])
-    dy_ft = abs(freq_comp_cols[0] - freq_comp_cols[1])
-
-    nume = xs_ft**2 + ys_ft**2
-    dnom = (xs_ft**2 + ys_ft**2 + dx_ft**2 * kx**2 + dy_ft**2 * ky**2)**2
-    cross = - ft_my * xs_ft + ft_mx * ys_ft
-    ft_phase = const * cross * nume / dnom * m_sat
-    phase = np.fft.ifft2(ft_phase).real
-
-    phase_field = df.Field(field.mesh.plane('z'), dim=1,
-                           value=phase.reshape((*field.mesh.n[:2], 1, 1)))
-    # TODO create df.Field from ft_phase and update return values
-    # ft_phase_field = df.Field()
-    return phase_field, ft_phase  # TODO replace ft_phase with ft_phase_field
+    k = df.Field(m_ft.mesh, dim=3, value=lambda x: x)
+    denom = (k.x**2 + k.y**2) / (k.x**2 + k.y**2
+                                 + k.mesh.dx**2*kx**2 + k.mesh.dy**2*ky**2)**2
+    const = 1j * mm.consts.e * mm.consts.mu0 / mm.consts.h
+    ft_phase = (m_ft & k).z * denom * const
+    phase = ft_phase.ifft2()
+    return phase, ft_phase
 
 
-def ltem_defocus_image(phase, /, U, Cs, df=0.2):
+def ltem_defocus_image(phase, /, U, Cs, df_length=0.2e-3):
     """Defocused image.
 
     Parameters
@@ -73,32 +50,26 @@ def ltem_defocus_image(phase, /, U, Cs, df=0.2):
         Accelerating voltage of electrons in V.
     Cs : numbers.Real
         Spherical aberration coefficient
-    df : numbers.Real
-        <explanation>
+    df_length : numbers.Real
+        Defocus length in m.
 
     Returns
     -------
 
     """
-    wavefn = np.exp(phase.array * 1j)
-    ft_wavefn = np.fft.fft2(wavefn)
+    ft_wavefn = df.Field(phase.mesh, dim=phase.dim,
+                         value=np.exp(phase.array * 1j)).fft2()
+    k = df.Field(ft_wavefn.mesh, dim=3, value=lambda x: x)
+    ksquare = (k.x**2 + k.y**2).array
 
-    freq_comp_rows = np.fft.fftfreq(ft_wavefn.shape[0], d=phase.mesh.dx)
-    freq_comp_cols = np.fft.fftfrex(ft_wavefn.shape[1], d=phase.mesh.dy)
-    xs_ft, ys_ft = np.meshgrid(freq_comp_rows, freq_comp_cols, indexing='xy')
+    wavelength = _relativistic_wavelength(U)
 
-    ksquare_ft = xs_ft**2 + ys_ft**2
-
-    intensity_cts = ctf(df, ksquare_ft, ft_wavefn, U, Cs)
-    # TODO create df.field to return
-    return intensity_cts
-
-
-def ctf(df, ft_wf_k2, ft_wavefn, wavelength, Cs):
-    cts = -0.5 * wavelength * df * ft_wf_k2 + 0.25 * wavelength**3 * Cs * ft_wf_k2**2
-    ft_def_wf_cts = ft_wavefn * np.exp(2*np.pi * cts * 1j)
-    def_wf_cts = np.fft.ift2(ft_def_wf_cts)
-    intensity_cts = def_wf_cts.conjugate() * def_wf_cts
+    cts = -df_length + 0.5 * wavelength**2 * Cs * ksquare
+    exp = np.exp(np.pi * cts * 1j * ksquare * wavelength)
+    print(exp.shape)
+    ft_def_wf_cts = ft_wavefn * exp
+    def_wf_cts = ft_def_wf_cts.ifft2()
+    intensity_cts = def_wf_cts.conjugate * def_wf_cts
     return intensity_cts.real
 
 

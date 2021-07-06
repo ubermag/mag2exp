@@ -1,4 +1,4 @@
-from .ltem import ltem_phase
+from .ltem import ltem_phase, ltem_defocus_image
 import pytest
 import importlib
 
