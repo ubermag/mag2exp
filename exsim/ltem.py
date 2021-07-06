@@ -66,7 +66,6 @@ def ltem_defocus_image(phase, /, U, Cs, df_length=0.2e-3):
 
     cts = -df_length + 0.5 * wavelength**2 * Cs * ksquare
     exp = np.exp(np.pi * cts * 1j * ksquare * wavelength)
-    print(exp.shape)
     ft_def_wf_cts = ft_wavefn * exp
     def_wf_cts = ft_def_wf_cts.ifft2()
     intensity_cts = def_wf_cts.conjugate * def_wf_cts
