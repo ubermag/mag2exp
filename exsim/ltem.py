@@ -103,10 +103,12 @@ def integrated_magnetic_flux_density(phase):
     imfd = -1 * phase.real.derivative('y') << phase.real.derivative('x')
     return pref * imfd
 
+
 def relativistic_wavelength(U):
     r"""Relativistic wavelength of an electron accelerated in a potential U.
 
-    .. math:: \lambda = \frac{h}{\sqrt(2 m_e e U \cdot (1 + \frac{e U}{2 m_e c^2}))}
+    .. math:: \lambda = \frac{h}{\sqrt(2 m_e e U \cdot
+    (1 + \frac{e U}{2 m_e c^2}))}
 
     Parameters
     ----------
