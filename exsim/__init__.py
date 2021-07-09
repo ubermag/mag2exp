@@ -2,6 +2,10 @@ import pytest
 import importlib
 from . import ltem
 from . import quick_plots
+from . import mfm
+from . import util
+from . import x_ray_holography
+
 
 
 __version__ = importlib.metadata.version(__name__)
