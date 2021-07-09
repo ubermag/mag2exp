@@ -1,6 +1,7 @@
-from .ltem import ltem_phase, ltem_defocus_image
 import pytest
 import importlib
+from . import ltem
+from . import quick_plots
 
 
 __version__ = importlib.metadata.version(__name__)
