@@ -6,6 +6,16 @@ def holographic_image(field, /, fwhm=None):
     """
     Parameters
     ----------
+    field : discretisedfield.field
+        Magneisation field.
+    fwhm : numbers.Real, optional
+        If specified, convolutes with a 2 Dimentional Gaussian of full width
+        half maxium (fwhm) specified.
+
+    Returns
+    -------
+    discretisedfield.Field
+        X-ray holographic image.
     """
     magnetisation = field.z.integral(direction='z')
     if fwhm is not None:
