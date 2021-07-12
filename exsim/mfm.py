@@ -3,7 +3,7 @@ import oommfc as oc
 from exsim.util import gaussian_filter
 
 
-def phase_shift(system, /, tip_m, Q=650, k=3, tip_q=0):
+def phase_shift(system, /, tip_m=(0,0,0), Q=650, k=3, tip_q=0):
     """
     Parameters
     ----------
