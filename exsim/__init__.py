@@ -5,7 +5,7 @@ from . import quick_plots
 from . import mfm
 from . import util
 from . import x_ray_holography
-
+from . import sans
 
 
 __version__ = importlib.metadata.version(__name__)
