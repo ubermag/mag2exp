@@ -17,7 +17,7 @@ def holographic_image(field, /, fwhm=None):
     discretisedfield.Field
         X-ray holographic image.
     """
-    magnetisation = (field.z* df.dz).integral(direction='z')
+    magnetisation = (field.z * df.dz).integral(direction='z')
     if fwhm is not None:
         magnetisation = gaussian_filter(magnetisation, fwhm=fwhm)
     return magnetisation
