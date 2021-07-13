@@ -1,3 +1,7 @@
+"""LTEM submodule.
+
+Details ...
+"""
 import numpy as np
 import discretisedfield as df
 import micromagneticmodel as mm
@@ -25,7 +29,17 @@ def phase(field, /, kx=0.1, ky=0.1):
 
     Example
     -------
-    ...
+    1. Uniform field
+
+    >>> import discretisedfield as df
+    >>> import exsim
+    >>> mesh = df.Mesh(p1=(0, 0, 0), p2=(10, 10, 1), cell=(1, 1, 1))
+    >>> field = df.Field(mesh, dim=3, value=(0, 0, 1))
+    >>> phase, ft_phase = exsim.phase(field)
+    >>> phase.array.mean()
+    0
+
+    2. Maybe second one
     """
     m_int = (field * df.dz).integral(direction='z')
     m_ft = m_int.fft2()

@@ -10,11 +10,22 @@ Welcome to exsim's documentation!
    :maxdepth: 2
    :caption: Contents:
 
+API Reference
+-------------
+.. autosummary::
+    :nosignatures:
+    :toctree: _autosummary
+    :caption: API Reference
+    :template: module-template.rst
+    :recursive:
+
+    exsim
+    exsim.ltem
+    exsim.quickplots
+    exsim.sans
 
 
 Indices and tables
-==================
+------------------
 
 * :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
