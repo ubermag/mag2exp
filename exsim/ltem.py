@@ -8,8 +8,34 @@ import micromagneticmodel as mm
 from scipy import constants
 
 
-def phase(field, /, kx=0.1, ky=0.1):
-    """LTEM phase contrast.
+def phase(field, /, kcx=0.1, kcy=0.1):
+    """Calculation of the magnetic phase shift experienced by the electrons.
+
+    The Fourier transform of the magnetic phase shift is calculated using
+
+    .. math::
+
+        \widetilde{\phi}_m (k_x,k_y) = \\frac {i e \mu_0 k_\perp^2}{h}
+        \\frac{\left[ \widetilde{\\bf M}_I(k_x,k_y) \\times
+        {\\bf k}_\perp \\right] _z}{\\left( k_\perp^2 + k_c^2 \\right)^2},
+
+    where :math:`{\\bf M}_I` is the integrated magnetisation along the path of
+    the electron beam. Here we define the electron beam to be
+    propagating in the :math:`z` direction.
+    :math:`\mu_0` is the vacuum permeability, and :math:`k` is the k-vector in
+    Fourier space.
+    :math:`k_c` is the radius of the filter and can be written in 2-Dimensions
+    as to
+
+    .. math::
+
+        k_c^2 = k_{cx}^2 dk_x^2 +  k_{cy}^2 dk_y^2,
+
+    where :math:`dk_x` and :math:`dk_y` are the fourier space resolution in the
+    :math:`x` and :math:`y` directions respectively. :math:`k_{cx}` and
+    :math:`k_{cy}` are the radii of the filter in each direction in units of
+    cells.
+
 
     Parameters
     ----------
@@ -46,7 +72,7 @@ def phase(field, /, kx=0.1, ky=0.1):
 
     k = df.Field(m_ft.mesh, dim=3, value=lambda x: x)
     denom = (k.x**2 + k.y**2) / (k.x**2 + k.y**2
-                                 + k.mesh.dx**2*kx**2 + k.mesh.dy**2*ky**2)**2
+                                 + k.mesh.dx**2*kcx**2 + k.mesh.dy**2*kcy**2)**2
     const = 1j * mm.consts.e * mm.consts.mu0 / mm.consts.h
     ft_phase = (m_ft & k).z * denom * const
     phase = ft_phase.ifft2()
