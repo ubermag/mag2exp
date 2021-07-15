@@ -2,3 +2,6 @@
 __pycache__
 Box2/
 egg-info
+_autosummary/
+_build/
+_templates/
