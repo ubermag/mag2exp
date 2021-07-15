@@ -1,7 +1,7 @@
 .ipynb_checkpoints
 __pycache__
 Box2/
-egg-info
+*egg-info
 _autosummary/
 _build/
 _templates/
