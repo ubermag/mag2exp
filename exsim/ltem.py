@@ -83,8 +83,8 @@ def phase(field, /, kcx=0.1, kcy=0.1):
         ...         return (0, 1, 0)
         ...
         >>> field = df.Field(mesh, dim=3, value=value_fun)
-        >>> phase, ft_phase = exsim.phase(field)
-        >>> phase.mpl_scalar()
+        >>> phase, ft_phase = exsim.ltem.phase(field)
+        >>> phase.real.mpl_scalar()
 
     """
     m_int = (field * df.dz).integral(direction='z')
@@ -168,9 +168,9 @@ def defocus_image(phase, /, Cs=0, df_length=0.2e-3, U=None, wavelenght=None):
     ...         return (0, 1, 0)
     ...
     >>> field = df.Field(mesh, dim=3, value=value_fun)
-    >>> phase, ft_phase = exsim.phase(field)
-    >>> df_img = exsim.defocus_image(phase, Cs=0, df_length=0,
-    ...                              U=300e3)
+    >>> phase, ft_phase = exsim.ltem.phase(field)
+    >>> df_img = exsim.ltem.defocus_image(phase, Cs=0, df_length=0,
+    ...                                   U=300e3)
     >>> df_img.array.mean()
     1
 
@@ -191,9 +191,9 @@ def defocus_image(phase, /, Cs=0, df_length=0.2e-3, U=None, wavelenght=None):
         ...         return (0, 1, 0)
         ...
         >>> field = df.Field(mesh, dim=3, value=value_fun)
-        >>> phase, ft_phase = exsim.phase(field)
-        >>> df_img = exsim.defocus_image(phase, Cs=8000, df_length=0.2e-3,
-        ...                              U=300e3)
+        >>> phase, ft_phase = exsim.ltem.phase(field)
+        >>> df_img = exsim.ltem.defocus_image(phase, Cs=8000, df_length=0.2e-3,
+        ...                                   U=300e3)
         >>> df_img.mpl_scalar()
 
     """
@@ -257,9 +257,9 @@ def integrated_magnetic_flux_density(phase):
         ...         return (0, 1, 0)
         ...
         >>> field = df.Field(mesh, dim=3, value=value_fun)
-        >>> phase, ft_phase = exsim.phase(field)
-        >>> df_img = exsim.defocus_image(phase, Cs=8000, df_length=0.2e-3,
-        ...                              U=300e3)
+        >>> phase, ft_phase = exsim.ltem.phase(field)
+        >>> df_img = exsim.ltem.defocus_image(phase, Cs=8000, df_length=0.2e-3,
+        ...                                   U=300e3)
         >>> imf = exsim.ltem.integrated_magnetic_flux_density(phase)
         >>> imf.mpl()
 
