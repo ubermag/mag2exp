@@ -63,8 +63,8 @@ def phase(field, /, kcx=0.1, kcy=0.1):
     >>> mesh = df.Mesh(p1=(0, 0, 0), p2=(10, 10, 1), cell=(1, 1, 1))
     >>> field = df.Field(mesh, dim=3, value=(0, 0, 1))
     >>> phase, ft_phase = exsim.ltem.phase(field)
-    >>> phase.array.mean()
-    0
+    >>> phase.real.array.mean()
+    0.0
 
     .. plot::
         :context: close-figs
@@ -158,7 +158,8 @@ def defocus_image(phase, /, Cs=0, df_length=0.2e-3, U=None, wavelenght=None):
 
     >>> import discretisedfield as df
     >>> import exsim
-    >>> mesh = df.Mesh(p1=(-5, -4, -1), p2=(5, 4, 1), cell=(2, 1, 0.5))
+    >>> mesh = df.Mesh(p1=(-5e-9, -4e-9, -1e-9), p2=(5e-9, 4e-9, 1e-9),
+    ...                    cell=(2e-9, 1e-9, 0.5e-9))
     ...
     >>> def value_fun(point):
     ...     x, y, z = point
@@ -172,7 +173,7 @@ def defocus_image(phase, /, Cs=0, df_length=0.2e-3, U=None, wavelenght=None):
     >>> df_img = exsim.ltem.defocus_image(phase, Cs=0, df_length=0,
     ...                                   U=300e3)
     >>> df_img.array.mean()
-    1
+    1.0
 
     .. plot::
         :context: close-figs
@@ -181,7 +182,8 @@ def defocus_image(phase, /, Cs=0, df_length=0.2e-3, U=None, wavelenght=None):
 
         >>> import discretisedfield as df
         >>> import exsim
-        >>> mesh = df.Mesh(p1=(-5, -4, -1), p2=(5, 4, 1), cell=(2, 1, 0.5))
+        >>> mesh = df.Mesh(p1=(-5e-9, -4e-9, -1e-9), p2=(5e-9, 4e-9, 1e-9),
+        ...                    cell=(2e-9, 1e-9, 0.5e-9))
         ...
         >>> def value_fun(point):
         ...     x, y, z = point
@@ -254,7 +256,8 @@ def integrated_magnetic_flux_density(phase):
 
         >>> import discretisedfield as df
         >>> import exsim
-        >>> mesh = df.Mesh(p1=(-5, -4, -1), p2=(5, 4, 1), cell=(2, 1, 0.5))
+        >>> mesh = df.Mesh(p1=(-5e-9, -4e-9, -1e-9), p2=(5e-9, 4e-9, 1e-9),
+        ...                    cell=(2e-9, 1e-9, 0.5e-9))
         ...
         >>> def value_fun(point):
         ...     x, y, z = point
@@ -306,7 +309,7 @@ def relativistic_wavelength(U):
 
     >>> import exsim
     >>> exsim.ltem.relativistic_wavelength(300e3)
-    1.9687e-12
+    1.9687489006848795e-12
 
     """
     return constants.h / np.sqrt(
