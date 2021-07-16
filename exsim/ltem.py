@@ -29,43 +29,62 @@ def phase(field, /, kcx=0.1, kcy=0.1):
 
     .. math::
 
-        k_c^2 = k_{cx}^2 dk_x^2 +  k_{cy}^2 dk_y^2,
+        k_c^2 = \\left(k_{cx} dk_x\\right) ^2 +  \\left(k_{cy} dk_y \\right) ^2,
 
-    where :math:`dk_x` and :math:`dk_y` are the fourier space resolution in the
-    :math:`x` and :math:`y` directions respectively. :math:`k_{cx}` and
+    where :math:`dk_x` and :math:`dk_y` are the resolution in fourier space for
+    the :math:`x` and :math:`y` directions respectively. :math:`k_{cx}` and
     :math:`k_{cy}` are the radii of the filter in each direction in units of
     cells.
 
 
     Parameters
     ----------
-    field : df.Field
+    field : discretisedfield.Field
         Magnetisation field.
-    kx : numbers.Real, optional
-        Tikhonov filter radius in x in pixels.
-    ky : numbers.Real, optional
-        Tikhonov filter radius in y in pixels.
+    kcx : numbers.Real, optional
+        Tikhonov filter radius in x in units of cells.
+    kcy : numbers.Real, optional
+        Tikhonov filter radius in y in units of cells.
 
     Returns
     -------
-    df.Field
+    discretisedfield.Field
         Phase in real space.
-    df.Field
+    discretisedfield.Field
         Phase in Fourier space.
 
     Example
     -------
-    1. Uniform field
+    .. plot::
+        :context: close-figs
 
-    >>> import discretisedfield as df
-    >>> import exsim
-    >>> mesh = df.Mesh(p1=(0, 0, 0), p2=(10, 10, 1), cell=(1, 1, 1))
-    >>> field = df.Field(mesh, dim=3, value=(0, 0, 1))
-    >>> phase, ft_phase = exsim.phase(field)
-    >>> phase.array.mean()
-    0
+        1. Uniform out-of-plane field.
 
-    2. Maybe second one
+        >>> import discretisedfield as df
+        >>> import exsim
+        >>> mesh = df.Mesh(p1=(0, 0, 0), p2=(10, 10, 1), cell=(1, 1, 1))
+        >>> field = df.Field(mesh, dim=3, value=(0, 0, 1))
+        >>> phase, ft_phase = exsim.phase(field)
+        >>> phase.array.mean()
+        0
+
+        2. Visualising the phase using ``matplotlib``.
+
+        >>> import discretisedfield as df
+        >>> import exsim
+        >>> mesh = df.Mesh(p1=(-5, -4, -1), p2=(5, 4, 1), cell=(2, 1, 0.5))
+        ...
+        >>> def value_fun(point):
+        ...     x, y, z = point
+        ...     if x > 0:
+        ...         return (0, -1, 0)
+        ...     else:
+        ...         return (0, 1, 0)
+        ...
+        >>> field = df.Field(mesh, dim=3, value=value_fun)
+        >>> phase, ft_phase = exsim.phase(field)
+        >>> phase.mpl_scalar()
+
     """
     m_int = (field * df.dz).integral(direction='z')
     m_ft = m_int.fft2()
@@ -80,16 +99,45 @@ def phase(field, /, kcx=0.1, kcy=0.1):
 
 
 def defocus_image(phase, /, Cs=0, df_length=0.2e-3, U=None, wavelenght=None):
-    """Defocused image.
+    """Calculating the defocused image.
 
     Either `wavelength` or `U` must be specified.
+
+    The wavefunction of the electrons is created from the magnetic phase shift
+    :math:`\phi_m`
+
+    .. math::
+
+        \psi_0 = e^{i\phi_m},
+
+    and propagated through the electon microscope to the image plane by use of
+    the Contrast Transfer Function :math:`T`.
+    The wavfunction at a defocus length :math:`\Delta f` in Fourier space is
+    given by
+
+    .. math::
+
+        \widetilde{\psi}_{\Delta f} = \widetilde{\psi}_0 e^{2 i \pi \lambda k^2
+        (-\\frac{1}{2} \Delta f + \\frac{1}{4} C_s \lambda^2 k^2)},
+
+    where :math:`\lambda` is the relativistic wavelength of the electrons,
+    :math:`C_s` is the spherical aberration coefficient of the microscope, and
+    :math:`k` is the wavevector in Fourier space.
+
+    The intensity of an image at a specific defocus is given by
+
+    .. math::
+
+        I_{\Delta f} = \\left\\vert \psi_{\Delta f} \\right\\vert^2.
+
+    In focus :math:`I=\\left\\vert\psi_0\\right\\vert^2=1`
 
     Parameters
     ----------
     phase : discretisedfield.Field
-        LTEM phase
+        Phase of the electrons from LTEM.
     Cs : numbers.Real, optional
-        Spherical aberration coefficient
+        Spherical aberration coefficient.
     df_length : numbers.Real, optional
         Defocus length in m.
     U : numbers.Real, optional
@@ -100,7 +148,52 @@ def defocus_image(phase, /, Cs=0, df_length=0.2e-3, U=None, wavelenght=None):
     Returns
     -------
     discretisedfield.Field
-        ...
+        Intensity at specified defocus.
+
+    Example
+    -------
+    .. plot::
+            :context: close-figs
+
+            1. Zero defocus.
+
+            >>> import discretisedfield as df
+            >>> import exsim
+            >>> mesh = df.Mesh(p1=(-5, -4, -1), p2=(5, 4, 1), cell=(2, 1, 0.5))
+            ...
+            >>> def value_fun(point):
+            ...     x, y, z = point
+            ...     if x > 0:
+            ...         return (0,-1, 0)
+            ...     else:
+            ...         return (0, 1, 0)
+            ...
+            >>> field = df.Field(mesh, dim=3, value=value_fun)
+            >>> phase, ft_phase = exsim.phase(field)
+            >>> df_img = exsim.defocus_image(phase, Cs=0, df_length=0,
+            ...                              U=300e3)
+            >>> df_img.array.mean()
+            1
+
+            2. Visualising the phase using ``matplotlib``.
+
+            >>> import discretisedfield as df
+            >>> import exsim
+            >>> mesh = df.Mesh(p1=(-5, -4, -1), p2=(5, 4, 1), cell=(2, 1, 0.5))
+            ...
+            >>> def value_fun(point):
+            ...     x, y, z = point
+            ...     if x > 0:
+            ...         return (0, -1, 0)
+            ...     else:
+            ...         return (0, 1, 0)
+            ...
+            >>> field = df.Field(mesh, dim=3, value=value_fun)
+            >>> phase, ft_phase = exsim.phase(field)
+            >>> df_img = exsim.defocus_image(phase, Cs=8000, df_length=0.2e-3,
+            ...                              U=300e3)
+            >>> df_img.mpl_scalar()
+
     """
     ft_wavefn = df.Field(phase.mesh, dim=phase.dim,
                          value=np.exp(phase.array * 1j)).fft2()
@@ -123,21 +216,52 @@ def defocus_image(phase, /, Cs=0, df_length=0.2e-3, U=None, wavelenght=None):
 
 
 def integrated_magnetic_flux_density(phase):
-    """Integrated magnetic flux density
+    """Calculate the integrated magnetic flux density.
+
+    This calculates the integrated magnetic flux density given by
+
+
+    .. math::
+        \int_{0}^{t} {\\bf B}_\perp dz =\\frac{\Phi_0}{\pi}
+            \\left(-\partial/\partial y \partial/\partial x \\right)
+
+    Ask James!!!
 
     Parameters
     ----------
     phase : discretisedfield.Field
-        Phase
+        Phase of the electrons from LTEM.
 
     Returns
     -------
     discretisedfield.Field
-        Integrated magnetic flux density
+        Integrated magnetic flux density.
 
     Example
     -------
-    ...
+    .. plot::
+            :context: close-figs
+
+            1. Visualising the phase using ``matplotlib``.
+
+            >>> import discretisedfield as df
+            >>> import exsim
+            >>> mesh = df.Mesh(p1=(-5, -4, -1), p2=(5, 4, 1), cell=(2, 1, 0.5))
+            ...
+            >>> def value_fun(point):
+            ...     x, y, z = point
+            ...     if x > 0:
+            ...         return (0, -1, 0)
+            ...     else:
+            ...         return (0, 1, 0)
+            ...
+            >>> field = df.Field(mesh, dim=3, value=value_fun)
+            >>> phase, ft_phase = exsim.phase(field)
+            >>> df_img = exsim.defocus_image(phase, Cs=8000, df_length=0.2e-3,
+            ...                              U=300e3)
+            >>> imf = exsim.ltem.integrated_magnetic_flux_density(phase)
+            >>> imf.mpl()
+
     """
     pref = mm.consts.hbar / mm.consts.e
     imfd = -1 * phase.real.derivative('y') << phase.real.derivative('x')
@@ -145,10 +269,18 @@ def integrated_magnetic_flux_density(phase):
 
 
 def relativistic_wavelength(U):
-    r"""Relativistic wavelength of an electron accelerated in a potential U.
+    r"""Relativistic wavelength of an electron accelerated using a voltage U.
 
-    .. math:: \lambda = \frac{h}{\sqrt(2 m_e e U \cdot
-    (1 + \frac{e U}{2 m_e c^2}))}
+    The wavelength is calculated using
+
+    .. math::
+        \lambda = \frac{h}{2 m_e e U
+        \sqrt{2 m_e e U \left(1 + \frac{e U}{2 m_e c^2}\right)}}
+
+    where :math:`m_e` and :math:`e` are the mass and charge of an electron
+    respectively, :math:`c` is the speed of light, and :math:`U` is the
+    accelarating voltage in V.
+
 
     Parameters
     ----------
@@ -159,6 +291,15 @@ def relativistic_wavelength(U):
     -------
     numbers.Real
         Wavelength in m.
+
+    Example
+    -------
+    1. Accelerating using 300 kV.
+
+    >>> import exsim
+    >>> exsim.relativistic_wavelength(300e3)
+    1.9687e-12
+
     """
     return constants.h / np.sqrt(
         2 * constants.m_e * U * constants.e
