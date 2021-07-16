@@ -9,15 +9,15 @@ from scipy import constants
 
 
 def phase(field, /, kcx=0.1, kcy=0.1):
-    """Calculation of the magnetic phase shift experienced by the electrons.
+    r"""Calculation of the magnetic phase shift experienced by the electrons.
 
     The Fourier transform of the magnetic phase shift is calculated using
 
     .. math::
 
-        \widetilde{\phi}_m (k_x,k_y) = \\frac {i e \mu_0 k_\perp^2}{h}
-        \\frac{\left[ \widetilde{\\bf M}_I(k_x,k_y) \\times
-        {\\bf k}_\perp \\right] _z}{\\left( k_\perp^2 + k_c^2 \\right)^2},
+        \widetilde{\phi}_m (k_x,k_y) = \frac {i e \mu_0 k_\perp^2}{h}
+        \frac{\left[ \widetilde{\bf M}_I(k_x,k_y) \times
+        {\bf k}_\perp \right] _z}{\left( k_\perp^2 + k_c^2 \right)^2},
 
     where :math:`{\\bf M}_I` is the integrated magnetisation along the path of
     the electron beam. Here we define the electron beam to be
@@ -29,7 +29,7 @@ def phase(field, /, kcx=0.1, kcy=0.1):
 
     .. math::
 
-        k_c^2 = \\left(k_{cx} dk_x\\right) ^2 +  \\left(k_{cy} dk_y \\right) ^2,
+        k_c^2 = \left(k_{cx} dk_x\right) ^2 +  \left(k_{cy} dk_y \right) ^2,
 
     where :math:`dk_x` and :math:`dk_y` are the resolution in fourier space for
     the :math:`x` and :math:`y` directions respectively. :math:`k_{cx}` and
@@ -42,9 +42,9 @@ def phase(field, /, kcx=0.1, kcy=0.1):
     field : discretisedfield.Field
         Magnetisation field.
     kcx : numbers.Real, optional
-        Tikhonov filter radius in x in units of cells.
+        Tikhonov filter radius in :math:`x` in units of cells.
     kcy : numbers.Real, optional
-        Tikhonov filter radius in y in units of cells.
+        Tikhonov filter radius in :math:`y` in units of cells.
 
     Returns
     -------
@@ -100,7 +100,7 @@ def phase(field, /, kcx=0.1, kcy=0.1):
 
 
 def defocus_image(phase, /, Cs=0, df_length=0.2e-3, U=None, wavelenght=None):
-    """Calculating the defocused image.
+    r"""Calculating the defocused image.
 
     Either `wavelength` or `U` must be specified.
 
@@ -119,7 +119,7 @@ def defocus_image(phase, /, Cs=0, df_length=0.2e-3, U=None, wavelenght=None):
     .. math::
 
         \widetilde{\psi}_{\Delta f} = \widetilde{\psi}_0 e^{2 i \pi \lambda k^2
-        (-\\frac{1}{2} \Delta f + \\frac{1}{4} C_s \lambda^2 k^2)},
+        (-\frac{1}{2} \Delta f + \frac{1}{4} C_s \lambda^2 k^2)},
 
     where :math:`\lambda` is the relativistic wavelength of the electrons,
     :math:`C_s` is the spherical aberration coefficient of the microscope, and
@@ -129,9 +129,9 @@ def defocus_image(phase, /, Cs=0, df_length=0.2e-3, U=None, wavelenght=None):
 
     .. math::
 
-        I_{\Delta f} = \\left\\vert \psi_{\Delta f} \\right\\vert^2.
+        I_{\Delta f} = \left\vert \psi_{\Delta f} \right\vert^2.
 
-    In focus :math:`I=\\left\\vert\psi_0\\right\\vert^2=1`
+    In focus :math:`I=\left\vert\psi_0\right\vert^2=1`
 
     Parameters
     ----------
@@ -218,15 +218,22 @@ def defocus_image(phase, /, Cs=0, df_length=0.2e-3, U=None, wavelenght=None):
 
 
 def integrated_magnetic_flux_density(phase):
-    """Calculate the integrated magnetic flux density.
+    r"""Calculate the integrated magnetic flux density.
 
-    This calculates the integrated magnetic flux density given by
+    This calculates the magnetic flux density integrated along the beam
+    direction given by
 
     .. math::
-        \int_{0}^{t} {\\bf B}_\perp dz =\\frac{\Phi_0}{\pi}
-            \\left(-\partial/\partial y \partial/\partial x \\right)
+        \int_{0}^{t} {\bf B}_\perp dz = \frac{\Phi_0}{\pi}\left(
+        \begin{array}{c}
+         -\partial/\partial y \\
+          \partial/\partial x
+        \end{array} \right).
 
     Ask James!!!
+
+    This quantity is most closely related to values obtained from electron
+    holography.
 
     Parameters
     ----------
