@@ -62,7 +62,7 @@ def phase(field, /, kcx=0.1, kcy=0.1):
     >>> import exsim
     >>> mesh = df.Mesh(p1=(0, 0, 0), p2=(10, 10, 1), cell=(1, 1, 1))
     >>> field = df.Field(mesh, dim=3, value=(0, 0, 1))
-    >>> phase, ft_phase = exsim.phase(field)
+    >>> phase, ft_phase = exsim.ltem.phase(field)
     >>> phase.array.mean()
     0
 
@@ -305,7 +305,7 @@ def relativistic_wavelength(U):
     1. Accelerating using 300 kV.
 
     >>> import exsim
-    >>> exsim.relativistic_wavelength(300e3)
+    >>> exsim.ltem.relativistic_wavelength(300e3)
     1.9687e-12
 
     """
