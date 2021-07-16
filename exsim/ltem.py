@@ -53,20 +53,21 @@ def phase(field, /, kcx=0.1, kcy=0.1):
     discretisedfield.Field
         Phase in Fourier space.
 
-    Example
-    -------
+    Examples
+    --------
+
+    1. Uniform out-of-plane field.
+
+    >>> import discretisedfield as df
+    >>> import exsim
+    >>> mesh = df.Mesh(p1=(0, 0, 0), p2=(10, 10, 1), cell=(1, 1, 1))
+    >>> field = df.Field(mesh, dim=3, value=(0, 0, 1))
+    >>> phase, ft_phase = exsim.phase(field)
+    >>> phase.array.mean()
+    0
+
     .. plot::
         :context: close-figs
-
-        1. Uniform out-of-plane field.
-
-        >>> import discretisedfield as df
-        >>> import exsim
-        >>> mesh = df.Mesh(p1=(0, 0, 0), p2=(10, 10, 1), cell=(1, 1, 1))
-        >>> field = df.Field(mesh, dim=3, value=(0, 0, 1))
-        >>> phase, ft_phase = exsim.phase(field)
-        >>> phase.array.mean()
-        0
 
         2. Visualising the phase using ``matplotlib``.
 
@@ -150,49 +151,50 @@ def defocus_image(phase, /, Cs=0, df_length=0.2e-3, U=None, wavelenght=None):
     discretisedfield.Field
         Intensity at specified defocus.
 
-    Example
-    -------
+    Examples
+    --------
+
+    1. Zero defocus.
+
+    >>> import discretisedfield as df
+    >>> import exsim
+    >>> mesh = df.Mesh(p1=(-5, -4, -1), p2=(5, 4, 1), cell=(2, 1, 0.5))
+    ...
+    >>> def value_fun(point):
+    ...     x, y, z = point
+    ...     if x > 0:
+    ...         return (0,-1, 0)
+    ...     else:
+    ...         return (0, 1, 0)
+    ...
+    >>> field = df.Field(mesh, dim=3, value=value_fun)
+    >>> phase, ft_phase = exsim.phase(field)
+    >>> df_img = exsim.defocus_image(phase, Cs=0, df_length=0,
+    ...                              U=300e3)
+    >>> df_img.array.mean()
+    1
+
     .. plot::
-            :context: close-figs
+        :context: close-figs
 
-            1. Zero defocus.
+        2. Visualising the phase using ``matplotlib``.
 
-            >>> import discretisedfield as df
-            >>> import exsim
-            >>> mesh = df.Mesh(p1=(-5, -4, -1), p2=(5, 4, 1), cell=(2, 1, 0.5))
-            ...
-            >>> def value_fun(point):
-            ...     x, y, z = point
-            ...     if x > 0:
-            ...         return (0,-1, 0)
-            ...     else:
-            ...         return (0, 1, 0)
-            ...
-            >>> field = df.Field(mesh, dim=3, value=value_fun)
-            >>> phase, ft_phase = exsim.phase(field)
-            >>> df_img = exsim.defocus_image(phase, Cs=0, df_length=0,
-            ...                              U=300e3)
-            >>> df_img.array.mean()
-            1
-
-            2. Visualising the phase using ``matplotlib``.
-
-            >>> import discretisedfield as df
-            >>> import exsim
-            >>> mesh = df.Mesh(p1=(-5, -4, -1), p2=(5, 4, 1), cell=(2, 1, 0.5))
-            ...
-            >>> def value_fun(point):
-            ...     x, y, z = point
-            ...     if x > 0:
-            ...         return (0, -1, 0)
-            ...     else:
-            ...         return (0, 1, 0)
-            ...
-            >>> field = df.Field(mesh, dim=3, value=value_fun)
-            >>> phase, ft_phase = exsim.phase(field)
-            >>> df_img = exsim.defocus_image(phase, Cs=8000, df_length=0.2e-3,
-            ...                              U=300e3)
-            >>> df_img.mpl_scalar()
+        >>> import discretisedfield as df
+        >>> import exsim
+        >>> mesh = df.Mesh(p1=(-5, -4, -1), p2=(5, 4, 1), cell=(2, 1, 0.5))
+        ...
+        >>> def value_fun(point):
+        ...     x, y, z = point
+        ...     if x > 0:
+        ...         return (0, -1, 0)
+        ...     else:
+        ...         return (0, 1, 0)
+        ...
+        >>> field = df.Field(mesh, dim=3, value=value_fun)
+        >>> phase, ft_phase = exsim.phase(field)
+        >>> df_img = exsim.defocus_image(phase, Cs=8000, df_length=0.2e-3,
+        ...                              U=300e3)
+        >>> df_img.mpl_scalar()
 
     """
     ft_wavefn = df.Field(phase.mesh, dim=phase.dim,
@@ -220,7 +222,6 @@ def integrated_magnetic_flux_density(phase):
 
     This calculates the integrated magnetic flux density given by
 
-
     .. math::
         \int_{0}^{t} {\\bf B}_\perp dz =\\frac{\Phi_0}{\pi}
             \\left(-\partial/\partial y \partial/\partial x \\right)
@@ -240,27 +241,27 @@ def integrated_magnetic_flux_density(phase):
     Example
     -------
     .. plot::
-            :context: close-figs
+        :context: close-figs
 
-            1. Visualising the phase using ``matplotlib``.
+        1. Visualising the phase using ``matplotlib``.
 
-            >>> import discretisedfield as df
-            >>> import exsim
-            >>> mesh = df.Mesh(p1=(-5, -4, -1), p2=(5, 4, 1), cell=(2, 1, 0.5))
-            ...
-            >>> def value_fun(point):
-            ...     x, y, z = point
-            ...     if x > 0:
-            ...         return (0, -1, 0)
-            ...     else:
-            ...         return (0, 1, 0)
-            ...
-            >>> field = df.Field(mesh, dim=3, value=value_fun)
-            >>> phase, ft_phase = exsim.phase(field)
-            >>> df_img = exsim.defocus_image(phase, Cs=8000, df_length=0.2e-3,
-            ...                              U=300e3)
-            >>> imf = exsim.ltem.integrated_magnetic_flux_density(phase)
-            >>> imf.mpl()
+        >>> import discretisedfield as df
+        >>> import exsim
+        >>> mesh = df.Mesh(p1=(-5, -4, -1), p2=(5, 4, 1), cell=(2, 1, 0.5))
+        ...
+        >>> def value_fun(point):
+        ...     x, y, z = point
+        ...     if x > 0:
+        ...         return (0, -1, 0)
+        ...     else:
+        ...         return (0, 1, 0)
+        ...
+        >>> field = df.Field(mesh, dim=3, value=value_fun)
+        >>> phase, ft_phase = exsim.phase(field)
+        >>> df_img = exsim.defocus_image(phase, Cs=8000, df_length=0.2e-3,
+        ...                              U=300e3)
+        >>> imf = exsim.ltem.integrated_magnetic_flux_density(phase)
+        >>> imf.mpl()
 
     """
     pref = mm.consts.hbar / mm.consts.e
