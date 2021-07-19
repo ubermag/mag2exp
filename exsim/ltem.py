@@ -1,6 +1,7 @@
 """LTEM submodule.
 
-Details ...
+Module for calculation of Lorentz Transmission Electron Microscopy related
+quantaties.
 """
 import numpy as np
 import discretisedfield as df
