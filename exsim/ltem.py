@@ -1,7 +1,7 @@
 """LTEM submodule.
 
 Module for calculation of Lorentz Transmission Electron Microscopy related
-quantaties.
+quantities.
 """
 import numpy as np
 import discretisedfield as df
@@ -20,8 +20,8 @@ def phase(field, /, kcx=0.1, kcy=0.1):
         \frac{\left[ \widetilde{\bf M}_I(k_x,k_y) \times
         {\bf k}_\perp \right] _z}{\left( k_\perp^2 + k_c^2 \right)^2},
 
-    where :math:`{\mathbf{M}}_I` is the integrated magnetisation along the path of
-    the electron beam. Here we define the electron beam to be
+    where :math:`{\mathbf{M}}_I` is the integrated magnetisation along the path
+    of the electron beam. Here we define the electron beam to be
     propagating in the :math:`z` direction.
     :math:`\mu_0` is the vacuum permeability, and :math:`k` is the k-vector in
     Fourier space.
@@ -32,7 +32,7 @@ def phase(field, /, kcx=0.1, kcy=0.1):
 
         k_c^2 = \left(k_{cx} dk_x\right) ^2 +  \left(k_{cy} dk_y \right) ^2,
 
-    where :math:`dk_x` and :math:`dk_y` are the resolution in fourier space for
+    where :math:`dk_x` and :math:`dk_y` are the resolution in Fourier space for
     the :math:`x` and :math:`y` directions respectively. :math:`k_{cx}` and
     :math:`k_{cy}` are the radii of the filter in each direction in units of
     cells.
@@ -100,7 +100,7 @@ def phase(field, /, kcx=0.1, kcy=0.1):
     return phase, ft_phase
 
 
-def defocus_image(phase, /, Cs=0, df_length=0.2e-3, U=None, wavelenght=None):
+def defocus_image(phase, /, Cs=0, df_length=0.2e-3, U=None, wavelength=None):
     r"""Calculating the defocused image.
 
     The wavefunction of the electrons is created from the magnetic phase shift
@@ -110,9 +110,9 @@ def defocus_image(phase, /, Cs=0, df_length=0.2e-3, U=None, wavelenght=None):
 
         \psi_0 = e^{i\phi_m},
 
-    and propagated through the electon microscope to the image plane by use of
+    and propagated through the electron microscope to the image plane by use of
     the Contrast Transfer Function :math:`T`.
-    The wavfunction at a defocus length :math:`\Delta f` in Fourier space is
+    The wavefunction at a defocus length :math:`\Delta f` in Fourier space is
     given by
 
     .. math::
@@ -132,7 +132,8 @@ def defocus_image(phase, /, Cs=0, df_length=0.2e-3, U=None, wavelenght=None):
 
     In focus :math:`I=\left\vert\psi_0\right\vert^2=1`
 
-    Either electron ``wavelength`` or accelaration voltage ``U`` must be specified.
+    Either electron ``wavelength`` or acceleration voltage ``U`` must be
+    specified.
 
     Parameters
     ----------
@@ -144,7 +145,7 @@ def defocus_image(phase, /, Cs=0, df_length=0.2e-3, U=None, wavelenght=None):
         Defocus length in m.
     U : numbers.Real, optional
         Accelerating voltage of electrons in V.
-    wavelenght : numbers.Real, optional
+    wavelength : numbers.Real, optional
         Relativistic wavelength of the electrons in m.
 
     Returns
@@ -210,7 +211,7 @@ def defocus_image(phase, /, Cs=0, df_length=0.2e-3, U=None, wavelenght=None):
     k = df.Field(ft_wavefn.mesh, dim=3, value=lambda x: x)
     ksquare = (k.x**2 + k.y**2).array
 
-    if wavelenght is None:
+    if wavelength is None:
         if U is None:
             msg = ('Either `wavelength` or acceleration voltage `U` needs'
                    'to be specified.')
@@ -296,7 +297,7 @@ def relativistic_wavelength(U):
 
     where :math:`m_e` and :math:`e` are the mass and charge of an electron
     respectively, :math:`c` is the speed of light, and :math:`U` is the
-    accelarating voltage in V.
+    accelerating voltage in V.
 
 
     Parameters

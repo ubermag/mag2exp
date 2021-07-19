@@ -17,7 +17,7 @@ def holographic_image(field, /, fwhm=None):
         Magnetisation field.
     fwhm : numbers.Real, optional
         If specified, convolutes the output image with a 2 Dimensional Gaussian
-        with the full width half maxium (fwhm) specified.
+        with the full width half maximum (fwhm) specified.
 
     Returns
     -------
@@ -83,8 +83,8 @@ def holographic_scattering(field):
     field parallel to the propagation direction of the light. Here, we define
     the experimental reference frame with the light propagating along :math:`z`
     direction. The intensity of X-ray holographic scattering can be calculated
-    from the Fourer transform of the real space integral of the magnetisation
-    along the beam direction multiplied by its complex conjuagte.
+    from the Fourier transform of the real space integral of the magnetisation
+    along the beam direction multiplied by its complex conjugate.
 
     .. math::
         M_I = \int M dz, \\
