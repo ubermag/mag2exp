@@ -1,6 +1,6 @@
 """MFM submodule.
 
-Module for calculation of Magnetic Force Microscopy related quantaties.
+Module for calculation of Magnetic Force Microscopy related quantities.
 """
 
 import micromagneticmodel as mm
@@ -40,7 +40,7 @@ def phase_shift(system, /, tip_m=(0, 0, 0), Q=650, k=3, tip_q=0):
     ----------
     system : micromagneticmodel.System
         Micromagnetic system which must include the magnetisation
-        configureation and an energy equation which includes demagnetisation.
+        configuration and an energy equation which includes demagnetisation.
 
     tip_m : numbers.Real, array_like
         The effective magnetic dipole moment of the tip in the :math:`x`,
