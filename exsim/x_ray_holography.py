@@ -108,6 +108,7 @@ def holographic_scattering(field):
         1. Visualising the scattering with ``matplotlib``.
 
         >>> import discretisedfield as df
+        >>> import numpy as np
         >>> import exsim
         >>> mesh = df.Mesh(p1=(0, 0, 0), p2=(50e-9, 50e-9, 1e-9),
         ...                cell=(1e-9, 1e-9, 1e-9))
