@@ -11,6 +11,8 @@
     :caption: Tutorials
 
     ipynb/Lorentz_TEM
+    ipynb/Magnetic_Force_Microscopy
+    ipynb/X-ray_Holography
 
 API Reference
 -------------
@@ -23,8 +25,10 @@ API Reference
 
     exsim
     exsim.ltem
-    exsim.quickplots
+    exsim.x_ray_holography
     exsim.sans
+    exsim.mfm
+    exsim.quick_plots
 
 
 Indices and tables
