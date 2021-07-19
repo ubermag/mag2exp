@@ -19,6 +19,7 @@ def test_ltem_phase():
 def test_ltem_phase_neel():
     mesh = df.Mesh(p1=(-5e-9, -4e-9, -1e-9), p2=(5e-9, 4e-9, 1e-9),
                    cell=(2e-9, 1e-9, 0.5e-9))
+
     def f_val(position):
         x, y, z = position
         if x < 0:
@@ -34,6 +35,7 @@ def test_ltem_phase_neel():
 def test_ltem_phase_bloch():
     mesh = df.Mesh(p1=(-5e-9, -4e-9, -1e-9), p2=(5e-9, 4e-9, 1e-9),
                    cell=(2e-9, 1e-9, 0.5e-9))
+
     def f_val(position):
         x, y, z = position
         if x < 0:
@@ -58,6 +60,7 @@ def test_defocus_image():
 def test_defocus_image_zero_df():
     mesh = df.Mesh(p1=(-5e-9, -4e-9, -1e-9), p2=(5e-9, 4e-9, 1e-9),
                    cell=(2e-9, 1e-9, 0.5e-9))
+
     def f_val(position):
         x, y, z = position
         if x < 0:
@@ -69,9 +72,11 @@ def test_defocus_image_zero_df():
     dfi = exsim.ltem.defocus_image(phase, Cs=0, df_length=0, U=300e3)
     assert (dfi.array == 1).all()
 
-def test_defocus_image_zero_df():
+
+def test_defocus_image_df():
     mesh = df.Mesh(p1=(-5e-9, -4e-9, -1e-9), p2=(5e-9, 4e-9, 1e-9),
                    cell=(2e-9, 1e-9, 0.5e-9))
+
     def f_val(position):
         x, y, z = position
         if x < 0:
@@ -87,6 +92,7 @@ def test_defocus_image_zero_df():
 def test_integrated_magnetic_flux_density():
     mesh = df.Mesh(p1=(-5e-9, -4e-9, -1e-9), p2=(5e-9, 4e-9, 1e-9),
                    cell=(2e-9, 1e-9, 0.5e-9))
+
     def f_val(position):
         x, y, z = position
         if x < 0:
