@@ -4,10 +4,6 @@ import micromagneticmodel as mm
 import exsim
 
 
-def test_relativistic_wavelength():
-    assert exsim.ltem.relativistic_wavelength(0) == float('inf')
-
-
 def test_mfm_phase_tip_m():
     mesh = df.Mesh(p1=(-5e-9, -4e-9, -2e-9), p2=(5e-9, 4e-9, 6e-9),
                    cell=(2e-9, 1e-9, 2e-9))
