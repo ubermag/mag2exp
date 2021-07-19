@@ -44,9 +44,9 @@ def cross_section(field, /, method, geometry):
         return nn + np
     elif method in ('unpolarised', 'unpol'):
         p = cross_section(field, method='half_polarised_p',
-                           geometry=geometry)
+                          geometry=geometry)
         n = cross_section(field, method='half_polarised_n',
-                           geometry=geometry)
+                          geometry=geometry)
         return 0.5 * (p + n)
     else:
         msg = f'Method {method} is unknown.'
@@ -91,7 +91,8 @@ def _Q_parallel(field):
         Magnetic interaction vector.
     """
     m_p_ft = (field * df.dz).integral(direction='z').fft2()
-    theta = df.Field(m_p_ft.mesh, dim=1, value=lambda x: np.arctan2(x[1],x[0]))
+    theta = df.Field(m_p_ft.mesh, dim=1,
+                     value=lambda x: np.arctan2(x[1], x[0]))
     Qx = (-m_p_ft.x * np.sin(theta.array)**2 +
           m_p_ft.y * np.cos(theta.array) * np.sin(theta.array))
     Qy = (-m_p_ft.y*np.cos(theta.array)**2 +
@@ -113,10 +114,13 @@ def _Q_perpendicular(field):
         Magnetic interaction vector.
     """
     m_p_ft = (field * df.dz).integral(direction='z').fft2()
-    theta = df.Field(m_p_ft.mesh, dim=1, value=lambda x: np.arctan2(x[1],x[0]))
+    theta = df.Field(m_p_ft.mesh, dim=1,
+                     value=lambda x: np.arctan2(x[1], x[0]))
     Qx = -m_p_ft.x
-    Qy = -m_p_ft.y*np.cos(theta.array)**2 + m_p_ft.z*np.cos(theta.array)*np.sin(theta.array)
-    Qz = m_p_ft.y*np.cos(theta.array)*np.sin(theta.array) - m_p_ft.z*np.sin(theta.array)**2
+    Qy = (-m_p_ft.y*np.cos(theta.array)**2 +
+          m_p_ft.z*np.cos(theta.array)*np.sin(theta.array))
+    Qz = (m_p_ft.y*np.cos(theta.array)*np.sin(theta.array) -
+          m_p_ft.z*np.sin(theta.array)**2)
     return Qx << Qy << Qz
 
 

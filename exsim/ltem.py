@@ -91,8 +91,8 @@ def phase(field, /, kcx=0.1, kcy=0.1):
     m_ft = m_int.fft2()
 
     k = df.Field(m_ft.mesh, dim=3, value=lambda x: x)
-    denom = (k.x**2 + k.y**2) / (k.x**2 + k.y**2
-                                 + k.mesh.dx**2*kcx**2 + k.mesh.dy**2*kcy**2)**2
+    denom = (k.x**2 + k.y**2) / (k.x**2 + k.y**2 +
+                                 k.mesh.dx**2*kcx**2 + k.mesh.dy**2*kcy**2)**2
     const = 1j * mm.consts.e * mm.consts.mu0 / mm.consts.h
     ft_phase = (m_ft & k).z * denom * const
     phase = ft_phase.ifft2()
