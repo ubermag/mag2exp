@@ -7,17 +7,17 @@ def cross_section(field, /, method, geometry):
     Parameters
     ----------
     field : discretisedfield.field
-        Magneisation field.
+        Magnetisation field.
     method : str
         Used to select the relevant cross section.
     geometry : str
-        Define the experimental geromtry as field parallel or perpendcular to
+        Define the experimental geometry as field parallel or perpendicular to
         the neutron propagation vector.
 
     Returns
     -------
     discretisedfield.Field
-        Scatering cross section.
+        Scattering cross section.
     """
     Q = magnetic_interaction_vector(field, geometry=geometry)
     if method in ('polarised_pp', 'pp'):
@@ -58,9 +58,9 @@ def magnetic_interaction_vector(field, /, geometry):
     Parameters
     ----------
     field : discretisedfield.field
-        Magneisation field.
+        Magnetisation field.
     geometry : str
-        Define the experimental geromtry as field parallel or perpendcular to
+        Define the experimental geometry as field parallel or perpendicular to
         the neutron propagation vector.
 
     Returns
@@ -83,7 +83,7 @@ def _Q_parallel(field):
     Parameters
     ----------
     field : discretisedfield.field
-        Magneisation field.
+        Magnetisation field.
 
     Returns
     -------
@@ -129,9 +129,9 @@ def chiral_function(field, /, geometry):
     Parameters
     ----------
     field : discretisedfield.field
-        Magneisation field.
+        Magnetisation field.
     geometry : str
-        Define the experimental geromtry as field parallel or perpendcular to
+        Define the experimental geometry as field parallel or perpendicular to
         the neutron propagation vector.
 
     Returns

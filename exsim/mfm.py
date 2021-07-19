@@ -15,7 +15,7 @@ def phase_shift(system, /, tip_m=(0, 0, 0), Q=650, k=3, tip_q=0):
     the magnetic tip of an oscillating cantilever and the samples stray field.
     As MFM is based on the stray field outside of a sample, an area outside of
     the sample where we wish to perform the MFM measurements, has to have the
-    saturation magnetisation equal to zero.
+    saturation magnetisation equal to zero. HARD TO UNDERSTAND
 
     The magnetic cantilever is driven to oscillate near its resonant frequency
     when there is no stray field. In the presence of a stray magnetic field the

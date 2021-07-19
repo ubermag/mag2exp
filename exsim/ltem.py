@@ -20,7 +20,7 @@ def phase(field, /, kcx=0.1, kcy=0.1):
         \frac{\left[ \widetilde{\bf M}_I(k_x,k_y) \times
         {\bf k}_\perp \right] _z}{\left( k_\perp^2 + k_c^2 \right)^2},
 
-    where :math:`{\\bf M}_I` is the integrated magnetisation along the path of
+    where :math:`{\mathbf{M}}_I` is the integrated magnetisation along the path of
     the electron beam. Here we define the electron beam to be
     propagating in the :math:`z` direction.
     :math:`\mu_0` is the vacuum permeability, and :math:`k` is the k-vector in
@@ -103,8 +103,6 @@ def phase(field, /, kcx=0.1, kcy=0.1):
 def defocus_image(phase, /, Cs=0, df_length=0.2e-3, U=None, wavelenght=None):
     r"""Calculating the defocused image.
 
-    Either `wavelength` or `U` must be specified.
-
     The wavefunction of the electrons is created from the magnetic phase shift
     :math:`\phi_m`
 
@@ -134,6 +132,8 @@ def defocus_image(phase, /, Cs=0, df_length=0.2e-3, U=None, wavelenght=None):
 
     In focus :math:`I=\left\vert\psi_0\right\vert^2=1`
 
+    Either electron ``wavelength`` or accelaration voltage ``U`` must be specified.
+
     Parameters
     ----------
     phase : discretisedfield.Field
@@ -145,7 +145,7 @@ def defocus_image(phase, /, Cs=0, df_length=0.2e-3, U=None, wavelenght=None):
     U : numbers.Real, optional
         Accelerating voltage of electrons in V.
     wavelenght : numbers.Real, optional
-        Relativistic wavelength of the electrons.
+        Relativistic wavelength of the electrons in m.
 
     Returns
     -------
@@ -198,6 +198,11 @@ def defocus_image(phase, /, Cs=0, df_length=0.2e-3, U=None, wavelenght=None):
         >>> df_img = exsim.ltem.defocus_image(phase, Cs=8000, df_length=0.2e-3,
         ...                                   U=300e3)
         >>> df_img.mpl_scalar()
+
+    .. seealso::
+
+        :py:func:`~exsim.ltem.phase`
+        :py:func:`~exsim.ltem.relativistic_wavelength`
 
     """
     ft_wavefn = df.Field(phase.mesh, dim=phase.dim,
