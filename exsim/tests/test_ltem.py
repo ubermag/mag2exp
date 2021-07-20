@@ -45,7 +45,7 @@ def test_ltem_phase_bloch():
     field = df.Field(mesh, dim=3, value=f_val)
     phase, ft_phase = exsim.ltem.phase(field)
     assert (phase.real.array != 0).any()
-    assert (phase.imag.array == 0).all()
+    assert phase.imag.allclose(df.Field(mesh=phase.mesh, dim=1))
 
 
 def test_defocus_image():
