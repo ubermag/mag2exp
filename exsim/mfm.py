@@ -13,9 +13,10 @@ def phase_shift(system, /, tip_m=(0, 0, 0), Q=650, k=3, tip_q=0, fwhm=None):
 
     The contrast in MFM images originates from the magnetic interaction between
     the magnetic tip of an oscillating cantilever and the samples stray field.
-    As MFM is based on the stray field outside of a sample, an area outside of
-    the sample where we wish to perform the MFM measurements, has to have the
-    saturation magnetisation equal to zero. HARD TO UNDERSTAND
+    As MFM is based on the stray field outside of a sample, an 'airbox' method
+    should be used. This mean that the saturation magnetisation should be set
+    to zero in the region outside the sample in which we wish to perform these
+    MFM measurements.
 
     The magnetic cantilever is driven to oscillate near its resonant frequency
     when there is no stray field. In the presence of a stray magnetic field the
