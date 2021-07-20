@@ -72,6 +72,8 @@ def magnetic_interaction_vector(field, /, geometry):
         Q = _Q_parallel(field)
     elif geometry == 'perpendicular':
         Q = _Q_perpendicular(field)
+    elif geometry == 'perp_z':
+        Q = _Q_perpendicular_z(field)
     else:
         msg = f'Geometry {geometry} is unknown.'
         raise ValueError(msg)
@@ -113,14 +115,37 @@ def _Q_perpendicular(field):
     discretisedfield.Field
         Magnetic interaction vector.
     """
-    m_p_ft = (field * df.dz).integral(direction='z').fft2()
+    m_p_ft = (field * df.dx).integral(direction='x').fft2()
     theta = df.Field(m_p_ft.mesh, dim=1,
-                     value=lambda x: np.arctan2(x[1], x[0]))
+                     value=lambda x: np.arctan2(x[2], x[1]))
     Qx = -m_p_ft.x
     Qy = (-m_p_ft.y*np.cos(theta.array)**2 +
           m_p_ft.z*np.cos(theta.array)*np.sin(theta.array))
     Qz = (m_p_ft.y*np.cos(theta.array)*np.sin(theta.array) -
           m_p_ft.z*np.sin(theta.array)**2)
+    return Qx << Qy << Qz
+
+
+def _Q_perpendicular_z(field):
+    """
+    Parameters
+    ----------
+    field : discretisedfield.field
+        Magneisation field.
+
+    Returns
+    -------
+    discretisedfield.Field
+        Magnetic interaction vector.
+    """
+    m_p_ft = (field * df.dz).integral(direction='z').fft2()
+    theta = df.Field(m_p_ft.mesh, dim=1,
+                     value=lambda x: np.arctan2(x[1], x[0]))
+    Qx = (-m_p_ft.y * np.sin(theta.array)**2 +
+          m_p_ft.z * np.cos(theta.array) * np.sin(theta.array))
+    Qy = (-m_p_ft.z*np.cos(theta.array)**2 +
+          m_p_ft.y*np.cos(theta.array)*np.sin(theta.array))
+    Qz = m_p_ft.x
     return Qx << Qy << Qz
 
 
