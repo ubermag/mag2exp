@@ -1,4 +1,4 @@
-import exsim.util
+import exsim
 import discretisedfield as df
 
 

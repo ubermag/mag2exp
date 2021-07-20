@@ -5,7 +5,7 @@ Module for calculation of Magnetic Force Microscopy related quantities.
 
 import micromagneticmodel as mm
 import oommfc as oc
-# from exsim.util import gaussian_filter  # think about 3D gaussian
+import exsim
 
 
 def phase_shift(system, /, tip_m=(0, 0, 0), Q=650, k=3, tip_q=0, fwhm=None):
@@ -176,5 +176,5 @@ def phase_shift(system, /, tip_m=(0, 0, 0), Q=650, k=3, tip_q=0, fwhm=None):
     d2h_dz2 = stray_field.derivative('z', n=2)
     phase_shift = (Q * mm.consts.mu0 / k) * (tip_q * dh_dz.z + d2h_dz2 @ tip_m)
     if fwhm is not None:
-        phase_shift = exism.util.gaussian_filter(phase_shift, fwhm=fwhm)
+        phase_shift = exsim.util.gaussian_filter(phase_shift, fwhm=fwhm)
     return phase_shift
