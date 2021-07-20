@@ -15,7 +15,7 @@ def holographic_image(field, /, fwhm=None):
     ----------
     field : discretisedfield.field
         Magnetisation field.
-    fwhm : numbers.Real, optional
+    fwhm : array_like, optional
         If specified, convolutes the output image with a 2 Dimensional Gaussian
         with the full width half maximum (fwhm) specified.
 

@@ -8,7 +8,7 @@ import oommfc as oc
 # from exsim.util import gaussian_filter  # think about 3D gaussian
 
 
-def phase_shift(system, /, tip_m=(0, 0, 0), Q=650, k=3, tip_q=0):
+def phase_shift(system, /, tip_m=(0, 0, 0), Q=650, k=3, tip_q=0, fwhm=None):
     r""" Calculation of the phase shift of an MFM tip.
 
     The contrast in MFM images originates from the magnetic interaction between
@@ -175,4 +175,6 @@ def phase_shift(system, /, tip_m=(0, 0, 0), Q=650, k=3, tip_q=0):
     dh_dz = stray_field.derivative('z', n=1)
     d2h_dz2 = stray_field.derivative('z', n=2)
     phase_shift = (Q * mm.consts.mu0 / k) * (tip_q * dh_dz.z + d2h_dz2 @ tip_m)
+    if fwhm is not None:
+        phase_shift = exism.util.gaussian_filter(phase_shift, fwhm=fwhm)
     return phase_shift
