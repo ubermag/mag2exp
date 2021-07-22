@@ -74,6 +74,8 @@ def magnetic_interaction_vector(field, /, geometry):
         Q = _Q_perpendicular(field)
     elif geometry == 'perp_z':
         Q = _Q_perpendicular_z(field)
+    elif geometry == 'perp_z_2':
+        Q = _Q_perpendicular_z_2(field)
     else:
         msg = f'Geometry {geometry} is unknown.'
         raise ValueError(msg)
@@ -147,6 +149,29 @@ def _Q_perpendicular_z(field):
           m_p_ft.y*np.cos(theta.array)*np.sin(theta.array))
     Qz = m_p_ft.x
     return Qx << Qy << Qz
+
+
+def _Q_perpendicular_z_2(field):
+    """
+    Parameters
+    ----------
+    field : discretisedfield.field
+        Magnetisation field.
+
+    Returns
+    -------
+    discretisedfield.Field
+        Magnetic interaction vector.
+    """
+    m_p_ft = (field * df.dz).integral(direction='z').fft2()
+    theta = df.Field(m_p_ft.mesh, dim=1,
+                     value=lambda x: np.arctan2(x[1], x[0]))
+    Qx = (m_p_ft.y * np.sin(theta.array)**2 -
+          m_p_ft.z * np.cos(theta.array) * np.sin(theta.array))
+    Qy = (m_p_ft.z*np.cos(theta.array)**2 -
+          m_p_ft.y*np.cos(theta.array)*np.sin(theta.array))
+    Qz = -m_p_ft.x
+    return Qy << Qz << Qx
 
 
 def chiral_function(field, /, geometry):
