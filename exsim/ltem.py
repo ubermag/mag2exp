@@ -160,6 +160,7 @@ def defocus_image(phase, /, Cs=0, df_length=0.2e-3, U=None, wavelength=None):
 
     >>> import discretisedfield as df
     >>> import exsim
+    >>> import numpy as np
     >>> mesh = df.Mesh(p1=(-5e-9, -4e-9, -1e-9), p2=(5e-9, 4e-9, 1e-9),
     ...                    cell=(2e-9, 1e-9, 0.5e-9))
     ...
@@ -174,8 +175,8 @@ def defocus_image(phase, /, Cs=0, df_length=0.2e-3, U=None, wavelength=None):
     >>> phase, ft_phase = exsim.ltem.phase(field)
     >>> df_img = exsim.ltem.defocus_image(phase, Cs=0, df_length=0,
     ...                                   U=300e3)
-    >>> df_img.array.mean()
-    1.0
+    >>> np.allclose(df_img.array, [1])
+    True
 
     .. plot::
         :context: close-figs
