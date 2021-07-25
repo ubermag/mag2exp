@@ -64,7 +64,7 @@ def phase(field, /, kcx=0.1, kcy=0.1):
     >>> mesh = df.Mesh(p1=(0, 0, 0), p2=(10, 10, 1), cell=(1, 1, 1))
     >>> field = df.Field(mesh, dim=3, value=(0, 0, 1))
     >>> phase, ft_phase = exsim.ltem.phase(field)
-    >>> phase.real.array.mean()
+    >>> phase.array.mean()
     0.0
 
     .. plot::
@@ -85,7 +85,7 @@ def phase(field, /, kcx=0.1, kcy=0.1):
         ...
         >>> field = df.Field(mesh, dim=3, value=value_fun)
         >>> phase, ft_phase = exsim.ltem.phase(field)
-        >>> phase.real.mpl_scalar()
+        >>> phase.mpl_scalar()
 
     """
     m_int = (field * df.dz).integral(direction='z')
@@ -96,7 +96,7 @@ def phase(field, /, kcx=0.1, kcy=0.1):
                                  k.mesh.dx**2*kcx**2 + k.mesh.dy**2*kcy**2)**2
     const = 1j * mm.consts.e * mm.consts.mu0 / mm.consts.h
     ft_phase = (m_ft & k).z * denom * const
-    phase = ft_phase.ifft2()
+    phase = ft_phase.ifft2().real
     return phase, ft_phase
 
 
