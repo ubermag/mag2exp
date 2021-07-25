@@ -70,7 +70,8 @@ def holographic_image(field, /, fwhm=None):
         >>> xrh2 = exsim.x_ray_holography.holographic_image(field, fwhm=2e-9)
         >>> xrh2.mpl_scalar()
     """
-    magnetisation = (field.z * df.dz).integral(direction='z')
+    # Direction arg will be removed soon.
+    magnetisation = df.integral(field.z * df.dz, direction='z')
     if fwhm is not None:
         magnetisation = exsim.util.gaussian_filter(magnetisation, fwhm=fwhm)
     return magnetisation
@@ -123,6 +124,7 @@ def holographic_scattering(field):
         >>> xrs.mpl_scalar()
 
     """
-    magnetisation = (field.z * df.dz).integral(direction='z')
+    # Direction arg will be removed soon.
+    magnetisation = df.integral(field.z * df.dz, direction='z')
     m_fft = magnetisation.fft2()
     return (m_fft*m_fft.conjugate).real

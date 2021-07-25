@@ -21,7 +21,7 @@ def cross_section(field, /, method, geometry):
     """
     Q = magnetic_interaction_vector(field, geometry=geometry)
     if method in ('polarised_pp', 'pp'):
-        return Q.z * Q.z.conjugate
+        return Q.z * Q.z.conjugate  # is this abs(Q.z)**2?
     elif method in ('polarised_nn', 'nn'):
         return Q.z * Q.z.conjugate
     elif method in ('polarised_pn', 'pn'):

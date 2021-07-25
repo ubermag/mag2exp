@@ -88,19 +88,21 @@ def phase(field, /, kcx=0.1, kcy=0.1):
         >>> phase.mpl_scalar()
 
     """
-    m_int = (field * df.dz).integral(direction='z')
+    m_int = df.integral(field * df.dz, direction='z')  # More readable notation, direction arg will be removed soon.
     m_ft = m_int.fft2()
 
     k = df.Field(m_ft.mesh, dim=3, value=lambda x: x)
     denom = (k.x**2 + k.y**2) / (k.x**2 + k.y**2 +
                                  k.mesh.dx**2*kcx**2 + k.mesh.dy**2*kcy**2)**2
-    const = 1j * mm.consts.e * mm.consts.mu0 / mm.consts.h
+    
+    # const variable name should be avoided
+    const = 1j * mm.consts.e * mm.consts.mu0 / mm.consts.h  # should be changed when/if we move consts to ubermagutil
     ft_phase = (m_ft & k).z * denom * const
     phase = ft_phase.ifft2().real
     return phase, ft_phase
 
 
-def defocus_image(phase, /, Cs=0, df_length=0.2e-3, U=None, wavelength=None):
+def defocus_image(phase, /, Cs=0, df_length=0.2e-3, U=None, wavelength=None):  # Although Cs and U are more readable variables, in coding, it is recommended for variables to be lowercase. Capitalisation is reserved for classes.
     r"""Calculating the defocused image.
 
     The wavefunction of the electrons is created from the magnetic phase shift
@@ -207,10 +209,15 @@ def defocus_image(phase, /, Cs=0, df_length=0.2e-3, U=None, wavelength=None):
         :py:func:`~exsim.ltem.relativistic_wavelength`
 
     """
+    # Perhaps we can add more functionality to discretisedfield to simplify
+    # these operations. The following line would then be: df.exp(phase *
+    # 1j).fft2(). The missing functionalities: (1) multiplication with complex
+    # scalars, (2) df.exp(). For consistency, we could also add df.sim(),
+    # df.cos(), df.sqrt(), etc. to mimic numpy's behaviour.
     ft_wavefn = df.Field(phase.mesh, dim=phase.dim,
                          value=np.exp(phase.array * 1j)).fft2()
     k = df.Field(ft_wavefn.mesh, dim=3, value=lambda x: x)
-    ksquare = (k.x**2 + k.y**2).array
+    ksquare = (k.x**2 + k.y**2).array  # Can we do this without exposing array?
 
     if wavelength is None:
         if U is None:
@@ -219,8 +226,8 @@ def defocus_image(phase, /, Cs=0, df_length=0.2e-3, U=None, wavelength=None):
             raise RuntimeError(msg)
         wavelength = relativistic_wavelength(U)
 
-    cts = -df_length + 0.5 * wavelength**2 * Cs * ksquare
-    exp = np.exp(np.pi * cts * 1j * ksquare * wavelength)
+    cts = -df_length + 0.5 * wavelength**2 * Cs * ksquare  # This could probably work with ksquare being an array
+    exp = np.exp(np.pi * cts * 1j * ksquare * wavelength)  # Similarly, if we had df.exp, this could be simplified.
     ft_def_wf_cts = ft_wavefn * exp
     def_wf_cts = ft_def_wf_cts.ifft2()
     intensity_cts = def_wf_cts.conjugate * def_wf_cts
@@ -282,9 +289,9 @@ def integrated_magnetic_flux_density(phase):
         >>> imf.mpl()
 
     """
-    pref = mm.consts.hbar / mm.consts.e
+    # -1 * field can be replaced with -field. Please report if that does not work.
     imfd = -1 * phase.real.derivative('y') << phase.real.derivative('x')
-    return pref * imfd
+    return mm.consts.hbar / mm.consts.e * imfd
 
 
 def relativistic_wavelength(U):
