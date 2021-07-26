@@ -1,4 +1,4 @@
-import exsim
+import mag2exp
 import discretisedfield as df
 
 
@@ -33,7 +33,7 @@ def holographic_image(field, /, fwhm=None):
         1. Visualising X-ray holography with ``matplotlib``.
 
         >>> import discretisedfield as df
-        >>> import exsim
+        >>> import mag2exp
         >>> mesh = df.Mesh(p1=(-5e-9, -4e-9, 0), p2=(5e-9, 4e-9, 2e-9),
         ...                cell=(1e-9, 1e-9, 1e-9))
         >>> def value_fun(point):
@@ -45,7 +45,7 @@ def holographic_image(field, /, fwhm=None):
         ...     else:
         ...         return (0, 0, -1)
         >>> field = df.Field(mesh, dim=3, value=value_fun, norm=0.3e6)
-        >>> xrh = exsim.x_ray_holography.holographic_image(field)
+        >>> xrh = mag2exp.x_ray_holography.holographic_image(field)
         >>> xrh.mpl_scalar()
 
 
@@ -55,7 +55,7 @@ def holographic_image(field, /, fwhm=None):
         1. Visualising X-ray holography with ``matplotlib``.
 
         >>> import discretisedfield as df
-        >>> import exsim
+        >>> import mag2exp
         >>> mesh = df.Mesh(p1=(-5e-9, -4e-9, 0), p2=(5e-9, 4e-9, 2e-9),
         ...                cell=(1e-9, 1e-9, 1e-9))
         >>> def value_fun(point):
@@ -67,13 +67,13 @@ def holographic_image(field, /, fwhm=None):
         ...     else:
         ...         return (0, 0, -1)
         >>> field = df.Field(mesh, dim=3, value=value_fun, norm=0.3e6)
-        >>> xrh2 = exsim.x_ray_holography.holographic_image(field, fwhm=2e-9)
+        >>> xrh2 = mag2exp.x_ray_holography.holographic_image(field, fwhm=2e-9)
         >>> xrh2.mpl_scalar()
     """
     # Direction arg will be removed soon.
     magnetisation = df.integral(field.z * df.dz, direction='z')
     if fwhm is not None:
-        magnetisation = exsim.util.gaussian_filter(magnetisation, fwhm=fwhm)
+        magnetisation = mag2exp.util.gaussian_filter(magnetisation, fwhm=fwhm)
     return magnetisation
 
 
@@ -110,7 +110,7 @@ def holographic_scattering(field):
 
         >>> import discretisedfield as df
         >>> import numpy as np
-        >>> import exsim
+        >>> import mag2exp
         >>> mesh = df.Mesh(p1=(0, 0, 0), p2=(50e-9, 50e-9, 1e-9),
         ...                cell=(1e-9, 1e-9, 1e-9))
         >>> def value_fun(point):
@@ -120,7 +120,7 @@ def holographic_scattering(field):
         ...             0,
         ...             np.cos(2 * np.pi * x/ qx))
         >>> field = df.Field(mesh, dim=3, value=value_fun, norm=0.3e6)
-        >>> xrs = exsim.x_ray_holography.holographic_scattering(field)
+        >>> xrs = mag2exp.x_ray_holography.holographic_scattering(field)
         >>> xrs.mpl_scalar()
 
     """

@@ -18,10 +18,10 @@ def test():
     --------
     1. Run all tests.
 
-    >>> import exsim
+    >>> import mag2exp
     ...
-    >>> # exsim.test()
+    >>> # mag2exp.test()
 
     """
     return pytest.main(['-v', '--pyargs',
-                        'exsim', '-l'])  # pragma: no cover
+                        'mag2exp', '-l'])  # pragma: no cover

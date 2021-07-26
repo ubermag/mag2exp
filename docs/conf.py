@@ -17,7 +17,7 @@
 
 # -- Project information -----------------------------------------------------
 
-project = 'exsim'
+project = 'mag2exp'
 copyright = '2021, Sam Holt, Martin Lang, Marijan Beg, and Hans Fangohr'
 author = 'Sam Holt, Martin Lang, Marijan Beg, and Hans Fangohr'
 

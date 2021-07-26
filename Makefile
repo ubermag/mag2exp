@@ -1,4 +1,4 @@
-PROJECT=exsim
+PROJECT=mag2exp
 IPYNBPATH=docs/ipynb/*.ipynb
 PYTHON?=python
 

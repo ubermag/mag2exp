@@ -23,12 +23,12 @@ API Reference
     :template: module-template.rst
     :recursive:
 
-    exsim
-    exsim.ltem
-    exsim.x_ray_holography
-    exsim.sans
-    exsim.mfm
-    exsim.quick_plots
+    mag2exp
+    mag2exp.ltem
+    mag2exp.x_ray_holography
+    mag2exp.sans
+    mag2exp.mfm
+    mag2exp.quick_plots
 
 
 Indices and tables

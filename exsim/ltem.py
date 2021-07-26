@@ -60,10 +60,10 @@ def phase(field, /, kcx=0.1, kcy=0.1):
     1. Uniform out-of-plane field.
 
     >>> import discretisedfield as df
-    >>> import exsim
+    >>> import mag2exp
     >>> mesh = df.Mesh(p1=(0, 0, 0), p2=(10, 10, 1), cell=(1, 1, 1))
     >>> field = df.Field(mesh, dim=3, value=(0, 0, 1))
-    >>> phase, ft_phase = exsim.ltem.phase(field)
+    >>> phase, ft_phase = mag2exp.ltem.phase(field)
     >>> phase.array.mean()
     0.0
 
@@ -73,7 +73,7 @@ def phase(field, /, kcx=0.1, kcy=0.1):
         2. Visualising the phase using ``matplotlib``.
 
         >>> import discretisedfield as df
-        >>> import exsim
+        >>> import mag2exp
         >>> mesh = df.Mesh(p1=(-5, -4, -1), p2=(5, 4, 1), cell=(2, 1, 0.5))
         ...
         >>> def value_fun(point):
@@ -84,7 +84,7 @@ def phase(field, /, kcx=0.1, kcy=0.1):
         ...         return (0, 1, 0)
         ...
         >>> field = df.Field(mesh, dim=3, value=value_fun)
-        >>> phase, ft_phase = exsim.ltem.phase(field)
+        >>> phase, ft_phase = mag2exp.ltem.phase(field)
         >>> phase.mpl_scalar()
 
     """
@@ -161,7 +161,7 @@ def defocus_image(phase, /, Cs=0, df_length=0.2e-3, U=None, wavelength=None):  #
     1. Zero defocus.
 
     >>> import discretisedfield as df
-    >>> import exsim
+    >>> import mag2exp
     >>> import numpy as np
     >>> mesh = df.Mesh(p1=(-5e-9, -4e-9, -1e-9), p2=(5e-9, 4e-9, 1e-9),
     ...                    cell=(2e-9, 1e-9, 0.5e-9))
@@ -174,8 +174,8 @@ def defocus_image(phase, /, Cs=0, df_length=0.2e-3, U=None, wavelength=None):  #
     ...         return (0, 1, 0)
     ...
     >>> field = df.Field(mesh, dim=3, value=value_fun)
-    >>> phase, ft_phase = exsim.ltem.phase(field)
-    >>> df_img = exsim.ltem.defocus_image(phase, Cs=0, df_length=0,
+    >>> phase, ft_phase = mag2exp.ltem.phase(field)
+    >>> df_img = mag2exp.ltem.defocus_image(phase, Cs=0, df_length=0,
     ...                                   U=300e3)
     >>> np.allclose(df_img.array, [1])
     True
@@ -186,7 +186,7 @@ def defocus_image(phase, /, Cs=0, df_length=0.2e-3, U=None, wavelength=None):  #
         2. Visualising the phase using ``matplotlib``.
 
         >>> import discretisedfield as df
-        >>> import exsim
+        >>> import mag2exp
         >>> mesh = df.Mesh(p1=(-5e-9, -4e-9, -1e-9), p2=(5e-9, 4e-9, 1e-9),
         ...                    cell=(2e-9, 1e-9, 0.5e-9))
         ...
@@ -198,15 +198,15 @@ def defocus_image(phase, /, Cs=0, df_length=0.2e-3, U=None, wavelength=None):  #
         ...         return (0, 1, 0)
         ...
         >>> field = df.Field(mesh, dim=3, value=value_fun)
-        >>> phase, ft_phase = exsim.ltem.phase(field)
-        >>> df_img = exsim.ltem.defocus_image(phase, Cs=8000, df_length=0.2e-3,
+        >>> phase, ft_phase = mag2exp.ltem.phase(field)
+        >>> df_img = mag2exp.ltem.defocus_image(phase, Cs=8000, df_length=0.2e-3,
         ...                                   U=300e3)
         >>> df_img.mpl_scalar()
 
     .. seealso::
 
-        :py:func:`~exsim.ltem.phase`
-        :py:func:`~exsim.ltem.relativistic_wavelength`
+        :py:func:`~mag2exp.ltem.phase`
+        :py:func:`~mag2exp.ltem.relativistic_wavelength`
 
     """
     # Perhaps we can add more functionality to discretisedfield to simplify
@@ -270,7 +270,7 @@ def integrated_magnetic_flux_density(phase):
         1. Visualising the phase using ``matplotlib``.
 
         >>> import discretisedfield as df
-        >>> import exsim
+        >>> import mag2exp
         >>> mesh = df.Mesh(p1=(-5e-9, -4e-9, -1e-9), p2=(5e-9, 4e-9, 1e-9),
         ...                    cell=(2e-9, 1e-9, 0.5e-9))
         ...
@@ -282,10 +282,10 @@ def integrated_magnetic_flux_density(phase):
         ...         return (0, 1, 0)
         ...
         >>> field = df.Field(mesh, dim=3, value=value_fun)
-        >>> phase, ft_phase = exsim.ltem.phase(field)
-        >>> df_img = exsim.ltem.defocus_image(phase, Cs=8000, df_length=0.2e-3,
+        >>> phase, ft_phase = mag2exp.ltem.phase(field)
+        >>> df_img = mag2exp.ltem.defocus_image(phase, Cs=8000, df_length=0.2e-3,
         ...                                   U=300e3)
-        >>> imf = exsim.ltem.integrated_magnetic_flux_density(phase)
+        >>> imf = mag2exp.ltem.integrated_magnetic_flux_density(phase)
         >>> imf.mpl()
 
     """
@@ -322,8 +322,8 @@ def relativistic_wavelength(U):
     -------
     1. Accelerating using 300 kV.
 
-    >>> import exsim
-    >>> exsim.ltem.relativistic_wavelength(300e3)
+    >>> import mag2exp
+    >>> mag2exp.ltem.relativistic_wavelength(300e3)
     1.9687489006848795e-12
 
     """

@@ -1,7 +1,7 @@
 import pytest
 import discretisedfield as df
 import micromagneticmodel as mm
-import exsim
+import mag2exp
 
 
 def test_mfm_phase_tip_m():
@@ -26,13 +26,13 @@ def test_mfm_phase_tip_m():
     system = mm.System(name='Box2')
     system.energy = mm.Demag()
     system.m = df.Field(mesh, dim=3, value=f_val, norm=Ms_fun)
-    ps = exsim.mfm.phase_shift(system, tip_m=(0, 0, 1e-16),
+    ps = mag2exp.mfm.phase_shift(system, tip_m=(0, 0, 1e-16),
                                Q=650, k=3, tip_q=0)
     assert (ps.array != 0).any()
-    ps = exsim.mfm.phase_shift(system, tip_m=(0, 1e-16, 0),
+    ps = mag2exp.mfm.phase_shift(system, tip_m=(0, 1e-16, 0),
                                Q=650, k=3, tip_q=0)
     assert (ps.array != 0).any()
-    ps = exsim.mfm.phase_shift(system, tip_m=(1e-16, 0, 0),
+    ps = mag2exp.mfm.phase_shift(system, tip_m=(1e-16, 0, 0),
                                Q=650, k=3, tip_q=0)
     assert (ps.array != 0).any()
 
@@ -59,7 +59,7 @@ def test_mfm_phase_tip_q():
     system = mm.System(name='Box2')
     system.energy = mm.Demag()
     system.m = df.Field(mesh, dim=3, value=f_val, norm=Ms_fun)
-    ps = exsim.mfm.phase_shift(system, tip_m=(0, 0, 0), Q=650, k=3, tip_q=1e-6)
+    ps = mag2exp.mfm.phase_shift(system, tip_m=(0, 0, 0), Q=650, k=3, tip_q=1e-6)
     assert (ps.array != 0).any()
 
 
@@ -85,7 +85,7 @@ def test_mfm_phase_no_tip():
     system = mm.System(name='Box2')
     system.energy = mm.Demag()
     system.m = df.Field(mesh, dim=3, value=f_val, norm=Ms_fun)
-    ps = exsim.mfm.phase_shift(system, tip_m=(0, 0, 0), Q=650, k=3, tip_q=0)
+    ps = mag2exp.mfm.phase_shift(system, tip_m=(0, 0, 0), Q=650, k=3, tip_q=0)
     assert (ps.array == 0).all()
 
 
@@ -111,7 +111,7 @@ def test_mfm_phase_Q():
     system = mm.System(name='Box2')
     system.energy = mm.Demag()
     system.m = df.Field(mesh, dim=3, value=f_val, norm=Ms_fun)
-    ps = exsim.mfm.phase_shift(system, tip_m=(0, 0, 1e-16), Q=0)
+    ps = mag2exp.mfm.phase_shift(system, tip_m=(0, 0, 1e-16), Q=0)
     assert (ps.array == 0).all()
 
 
@@ -138,9 +138,9 @@ def test_mfm_phase_k():
     system.energy = mm.Demag()
     system.m = df.Field(mesh, dim=3, value=f_val, norm=Ms_fun)
     with pytest.raises(RuntimeError):
-        exsim.mfm.phase_shift(system, tip_m=(0, 0, 1e-16), k=0)
+        mag2exp.mfm.phase_shift(system, tip_m=(0, 0, 1e-16), k=0)
     with pytest.raises(RuntimeError):
-        exsim.mfm.phase_shift(system, tip_m=(0, 0, 1e-16), k=-3)
+        mag2exp.mfm.phase_shift(system, tip_m=(0, 0, 1e-16), k=-3)
 
 
 def test_mfm_phase_demag():
@@ -166,4 +166,4 @@ def test_mfm_phase_demag():
     system.energy = mm.Exchange(A=8.78e-12)
     system.m = df.Field(mesh, dim=3, value=f_val, norm=Ms_fun)
     with pytest.raises(AttributeError):
-        exsim.mfm.phase_shift(system, tip_m=(0, 0, 1e-16), k=3)
+        mag2exp.mfm.phase_shift(system, tip_m=(0, 0, 1e-16), k=3)

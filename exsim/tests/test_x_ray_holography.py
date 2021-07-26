@@ -1,7 +1,7 @@
 # import pytest
 import discretisedfield as df
 import numpy as np
-import exsim
+import mag2exp
 
 
 def test_xray_holographic_image_inplane():
@@ -9,7 +9,7 @@ def test_xray_holographic_image_inplane():
                    cell=(2e-9, 1e-9, 2e-9))
 
     field = df.Field(mesh, dim=3, value=(1, 1, 0), norm=384e3)
-    xrh = exsim.x_ray_holography.holographic_image(field)
+    xrh = mag2exp.x_ray_holography.holographic_image(field)
     assert (xrh.array == 0).all()
 
 
@@ -18,7 +18,7 @@ def test_xray_holographic_image_outofplane():
                    cell=(2e-9, 1e-9, 2e-9))
 
     field = df.Field(mesh, dim=3, value=(0, 0, 1), norm=384e3)
-    xrh = exsim.x_ray_holography.holographic_image(field)
+    xrh = mag2exp.x_ray_holography.holographic_image(field)
     assert (xrh.array != 0).all()
 
 
@@ -27,7 +27,7 @@ def test_xray_holographic_image_filter():
                    cell=(2e-9, 1e-9, 2e-9))
 
     field = df.Field(mesh, dim=3, value=(0, 0, 1), norm=384e3)
-    xrh = exsim.x_ray_holography.holographic_image(field, 2e-9)
+    xrh = mag2exp.x_ray_holography.holographic_image(field, 2e-9)
     assert (xrh.array != 0).all()
 
 
@@ -36,7 +36,7 @@ def test_xray_holographic_scattering():
                    cell=(2e-9, 1e-9, 2e-9))
 
     field = df.Field(mesh, dim=3, value=(0, 0, 1), norm=384e3)
-    xrh = exsim.x_ray_holography.holographic_scattering(field)
+    xrh = mag2exp.x_ray_holography.holographic_scattering(field)
     assert (xrh.array != 0).any()
     assert (np.isreal(xrh.array)).all()
 
@@ -46,5 +46,5 @@ def test_xray_holographic_scattering_inplane():
                    cell=(2e-9, 1e-9, 2e-9))
 
     field = df.Field(mesh, dim=3, value=(1, 1, 0), norm=384e3)
-    xrh = exsim.x_ray_holography.holographic_scattering(field)
+    xrh = mag2exp.x_ray_holography.holographic_scattering(field)
     assert (xrh.array == 0).all()

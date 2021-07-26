@@ -5,7 +5,7 @@ Module for calculation of Magnetic Force Microscopy related quantities.
 
 import micromagneticmodel as mm
 import oommfc as oc
-import exsim
+import mag2exp
 
 
 def phase_shift(system, /, tip_m=(0, 0, 0), Q=650, k=3, tip_q=0, fwhm=None):
@@ -74,7 +74,7 @@ def phase_shift(system, /, tip_m=(0, 0, 0), Q=650, k=3, tip_q=0, fwhm=None):
 
         >>> import discretisedfield as df
         >>> import micromagneticmodel as mm
-        >>> import exsim
+        >>> import mag2exp
         >>> mesh = df.Mesh(p1=(-25e-9, -25e-9, -2e-9),
         ...                p2=(25e-9, 25e-9, 50e-9),
         ...                cell=(1e-9, 1e-9, 2e-9))
@@ -95,7 +95,7 @@ def phase_shift(system, /, tip_m=(0, 0, 0), Q=650, k=3, tip_q=0, fwhm=None):
         >>> system = mm.System(name='Box2')
         >>> system.energy = mm.Demag()
         >>> system.m = df.Field(mesh, dim=3, value=v_fun, norm=Ms_fun)
-        >>> ps = exsim.mfm.phase_shift(system, tip_m=(0,0,1e-16))
+        >>> ps = mag2exp.mfm.phase_shift(system, tip_m=(0,0,1e-16))
         Running OOMMF...
         >>> ps.plane(z=10e-9).mpl_scalar()
         >>> ps.plane(z=40e-9).mpl_scalar()
@@ -108,7 +108,7 @@ def phase_shift(system, /, tip_m=(0, 0, 0), Q=650, k=3, tip_q=0, fwhm=None):
 
         >>> import discretisedfield as df
         >>> import micromagneticmodel as mm
-        >>> import exsim
+        >>> import mag2exp
         >>> mesh = df.Mesh(p1=(-25e-9, -25e-9, -2e-9),
         ...                p2=(25e-9, 25e-9, 50e-9),
         ...                cell=(1e-9, 1e-9, 2e-9))
@@ -129,7 +129,7 @@ def phase_shift(system, /, tip_m=(0, 0, 0), Q=650, k=3, tip_q=0, fwhm=None):
         >>> system = mm.System(name='Box2')
         >>> system.energy = mm.Demag()
         >>> system.m = df.Field(mesh, dim=3, value=v_fun, norm=Ms_fun)
-        >>> ps = exsim.mfm.phase_shift(system, tip_m=(1e-16,0,0))
+        >>> ps = mag2exp.mfm.phase_shift(system, tip_m=(1e-16,0,0))
         Running OOMMF...
         >>> ps.plane(z=10e-9).mpl_scalar()
         >>> ps.plane(z=40e-9).mpl_scalar()
@@ -142,7 +142,7 @@ def phase_shift(system, /, tip_m=(0, 0, 0), Q=650, k=3, tip_q=0, fwhm=None):
 
         >>> import discretisedfield as df
         >>> import micromagneticmodel as mm
-        >>> import exsim
+        >>> import mag2exp
         >>> mesh = df.Mesh(p1=(-25e-9, -25e-9, -2e-9),
         ...                p2=(25e-9, 25e-9, 50e-9),
         ...                cell=(1e-9, 1e-9, 2e-9))
@@ -163,7 +163,7 @@ def phase_shift(system, /, tip_m=(0, 0, 0), Q=650, k=3, tip_q=0, fwhm=None):
         >>> system = mm.System(name='Box2')
         >>> system.energy = mm.Demag()
         >>> system.m = df.Field(mesh, dim=3, value=v_fun, norm=Ms_fun)
-        >>> ps = exsim.mfm.phase_shift(system, tip_q=1e-9)
+        >>> ps = mag2exp.mfm.phase_shift(system, tip_q=1e-9)
         Running OOMMF...
         >>> ps.plane(z=10e-9).mpl_scalar()
         >>> ps.plane(z=40e-9).mpl_scalar()
@@ -172,12 +172,12 @@ def phase_shift(system, /, tip_m=(0, 0, 0), Q=650, k=3, tip_q=0, fwhm=None):
     if k <= 0:
         msg = '`k` has to be a positive non-zero number.'
         raise RuntimeError(msg)
-    
+
     # oommfc is a heavy dependency here. We could compute demag field directly (fidimag notebook as guidance). Missing functionality: demag tensor.
     stray_field = oc.compute(system.energy.demag.effective_field, system)
     dh_dz = stray_field.derivative('z', n=1)
     d2h_dz2 = stray_field.derivative('z', n=2)
     phase_shift = (Q * mm.consts.mu0 / k) * (tip_q * dh_dz.z + d2h_dz2 @ tip_m)
     if fwhm is not None:
-        phase_shift = exsim.util.gaussian_filter(phase_shift, fwhm=fwhm)
+        phase_shift = mag2exp.util.gaussian_filter(phase_shift, fwhm=fwhm)
     return phase_shift
