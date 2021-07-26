@@ -102,7 +102,7 @@ def phase(field, /, kcx=0.1, kcy=0.1):
     return phase, ft_phase
 
 
-def defocus_image(phase, /, Cs=0, df_length=0.2e-3, U=None, wavelength=None):  # Although Cs and U are more readable variables, in coding, it is recommended for variables to be lowercase. Capitalisation is reserved for classes.
+def defocus_image(phase, /, cs=0, df_length=0.2e-3, voltage=None, wavelength=None):
     r"""Calculating the defocused image.
 
     The wavefunction of the electrons is created from the magnetic phase shift
@@ -141,11 +141,11 @@ def defocus_image(phase, /, Cs=0, df_length=0.2e-3, U=None, wavelength=None):  #
     ----------
     phase : discretisedfield.Field
         Phase of the electrons from LTEM.
-    Cs : numbers.Real, optional
+    cs : numbers.Real, optional
         Spherical aberration coefficient.
     df_length : numbers.Real, optional
         Defocus length in m.
-    U : numbers.Real, optional
+    voltage : numbers.Real, optional
         Accelerating voltage of electrons in V.
     wavelength : numbers.Real, optional
         Relativistic wavelength of the electrons in m.
@@ -175,8 +175,8 @@ def defocus_image(phase, /, Cs=0, df_length=0.2e-3, U=None, wavelength=None):  #
     ...
     >>> field = df.Field(mesh, dim=3, value=value_fun)
     >>> phase, ft_phase = mag2exp.ltem.phase(field)
-    >>> df_img = mag2exp.ltem.defocus_image(phase, Cs=0, df_length=0,
-    ...                                   U=300e3)
+    >>> df_img = mag2exp.ltem.defocus_image(phase, cs=0, df_length=0,
+    ...                                     voltage=300e3)
     >>> np.allclose(df_img.array, [1])
     True
 
@@ -199,8 +199,8 @@ def defocus_image(phase, /, Cs=0, df_length=0.2e-3, U=None, wavelength=None):  #
         ...
         >>> field = df.Field(mesh, dim=3, value=value_fun)
         >>> phase, ft_phase = mag2exp.ltem.phase(field)
-        >>> df_img = mag2exp.ltem.defocus_image(phase, Cs=8000, df_length=0.2e-3,
-        ...                                   U=300e3)
+        >>> df_img = mag2exp.ltem.defocus_image(phase, cs=8000, df_length=0.2e-3,
+        ...                                     voltage=300e3)
         >>> df_img.mpl_scalar()
 
     .. seealso::
@@ -220,13 +220,13 @@ def defocus_image(phase, /, Cs=0, df_length=0.2e-3, U=None, wavelength=None):  #
     ksquare = (k.x**2 + k.y**2).array  # Can we do this without exposing array?
 
     if wavelength is None:
-        if U is None:
+        if voltage is None:
             msg = ('Either `wavelength` or acceleration voltage `U` needs'
                    'to be specified.')
             raise RuntimeError(msg)
-        wavelength = relativistic_wavelength(U)
+        wavelength = relativistic_wavelength(voltage)
 
-    cts = -df_length + 0.5 * wavelength**2 * Cs * ksquare  # This could probably work with ksquare being an array
+    cts = -df_length + 0.5 * wavelength**2 * cs * ksquare  # This could probably work with ksquare being an array
     exp = np.exp(np.pi * cts * 1j * ksquare * wavelength)  # Similarly, if we had df.exp, this could be simplified.
     ft_def_wf_cts = ft_wavefn * exp
     def_wf_cts = ft_def_wf_cts.ifft2()
@@ -283,18 +283,18 @@ def integrated_magnetic_flux_density(phase):
         ...
         >>> field = df.Field(mesh, dim=3, value=value_fun)
         >>> phase, ft_phase = mag2exp.ltem.phase(field)
-        >>> df_img = mag2exp.ltem.defocus_image(phase, Cs=8000, df_length=0.2e-3,
-        ...                                   U=300e3)
+        >>> df_img = mag2exp.ltem.defocus_image(phase, cs=8000, df_length=0.2e-3,
+        ...                                     voltage=300e3)
         >>> imf = mag2exp.ltem.integrated_magnetic_flux_density(phase)
         >>> imf.mpl()
 
     """
     # -1 * field can be replaced with -field. Please report if that does not work.
-    imfd = -1 * phase.real.derivative('y') << phase.real.derivative('x')
+    imfd = -phase.real.derivative('y') << phase.real.derivative('x')
     return mm.consts.hbar / mm.consts.e * imfd
 
 
-def relativistic_wavelength(U):
+def relativistic_wavelength(voltage):
     r"""Relativistic wavelength of an electron accelerated using a voltage U.
 
     The wavelength is calculated using
@@ -310,7 +310,7 @@ def relativistic_wavelength(U):
 
     Parameters
     ----------
-    U : numbers.Real
+    voltage : numbers.Real
         Accelerating voltage in V.
 
     Returns
@@ -328,5 +328,5 @@ def relativistic_wavelength(U):
 
     """
     return constants.h / np.sqrt(
-        2 * constants.m_e * U * constants.e
-        * (1 + constants.e * U / (2 * constants.m_e * constants.c**2)))
+        2 * constants.m_e * voltage * constants.e
+        * (1 + constants.e * voltage / (2 * constants.m_e * constants.c**2)))

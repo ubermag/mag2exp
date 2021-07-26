@@ -69,7 +69,7 @@ def test_defocus_image_zero_df():
             return (0, -1, 0)
     field = df.Field(mesh, dim=3, value=f_val)
     phase, ft_phase = mag2exp.ltem.phase(field)
-    dfi = mag2exp.ltem.defocus_image(phase, Cs=0, df_length=0, U=300e3)
+    dfi = mag2exp.ltem.defocus_image(phase, cs=0, df_length=0, voltage=300e3)
     assert (dfi.array == 1).all()
 
 
@@ -85,7 +85,7 @@ def test_defocus_image_df():
             return (0, -1, 0)
     field = df.Field(mesh, dim=3, value=f_val)
     phase, ft_phase = mag2exp.ltem.phase(field)
-    dfi = mag2exp.ltem.defocus_image(phase, Cs=0, df_length=0.2e-3, U=300e3)
+    dfi = mag2exp.ltem.defocus_image(phase, cs=0, df_length=0.2e-3, voltage=300e3)
     assert (dfi.array != 1).any()
 
 

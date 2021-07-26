@@ -8,7 +8,7 @@ import oommfc as oc
 import mag2exp
 
 
-def phase_shift(system, /, tip_m=(0, 0, 0), Q=650, k=3, tip_q=0, fwhm=None):
+def phase_shift(system, /, tip_m=(0, 0, 0), quality=650, k=3, tip_q=0, fwhm=None):
     r""" Calculation of the phase shift of an MFM tip.
 
     The contrast in MFM images originates from the magnetic interaction between
@@ -48,7 +48,7 @@ def phase_shift(system, /, tip_m=(0, 0, 0), Q=650, k=3, tip_q=0, fwhm=None):
         :math:`y`, and :math:`z` directions, respectively. Values are given in
         units of :math:`\textrm{Am}^{-1}`.
 
-    Q : numbers.Real
+    quality : numbers.Real
         The quality factor of the tip. Should be a real, positive number.
 
     k : numbers.Real
@@ -177,7 +177,8 @@ def phase_shift(system, /, tip_m=(0, 0, 0), Q=650, k=3, tip_q=0, fwhm=None):
     stray_field = oc.compute(system.energy.demag.effective_field, system)
     dh_dz = stray_field.derivative('z', n=1)
     d2h_dz2 = stray_field.derivative('z', n=2)
-    phase_shift = (Q * mm.consts.mu0 / k) * (tip_q * dh_dz.z + d2h_dz2 @ tip_m)
+    phase_shift = (quality * mm.consts.mu0 / k) * (tip_q * dh_dz.z
+                                                   + d2h_dz2 @ tip_m)
     if fwhm is not None:
         phase_shift = mag2exp.util.gaussian_filter(phase_shift, fwhm=fwhm)
     return phase_shift
