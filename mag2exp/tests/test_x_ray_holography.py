@@ -27,7 +27,7 @@ def test_xray_holographic_image_filter():
                    cell=(2e-9, 1e-9, 2e-9))
 
     field = df.Field(mesh, dim=3, value=(0, 0, 1), norm=384e3)
-    xrh = mag2exp.x_ray_holography.holographic_image(field, 2e-9)
+    xrh = mag2exp.x_ray_holography.holographic_image(field, [2e-9, 2e-9])
     assert (xrh.array != 0).all()
 
 
