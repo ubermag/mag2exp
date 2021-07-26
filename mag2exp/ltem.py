@@ -85,7 +85,7 @@ def phase(field, /, kcx=0.1, kcy=0.1):
         ...
         >>> field = df.Field(mesh, dim=3, value=value_fun)
         >>> phase, ft_phase = mag2exp.ltem.phase(field)
-        >>> phase.mpl_scalar()
+        >>> phase.mpl.scalar()
 
     """
     m_int = df.integral(field * df.dz, direction='z')  # More readable notation, direction arg will be removed soon.
@@ -94,7 +94,7 @@ def phase(field, /, kcx=0.1, kcy=0.1):
     k = df.Field(m_ft.mesh, dim=3, value=lambda x: x)
     denom = (k.x**2 + k.y**2) / (k.x**2 + k.y**2 +
                                  k.mesh.dx**2*kcx**2 + k.mesh.dy**2*kcy**2)**2
-    
+
     # const variable name should be avoided
     const = 1j * mm.consts.e * mm.consts.mu0 / mm.consts.h  # should be changed when/if we move consts to ubermagutil
     ft_phase = (m_ft & k).z * denom * const
@@ -102,7 +102,8 @@ def phase(field, /, kcx=0.1, kcy=0.1):
     return phase, ft_phase
 
 
-def defocus_image(phase, /, cs=0, df_length=0.2e-3, voltage=None, wavelength=None):
+def defocus_image(phase, /, cs=0, df_length=0.2e-3, voltage=None,
+                  wavelength=None):
     r"""Calculating the defocused image.
 
     The wavefunction of the electrons is created from the magnetic phase shift
@@ -199,9 +200,10 @@ def defocus_image(phase, /, cs=0, df_length=0.2e-3, voltage=None, wavelength=Non
         ...
         >>> field = df.Field(mesh, dim=3, value=value_fun)
         >>> phase, ft_phase = mag2exp.ltem.phase(field)
-        >>> df_img = mag2exp.ltem.defocus_image(phase, cs=8000, df_length=0.2e-3,
+        >>> df_img = mag2exp.ltem.defocus_image(phase, cs=8000,
+        ...                                     df_length=0.2e-3,
         ...                                     voltage=300e3)
-        >>> df_img.mpl_scalar()
+        >>> df_img.mpl.scalar()
 
     .. seealso::
 
@@ -221,7 +223,7 @@ def defocus_image(phase, /, cs=0, df_length=0.2e-3, voltage=None, wavelength=Non
 
     if wavelength is None:
         if voltage is None:
-            msg = ('Either `wavelength` or acceleration voltage `U` needs'
+            msg = ('Either `wavelength` or acceleration `voltage` needs'
                    'to be specified.')
             raise RuntimeError(msg)
         wavelength = relativistic_wavelength(voltage)
@@ -283,13 +285,13 @@ def integrated_magnetic_flux_density(phase):
         ...
         >>> field = df.Field(mesh, dim=3, value=value_fun)
         >>> phase, ft_phase = mag2exp.ltem.phase(field)
-        >>> df_img = mag2exp.ltem.defocus_image(phase, cs=8000, df_length=0.2e-3,
+        >>> df_img = mag2exp.ltem.defocus_image(phase, cs=8000,
+        ...                                     df_length=0.2e-3,
         ...                                     voltage=300e3)
         >>> imf = mag2exp.ltem.integrated_magnetic_flux_density(phase)
-        >>> imf.mpl()
+        >>> imf.mpl.plot()
 
     """
-    # -1 * field can be replaced with -field. Please report if that does not work.
     imfd = -phase.real.derivative('y') << phase.real.derivative('x')
     return mm.consts.hbar / mm.consts.e * imfd
 

@@ -8,7 +8,8 @@ import oommfc as oc
 import mag2exp
 
 
-def phase_shift(system, /, tip_m=(0, 0, 0), quality=650, k=3, tip_q=0, fwhm=None):
+def phase_shift(system, /, tip_m=(0, 0, 0), quality=650, k=3, tip_q=0,
+                fwhm=None):
     r""" Calculation of the phase shift of an MFM tip.
 
     The contrast in MFM images originates from the magnetic interaction between
@@ -97,8 +98,8 @@ def phase_shift(system, /, tip_m=(0, 0, 0), quality=650, k=3, tip_q=0, fwhm=None
         >>> system.m = df.Field(mesh, dim=3, value=v_fun, norm=Ms_fun)
         >>> ps = mag2exp.mfm.phase_shift(system, tip_m=(0,0,1e-16))
         Running OOMMF...
-        >>> ps.plane(z=10e-9).mpl_scalar()
-        >>> ps.plane(z=40e-9).mpl_scalar()
+        >>> ps.plane(z=10e-9).mpl.scalar()
+        >>> ps.plane(z=40e-9).mpl.scalar()
 
 
     .. plot::
@@ -131,8 +132,8 @@ def phase_shift(system, /, tip_m=(0, 0, 0), quality=650, k=3, tip_q=0, fwhm=None
         >>> system.m = df.Field(mesh, dim=3, value=v_fun, norm=Ms_fun)
         >>> ps = mag2exp.mfm.phase_shift(system, tip_m=(1e-16,0,0))
         Running OOMMF...
-        >>> ps.plane(z=10e-9).mpl_scalar()
-        >>> ps.plane(z=40e-9).mpl_scalar()
+        >>> ps.plane(z=10e-9).mpl.scalar()
+        >>> ps.plane(z=40e-9).mpl.scalar()
 
 
     .. plot::
@@ -165,8 +166,8 @@ def phase_shift(system, /, tip_m=(0, 0, 0), quality=650, k=3, tip_q=0, fwhm=None
         >>> system.m = df.Field(mesh, dim=3, value=v_fun, norm=Ms_fun)
         >>> ps = mag2exp.mfm.phase_shift(system, tip_q=1e-9)
         Running OOMMF...
-        >>> ps.plane(z=10e-9).mpl_scalar()
-        >>> ps.plane(z=40e-9).mpl_scalar()
+        >>> ps.plane(z=10e-9).mpl.scalar()
+        >>> ps.plane(z=40e-9).mpl.scalar()
     """
 
     if k <= 0:

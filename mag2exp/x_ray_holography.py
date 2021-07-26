@@ -46,7 +46,7 @@ def holographic_image(field, /, fwhm=None):
         ...         return (0, 0, -1)
         >>> field = df.Field(mesh, dim=3, value=value_fun, norm=0.3e6)
         >>> xrh = mag2exp.x_ray_holography.holographic_image(field)
-        >>> xrh.mpl_scalar()
+        >>> xrh.mpl.scalar()
 
 
     .. plot::
@@ -68,7 +68,7 @@ def holographic_image(field, /, fwhm=None):
         ...         return (0, 0, -1)
         >>> field = df.Field(mesh, dim=3, value=value_fun, norm=0.3e6)
         >>> xrh2 = mag2exp.x_ray_holography.holographic_image(field, fwhm=2e-9)
-        >>> xrh2.mpl_scalar()
+        >>> xrh2.mpl.scalar()
     """
     # Direction arg will be removed soon.
     magnetisation = df.integral(field.z * df.dz, direction='z')
@@ -121,7 +121,7 @@ def holographic_scattering(field):
         ...             np.cos(2 * np.pi * x/ qx))
         >>> field = df.Field(mesh, dim=3, value=value_fun, norm=0.3e6)
         >>> xrs = mag2exp.x_ray_holography.holographic_scattering(field)
-        >>> xrs.mpl_scalar()
+        >>> xrs.mpl.scalar()
 
     """
     # Direction arg will be removed soon.
