@@ -67,7 +67,8 @@ def holographic_image(field, /, fwhm=None):
         ...     else:
         ...         return (0, 0, -1)
         >>> field = df.Field(mesh, dim=3, value=value_fun, norm=0.3e6)
-        >>> xrh2 = mag2exp.x_ray_holography.holographic_image(field, fwhm=2e-9)
+        >>> xrh2 = mag2exp.x_ray_holography.holographic_image(field,
+        ...                                                   fwhm=(2e-9,2e-9))
         >>> xrh2.mpl.scalar()
     """
     # Direction arg will be removed soon.
