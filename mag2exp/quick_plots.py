@@ -45,7 +45,7 @@ def ltem_ft_phase(field, /, kcx=0.1, kcy=0.1):
 
 
 def ltem_defocus(field, /, kcx=0.1, kcy=0.1,
-                 Cs=0, df_length=0.2e-3, U=None, wavelength=None):
+                 cs=0, df_length=0.2e-3, voltage=None, wavelength=None):
     r"""Quickplot of the LTEM defocus image.
 
     The phase is calculated using the :code:`ltem.phase`
@@ -59,7 +59,7 @@ def ltem_defocus(field, /, kcx=0.1, kcy=0.1,
     py:func:`~ltem.defocus_image`
     """
     phase, _ = ltem.phase(field, kcx=kcx, kcy=kcy)
-    defocus = ltem.defocus_image(phase, Cs=Cs, df_length=df_length,
-                                 U=U, wavelength=wavelength)
+    defocus = ltem.defocus_image(phase, cs=cs, df_length=df_length,
+                                 voltage=voltage, wavelength=wavelength)
     defocus.mpl.scalar(cmap='gray', interpolation='spline16',
                        colorbar_label='Intensity (counts)')
