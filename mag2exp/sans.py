@@ -19,7 +19,8 @@ def cross_section(field, /, method, geometry):
     discretisedfield.Field
         Scattering cross section.
     """
-    magnetic_interaction = magnetic_interaction_vector(field, geometry=geometry)
+    magnetic_interaction = magnetic_interaction_vector(field,
+                                                       geometry=geometry)
     if method in ('polarised_pp', 'pp'):
         return abs(magnetic_interaction.z)**2
     elif method in ('polarised_nn', 'nn'):
@@ -156,9 +157,11 @@ def _magnetic_interaction_perpendicular_z(field):
     theta = df.Field(m_p_ft.mesh, dim=1,
                      value=lambda x: np.arctan2(x[1], x[0]))
     magnetic_interaction_x = (-m_p_ft.y * np.sin(theta.array)**2 +
-          m_p_ft.z * np.cos(theta.array) * np.sin(theta.array))
+                              m_p_ft.z * np.cos(theta.array) *
+                              np.sin(theta.array))
     magnetic_interaction_y = (-m_p_ft.z*np.cos(theta.array)**2 +
-          m_p_ft.y*np.cos(theta.array)*np.sin(theta.array))
+                              m_p_ft.y*np.cos(theta.array) *
+                              np.sin(theta.array))
     magnetic_interaction_z = m_p_ft.x
     return (magnetic_interaction_x
             << magnetic_interaction_y
@@ -181,9 +184,11 @@ def _magnetic_interaction_perpendicular_z_2(field):
     theta = df.Field(m_p_ft.mesh, dim=1,
                      value=lambda x: np.arctan2(x[1], x[0]))
     magnetic_interaction_x = (m_p_ft.y * np.sin(theta.array)**2 -
-          m_p_ft.z * np.cos(theta.array) * np.sin(theta.array))
+                              m_p_ft.z * np.cos(theta.array) *
+                              np.sin(theta.array))
     magnetic_interaction_y = (m_p_ft.z*np.cos(theta.array)**2 -
-          m_p_ft.y*np.cos(theta.array)*np.sin(theta.array))
+                              m_p_ft.y*np.cos(theta.array) *
+                              np.sin(theta.array))
     magnetic_interaction_z = -m_p_ft.x
     return (magnetic_interaction_y
             << magnetic_interaction_z
