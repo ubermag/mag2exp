@@ -1,6 +1,6 @@
 @ECHO OFF
 
-set PROJECT=exsim
+set PROJECT=mag2exp
 set IPYNBPATH=docs/ipynb/*.ipynb
 set PYTHON=python
 
@@ -10,14 +10,14 @@ REM Command file for testing
 %PYTHON% -c "import sys; import %PROJECT%; sys.exit(%PROJECT%.test())"
 
 REM test-coverage:
-%PYTHON% -m pytest -v --cov=%PROJECT% --cov-report=xml --cov-config .coveragerc
+REM %PYTHON% -m pytest -v --cov=%PROJECT% --cov-report=xml --cov-config .coveragerc
 
 REM test-docs:
 %PYTHON% -m pytest -v --doctest-modules --ignore=%PROJECT%/tests %PROJECT%
 
 REM test-ipynb:
-%PYTHON% -m pytest -v --nbval %IPYNBPATH%
+REM %PYTHON% -m pytest -v --nbval %IPYNBPATH%
 
-%PYTHON% -m pycodestyle --filename=*.py .
+REM %PYTHON% -m pycodestyle --filename=*.py .
 
 
