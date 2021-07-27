@@ -99,7 +99,7 @@ def _magnetic_interaction_parallel(field):
     discretisedfield.Field
         Magnetic interaction vector.
     """
-    m_p_ft = (field * df.dz).integral(direction='z').fft2()
+    m_p_ft = (field * df.dz).integral(direction='z').fft2
     theta = df.Field(m_p_ft.mesh, dim=1,
                      value=lambda x: np.arctan2(x[1], x[0]))
     magnetic_interaction_x = (-m_p_ft.x * np.sin(theta.array)**2 +
@@ -126,7 +126,7 @@ def _magnetic_interaction_perpendicular(field):
     discretisedfield.Field
         Magnetic interaction vector.
     """
-    m_p_ft = (field * df.dx).integral(direction='x').fft2()
+    m_p_ft = (field * df.dx).integral(direction='x').fft2
     theta = df.Field(m_p_ft.mesh, dim=1,
                      value=lambda x: np.arctan2(x[2], x[1]))
     magnetic_interaction_x = -m_p_ft.x
@@ -153,7 +153,7 @@ def _magnetic_interaction_perpendicular_z(field):
     discretisedfield.Field
         Magnetic interaction vector.
     """
-    m_p_ft = (field * df.dz).integral(direction='z').fft2()
+    m_p_ft = (field * df.dz).integral(direction='z').fft2
     theta = df.Field(m_p_ft.mesh, dim=1,
                      value=lambda x: np.arctan2(x[1], x[0]))
     magnetic_interaction_x = (-m_p_ft.y * np.sin(theta.array)**2 +
@@ -180,7 +180,7 @@ def _magnetic_interaction_perpendicular_z_2(field):
     discretisedfield.Field
         Magnetic interaction vector.
     """
-    m_p_ft = (field * df.dz).integral(direction='z').fft2()
+    m_p_ft = (field * df.dz).integral(direction='z').fft2
     theta = df.Field(m_p_ft.mesh, dim=1,
                      value=lambda x: np.arctan2(x[1], x[0]))
     magnetic_interaction_x = (m_p_ft.y * np.sin(theta.array)**2 -
