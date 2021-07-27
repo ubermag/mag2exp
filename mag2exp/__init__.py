@@ -4,7 +4,7 @@ from . import ltem
 from . import quick_plots
 from . import mfm
 from . import util
-from . import x_ray_holography
+from . import x_ray
 from . import sans
 
 

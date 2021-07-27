@@ -25,7 +25,7 @@ API Reference
 
     mag2exp
     mag2exp.ltem
-    mag2exp.x_ray_holography
+    mag2exp.x_ray
     mag2exp.sans
     mag2exp.mfm
     mag2exp.quick_plots

@@ -2,7 +2,7 @@ import mag2exp
 import discretisedfield as df
 
 
-def holographic_image(field, /, fwhm=None):
+def holography(field, /, fwhm=None):
     r""" Calculation of the pattern obtained from X-ray holography.
 
     X-ray holography uses magnetic circular dichroism to measure the magnetic
@@ -45,7 +45,7 @@ def holographic_image(field, /, fwhm=None):
         ...     else:
         ...         return (0, 0, -1)
         >>> field = df.Field(mesh, dim=3, value=value_fun, norm=0.3e6)
-        >>> xrh = mag2exp.x_ray_holography.holographic_image(field)
+        >>> xrh = mag2exp.x_ray.holography(field)
         >>> xrh.mpl.scalar()
 
 
@@ -67,8 +67,7 @@ def holographic_image(field, /, fwhm=None):
         ...     else:
         ...         return (0, 0, -1)
         >>> field = df.Field(mesh, dim=3, value=value_fun, norm=0.3e6)
-        >>> xrh2 = mag2exp.x_ray_holography.holographic_image(field,
-        ...                                                   fwhm=(2e-9,2e-9))
+        >>> xrh2 = mag2exp.x_ray.holography(field, fwhm=(2e-9,2e-9))
         >>> xrh2.mpl.scalar()
     """
     # Direction arg will be removed soon.
@@ -78,7 +77,7 @@ def holographic_image(field, /, fwhm=None):
     return magnetisation
 
 
-def holographic_scattering(field):
+def saxs(field):
     r""" Calculation of the scattering pattern obtained from X-ray holography.
 
     X-ray holography uses magnetic circular dichroism to measure the magnetic
@@ -121,7 +120,7 @@ def holographic_scattering(field):
         ...             0,
         ...             np.cos(2 * np.pi * x/ qx))
         >>> field = df.Field(mesh, dim=3, value=value_fun, norm=0.3e6)
-        >>> xrs = mag2exp.x_ray_holography.holographic_scattering(field)
+        >>> xrs = mag2exp.x_ray.saxs(field)
         >>> xrs.mpl.scalar()
 
     """
