@@ -63,3 +63,25 @@ def ltem_defocus(field, /, kcx=0.1, kcy=0.1,
                                  voltage=voltage, wavelength=wavelength)
     defocus.mpl.scalar(cmap='gray', interpolation='spline16',
                        colorbar_label='Intensity (counts)')
+
+
+def ltem_integrated_mfd(field, /, kcx=0.1, kcy=0.1):
+    r"""Quickplot of the LTEM integrated magnetic flux density.
+
+    The phase is calculated using the :code:`ltem.phase`
+    function and propagated to the image plane using
+    :code:`ltem.defocus_image`.	This is then plotted using
+    :code:`mpl.scalar`.
+
+    .. seealso:: :
+
+    py:func:`~ltem.phase`
+    py:func:`~ltem.defocus_image`
+    """
+    phase, _ = ltem.phase(field, kcx=kcx, kcy=kcy)
+    imf = ltem.integrated_magnetic_flux_density(phase)
+    fig, ax = plt.subplots()
+    imf.mpl.lightness(ax=ax, clim=[0, 0.5], interpolation='spline16',
+                      colorwheel_args=dict(width=.75, height=.75),
+                      colorwheel_xlabel=r'$m_x$', colorwheel_ylabel=r'$m_y$')
+    imf.mpl.vector(ax=ax, use_color=False, color='w')
