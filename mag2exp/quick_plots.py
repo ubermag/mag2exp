@@ -2,6 +2,7 @@ import matplotlib.pyplot as plt
 import matplotlib
 import ubermagutil.units as uu
 from . import ltem
+from . import mfm
 
 
 def ltem_phase(field, /, kcx=0.1, kcy=0.1):
@@ -69,14 +70,16 @@ def ltem_integrated_mfd(field, /, kcx=0.1, kcy=0.1):
     r"""Quickplot of the LTEM integrated magnetic flux density.
 
     The phase is calculated using the :code:`ltem.phase`
-    function and propagated to the image plane using
-    :code:`ltem.defocus_image`.	This is then plotted using
-    :code:`mpl.scalar`.
+    function and the integrated magnetic flux density
+    :code:`ltem.integrated_magnetic_flux_density`.
+    This is then plotted using :code:`mpl.lightness` and :code:`mpl.vector`.
 
     .. seealso:: :
 
     py:func:`~ltem.phase`
-    py:func:`~ltem.defocus_image`
+    py:func:`~ltem.integrated_magnetic_flux_density`
+    py:func:`~mpl.lightness`
+    py:func:`~mpl.vector`
     """
     phase, _ = ltem.phase(field, kcx=kcx, kcy=kcy)
     imf = ltem.integrated_magnetic_flux_density(phase)
@@ -85,3 +88,19 @@ def ltem_integrated_mfd(field, /, kcx=0.1, kcy=0.1):
                       colorwheel_args=dict(width=.75, height=.75),
                       colorwheel_xlabel=r'$m_x$', colorwheel_ylabel=r'$m_y$')
     imf.mpl.vector(ax=ax, use_color=False, color='w')
+
+
+def mfm_phase_shift(system, /, tip_m=(0, 0, 0), quality=650, k=3, tip_q=0,
+                    fwhm=None, z0=0):
+    r"""Quickplot of the magnetic phase shift.
+
+    The phase is calculated using the :code:`ltem.phase`
+    function and plotted using :code:`mpl.scalar`.
+
+    .. seealso:: :py:func:`~ltem.phase`
+    """
+    phase_shift = mfm.phase_shift(system, tip_m=tip_m, quality=quality,
+                                  k=k, tip_q=tip_q, fwhm=fwhm)
+    phase_shift_p = phase_shift.plane(z=z0)
+    phase_shift_p.mpl.scalar(interpolation='spline16',
+                             colorbar_label=r'Phase shift (radians.)')
