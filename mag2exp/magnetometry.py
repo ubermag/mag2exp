@@ -2,7 +2,6 @@
 
 Module for calculation of magnetometry based techniques.
 """
-import mag2exp
 import discretisedfield as df
 import micromagneticmodel as mm
 import oommfc as oc
