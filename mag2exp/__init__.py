@@ -6,6 +6,7 @@ from . import mfm
 from . import util
 from . import x_ray
 from . import sans
+from . import magnetometry
 
 
 __version__ = importlib.metadata.version(__name__)
