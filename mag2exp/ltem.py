@@ -89,7 +89,7 @@ def phase(field, /, kcx=0.1, kcy=0.1):
 
     """
     m_int = df.integral(field * df.dz, direction='z')  # More readable notation, direction arg will be removed soon.
-    m_ft = m_int.fft2
+    m_ft = m_int.fftn
 
     k = df.Field(m_ft.mesh, dim=3, value=lambda x: x)
     denom = (k.x**2 + k.y**2) / (k.x**2 + k.y**2 +
@@ -98,7 +98,7 @@ def phase(field, /, kcx=0.1, kcy=0.1):
     # const variable name should be avoided
     const = 1j * mm.consts.e * mm.consts.mu0 / mm.consts.h  # should be changed when/if we move consts to ubermagutil
     ft_phase = (m_ft & k).z * denom * const
-    phase = ft_phase.ifft2.real
+    phase = ft_phase.ifftn.real
     return phase, ft_phase
 
 
@@ -217,7 +217,7 @@ def defocus_image(phase, /, cs=0, df_length=0.2e-3, voltage=None,
     # scalars, (2) df.exp(). For consistency, we could also add df.sim(),
     # df.cos(), df.sqrt(), etc. to mimic numpy's behaviour.
     ft_wavefn = df.Field(phase.mesh, dim=phase.dim,
-                         value=np.exp(phase.array * 1j)).fft2
+                         value=np.exp(phase.array * 1j)).fftn
     k = df.Field(ft_wavefn.mesh, dim=3, value=lambda x: x)
     ksquare = (k.x**2 + k.y**2).array  # Can we do this without exposing array?
 
@@ -231,7 +231,7 @@ def defocus_image(phase, /, cs=0, df_length=0.2e-3, voltage=None,
     cts = -df_length + 0.5 * wavelength**2 * cs * ksquare  # This could probably work with ksquare being an array
     exp = np.exp(np.pi * cts * 1j * ksquare * wavelength)  # Similarly, if we had df.exp, this could be simplified.
     ft_def_wf_cts = ft_wavefn * exp
-    def_wf_cts = ft_def_wf_cts.ifft2
+    def_wf_cts = ft_def_wf_cts.ifftn
     intensity_cts = def_wf_cts.conjugate * def_wf_cts
     return intensity_cts.real
 
