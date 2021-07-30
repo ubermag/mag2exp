@@ -3,6 +3,7 @@ import matplotlib
 import ubermagutil.units as uu
 from . import ltem
 from . import mfm
+from . import x_ray
 
 
 def ltem_phase(field, /, kcx=0.1, kcy=0.1):
@@ -104,3 +105,17 @@ def mfm_phase_shift(system, /, tip_m=(0, 0, 0), quality=650, k=3, tip_q=0,
     phase_shift_p = phase_shift.plane(z=z0)
     phase_shift_p.mpl.scalar(interpolation='spline16',
                              colorbar_label=r'Phase shift (radians.)')
+
+
+def x_ray_holography(field, /, fwhm=None):
+    r"""Quickplot of the magnetic phase shift.
+
+    The phase is calculated using the :code:`ltem.phase`
+    function and plotted using :code:`mpl.scalar`.
+
+    .. seealso:: :py:func:`~ltem.phase`
+    """
+    holo = x_ray.holography(field, fwhm=fwhm)
+    holo.mpl.scalar(cmap='RdBu',
+                    interpolation='spline16',
+                    colorbar_label=r'Integrated Magnetisation (A)')
