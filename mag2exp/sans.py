@@ -3,21 +3,131 @@ import discretisedfield as df
 
 
 def cross_section(field, /, method, geometry):
-    """
+    r""" Calculation of scattering cross sections.
+
+    The spin-flip and non-spin-flip neutron scattering cross sections can be
+    calculated for specific scattering geometries using
+
+    .. math::
+        \begin{align}
+            \frac{d\sum^{\pm \pm}}{d\Omega} &\sim |{\bf Q}_z|^2 \\
+            \frac{d\sum^{\pm \mp}}{d\Omega} &\sim |{\bf Q}_x|^2 +
+                  |{\bf Q}_y|^2 \mp
+                  i\left( {\bf Q}_x {\bf Q}^{\ast}_y -
+                  {\bf Q}^{\ast}_x {\bf Q}_y \right) .
+        \end{align}
+
+    where :math:`{\bf Q}` is the magnetic interaction vector given by
+
+    .. math::
+        \begin{equation}
+            {\bf Q} = \hat{\bf q} \times \left[ \hat{\bf q} \times
+                       \widetilde{\bf M} \right],
+        \end{equation}
+
+    where :math:`\hat{\bf q}` is the unit scattering vector and
+    :math:`\widetilde{\bf M}` is the Fourier transform of the magnetisation.
+    The magnetic interaction vector is is dependent on the scattering geometry
+    and the scattering vector is defined as
+
+    .. math::
+
+        \begin{equation}
+            {\bf q} = {\bf k}_1 - {\bf k}_0.
+        \end{equation}
+
+    The spin based cross sections then be combined in order to get the half
+    polarised cross sections
+
+    .. math::
+
+        \begin{align}
+            \frac{d\sum^{+}}{d\Omega} &= \frac{d\sum^{++}}{d\Omega} +
+            \frac{d\sum^{+-}}{d\Omega}, \\
+            \frac{d\sum^{-}}{d\Omega} &= \frac{d\sum^{--}}{d\Omega} +
+            \frac{d\sum^{-+}}{d\Omega}.
+        \end{align}
+
+    These can further be combined to get the unpolarised cross section
+
+    .. math::
+        \begin{align}
+            \frac{d\sum}{d\Omega} &= \frac{1}{2} \left(
+            \frac{d\sum^{+}}{d\Omega} + \frac{d\sum^{-}}{d\Omega} \right), \\
+            \frac{d\sum}{d\Omega} &= \frac{1}{2}
+            \left( \frac{d\sum^{++}}{d\Omega} + \frac{d\sum^{+-}}{d\Omega} +
+            \frac{d\sum^{--}}{d\Omega} + \frac{d\sum^{-+}}{d\Omega} \right).
+        \end{align}
+
     Parameters
     ----------
     field : discretisedfield.field
         Magnetisation field.
     method : str
-        Used to select the relevant cross section.
+        Used to select the relevant cross section and can take the value of
+
+            * pp - positive positive non-spin-flip cross section,
+            * nn - negative negative non-spin-flip cross section,
+            * pn - positive negative spin-flip cross section,
+            * np - negative positive spin-flip cross section,
+            * p - positive half polarised cross section,
+            * n - negitive half polarised cross section,
+            * unpol - unpolarised cross section.
     geometry : str
-        Define the experimental geometry as field parallel or perpendicular to
-        the neutron propagation vector.
+        Define the experimental geometry with applied magnetic field parallel
+        or perpendicular to the neutron propagation vector.
 
     Returns
     -------
     discretisedfield.Field
         Scattering cross section.
+
+    Examples
+    --------
+
+    .. plot::
+        :context: close-figs
+
+        1. Visualising unpolarised cross section with ``matplotlib``.
+
+        >>> import discretisedfield as df
+        >>> import micromagneticmodel as mm
+        >>> import numpy as np
+        >>> import mag2exp
+        >>> mesh = df.Mesh(p1=(-25e-9, -25e-9, -2e-9),
+        ...                p2=(25e-9, 25e-9, 50e-9),
+        ...                cell=(1e-9, 1e-9, 2e-9))
+        >>> def v_fun(point):
+        ...     x, y, z = point
+        ...     q = 10e-9
+        ...     return (np.sin(2*np.pi*x/q),0,np.cos(2*np.pi*x/q))
+        >>> field = df.Field(mesh, dim=3, value=v_fun, norm=1e5)
+        >>> field.plane('z').mpl()
+        >>> cs = mag2exp.sans.cross_section(field, method='unpol',
+        ...                                 geometry='parallel')
+        >>> cs.plane('z').real.mpl.scalar()
+
+    .. plot::
+        :context: close-figs
+
+        2. Visualising spin-flip cross section with ``matplotlib``.
+
+        >>> import discretisedfield as df
+        >>> import micromagneticmodel as mm
+        >>> import numpy as np
+        >>> import mag2exp
+        >>> mesh = df.Mesh(p1=(-25e-9, -25e-9, -2e-9),
+        ...                p2=(25e-9, 25e-9, 50e-9),
+        ...                cell=(1e-9, 1e-9, 2e-9))
+        >>> def v_fun(point):
+        ...     x, y, z = point
+        ...     q = 10e-9
+        ...     return (np.sin(2*np.pi*x/q),0,np.cos(2*np.pi*x/q))
+        >>> field = df.Field(mesh, dim=3, value=v_fun, norm=1e5)
+        >>> field.plane('z').mpl()
+        >>> cs = mag2exp.sans.cross_section(field, method='pn',
+        ...                                 geometry='parallel')
+        >>> cs.plane('z').real.mpl.scalar()
     """
     magnetic_interaction = magnetic_interaction_vector(field,
                                                        geometry=geometry)
