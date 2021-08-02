@@ -2,6 +2,7 @@
 
 Module for calculation of magnetometry based techniques.
 """
+import numpy as np
 import discretisedfield as df
 import micromagneticmodel as mm
 import oommfc as oc
@@ -23,10 +24,10 @@ def magnetisation(field):
     """
     norm_field = df.Field(field.mesh, dim=1, value=(field.norm.array != 0))
     volume = df.integral(norm_field * df.dV, direction='xyz')
-    return (df.integral(field * df.dV / volume, direction='xyz'))
+    return df.integral(field * df.dV / volume, direction='xyz')
 
 
-def torque(system):
+def torque(system, /, use_demag=True):
     r""" Calculation of the torque.
 
     Parameters
@@ -41,9 +42,12 @@ def torque(system):
         Torque in :math:`\textrm{Nm}^{-2}`.
 
     """
-    total_field = (mm.consts.mu0 *
-                   (oc.compute(system.energy.demag.effective_field, system) +
-                    system.energy.zeeman.H))
+    if use_demag:
+        total_field = (mm.consts.mu0 *
+                       (oc.compute(system.energy.demag.effective_field, system)
+                        + system.energy.zeeman.H))
+    else:
+        total_field = mm.consts.mu0 * np.array(system.energy.zeeman.H)
     norm_field = df.Field(system.m.mesh, dim=1,
                           value=(system.m.norm.array != 0))
     volume = df.integral(norm_field * df.dV, direction='xyz')
