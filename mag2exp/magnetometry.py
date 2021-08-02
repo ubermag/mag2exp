@@ -150,7 +150,7 @@ def torque(system, /, use_demag=True):
     """
     if use_demag:
         total_field = (mm.consts.mu0 *
-                       (oc.compute(system.energy.demag.effective_field, system)
+                       (oc.compute(system.energy.demag.effective_field, system)  # Change when ubermag can internally calculate demag
                         + system.energy.zeeman.H))
     else:
         total_field = mm.consts.mu0 * np.array(system.energy.zeeman.H)
