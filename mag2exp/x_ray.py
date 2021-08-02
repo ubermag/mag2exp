@@ -132,4 +132,4 @@ def saxs(field):
     # Direction arg will be removed soon.
     magnetisation = df.integral(field.z * df.dz, direction='z')
     m_fft = magnetisation.fftn
-    return (m_fft * m_fft.conjugate).real
+    return (abs(m_fft)**2).real
