@@ -114,8 +114,8 @@ def torque(system, /, use_demag=True):
     ...                p2=(25e-9, 25e-9, 50e-9),
     ...                cell=(1e-9, 1e-9, 2e-9))
     >>> system = mm.System(name='Box2')
-    >>> system.energy = mm.Zeeman(H=(0,0,1e6)) + mm.Demag()
-    >>> system.m = df.Field(mesh, dim=3, value=(0,0,1), norm=1e6)
+    >>> system.energy = mm.Zeeman(H=(0, 0, 1e6)) + mm.Demag()
+    >>> system.m = df.Field(mesh, dim=3, value=(0, 0, 1), norm=1e6)
     >>> mag2exp.magnetometry.torque(system, use_demag=True)
     Running OOMMF...
     (4.789058039023075e-12, 5.8468785368859244e-12, 0.0)
@@ -129,8 +129,8 @@ def torque(system, /, use_demag=True):
     ...                p2=(25e-9, 25e-9, 50e-9),
     ...                cell=(1e-9, 1e-9, 2e-9))
     >>> system = mm.System(name='Box2')
-    >>> system.energy = mm.Zeeman(H=(0,0,1e6))
-    >>> system.m = df.Field(mesh, dim=3, value=(0,0,1), norm=1e6)
+    >>> system.energy = mm.Zeeman(H=(0, 0, 1e6))
+    >>> system.m = df.Field(mesh, dim=3, value=(0, 0, 1), norm=1e6)
     >>> mag2exp.magnetometry.torque(system, use_demag=False)
     (0.0, 0.0, 0.0)
 
@@ -143,8 +143,8 @@ def torque(system, /, use_demag=True):
     ...                p2=(25e-9, 25e-9, 50e-9),
     ...                cell=(1e-9, 1e-9, 2e-9))
     >>> system = mm.System(name='Box2')
-    >>> system.energy = mm.Zeeman(H=(0,1e6,0))
-    >>> system.m = df.Field(mesh, dim=3, value=(0,0,1), norm=1e6)
+    >>> system.energy = mm.Zeeman(H=(0, 1e6, 0))
+    >>> system.m = df.Field(mesh, dim=3, value=(0, 0, 1), norm=1e6)
     >>> mag2exp.magnetometry.torque(system, use_demag=False)
     (-1256637.061435814, 0.0, 0.0)
     """

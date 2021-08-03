@@ -100,7 +100,9 @@ def cross_section(field, /, method, geometry):
         >>> def v_fun(point):
         ...     x, y, z = point
         ...     q = 10e-9
-        ...     return (np.sin(2*np.pi*x/q),0,np.cos(2*np.pi*x/q))
+        ...     return (np.sin(2 * np.pi * x / q),
+        ...             0,
+        ...             np.cos(2 * np.pi * x / q))
         >>> field = df.Field(mesh, dim=3, value=v_fun, norm=1e5)
         >>> field.plane('z').mpl()
         >>> cs = mag2exp.sans.cross_section(field, method='unpol',
@@ -122,7 +124,9 @@ def cross_section(field, /, method, geometry):
         >>> def v_fun(point):
         ...     x, y, z = point
         ...     q = 10e-9
-        ...     return (np.sin(2*np.pi*x/q),0,np.cos(2*np.pi*x/q))
+        ...     return (np.sin(2 * np.pi * x / q),
+        ...             0,
+        ...             np.cos(2 * np.pi * x / q))
         >>> field = df.Field(mesh, dim=3, value=v_fun, norm=1e5)
         >>> field.plane('z').mpl()
         >>> cs = mag2exp.sans.cross_section(field, method='pn',
