@@ -10,9 +10,14 @@
     :maxdepth: 2
     :caption: Tutorials
 
+    ipynb/DC_magnetometry
+    ipynb/Torque_magnetometry
     ipynb/Lorentz_TEM
     ipynb/Magnetic_Force_Microscopy
     ipynb/X-ray_Holography
+    ipynb/SAXS
+    ipynb/SANS
+
 
 API Reference
 -------------
