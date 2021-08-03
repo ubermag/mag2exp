@@ -173,14 +173,45 @@ def cross_section(field, /, method, geometry):
 
 
 def magnetic_interaction_vector(field, /, geometry):
-    """
+    r"""Calculation of the magnetic interaction vector.
+
+    The magnetic interaction vector :math:`{\bf Q}` given by
+
+    .. math::
+        \begin{equation}
+            {\bf Q} = \hat{\bf q} \times \left[ \hat{\bf q} \times
+                       \widetilde{\bf M} \right],
+        \end{equation}
+
+    where :math:`\hat{\bf q}` is the unit scattering vector and
+    :math:`\widetilde{\bf M}` is the Fourier transform of the magnetisation.
+    The magnetic interaction vector is is dependent on the scattering geometry
+    and the scattering vector is defined as
+
+    .. math::
+
+        \begin{equation}
+            {\bf q} = {\bf k}_1 - {\bf k}_0.
+        \end{equation}
+
+    There are common scattering geometries defined in SANS, namely with a
+    magnetic field applied to the incoming neutron beam in either a
+    perpendicular or and parallel geometry.
+
+    **Perpendicular geometry**: the magnetic field is applied along the
+    :math:`z` direction while the incoming neutron beam propagates along the
+    :math:`x` direction.
+
+    **Parallel geometry**: both the magnetic field and the incoming neutron
+    beam are along the :math:`z` direction.
+
     Parameters
     ----------
     field : discretisedfield.field
         Magnetisation field.
     geometry : str
-        Define the experimental geometry as field parallel or perpendicular to
-        the neutron propagation vector.
+        Define the experimental geometry as field `parallel` or `perpendicular`
+        to the neutron propagation vector.
 
     Returns
     -------
@@ -191,10 +222,6 @@ def magnetic_interaction_vector(field, /, geometry):
         magnetic_interaction = _magnetic_interaction_parallel(field)
     elif geometry == 'perpendicular':
         magnetic_interaction = _magnetic_interaction_perpendicular(field)
-    elif geometry == 'perp_z':
-        magnetic_interaction = _magnetic_interaction_perpendicular_z(field)
-    elif geometry == 'perp_z_2':
-        magnetic_interaction = _magnetic_interaction_perpendicular_z_2(field)
     else:
         msg = f'Geometry {geometry} is unknown.'
         raise ValueError(msg)
@@ -202,7 +229,47 @@ def magnetic_interaction_vector(field, /, geometry):
 
 
 def _magnetic_interaction_parallel(field):
-    """
+    r"""Parallel magnetic interaction vector.
+
+    Magnetic interaction vector for the geometry where both the applied
+    magnetic field and the incoming neutron beam are parallel to the :math:`z`
+    direction.
+
+    The magnetic interaction vector :math:`{\bf Q}` is given by
+
+    .. math::
+        \begin{equation}
+            {\bf Q} = \hat{\bf q} \times \left[ \hat{\bf q} \times
+                       \widetilde{\bf M} \right],
+        \end{equation}
+
+    where :math:`\hat{\bf q}` is the unit scattering vector and
+    :math:`\widetilde{\bf M}` is the Fourier transform of the magnetisation.
+    The magnetic interaction vector is is dependent on the scattering geometry
+    and the scattering vector is defined as
+
+    .. math::
+
+        \begin{equation}
+            {\bf q} = {\bf k}_1 - {\bf k}_0.
+        \end{equation}
+
+    For this parallel geometry, the magnetic interaction vector can be written
+    as
+
+    .. math::
+
+        {\bf Q}_{\parallel} = \begin{pmatrix}
+                                 -\widetilde{\bf M}_x \sin^2\theta +
+                                 \widetilde{\bf M}_y \sin\theta\cos\theta \\
+                                 \widetilde{\bf M}_x \sin\theta\cos\theta -
+                                 \widetilde{\bf M}_y \cos^2\theta \\
+                                 -\widetilde{\bf M}_z
+                                \end{pmatrix}
+
+    where :math:`\theta` is the angle between the scattering vector and the
+    :math:`x` axis.
+
     Parameters
     ----------
     field : discretisedfield.field
@@ -229,11 +296,51 @@ def _magnetic_interaction_parallel(field):
 
 
 def _magnetic_interaction_perpendicular(field):
-    """
+    r"""Perpendicular magnetic interaction vector.
+
+    Magnetic interaction vector for the geometry where the applied
+    magnetic field is along the :math:`z` direction and the incoming neutron
+    beam is along the :math:`x` direction.
+
+    The magnetic interaction vector :math:`{\bf Q}` is given by
+
+    .. math::
+        \begin{equation}
+            {\bf Q} = \hat{\bf q} \times \left[ \hat{\bf q} \times
+                       \widetilde{\bf M} \right],
+        \end{equation}
+
+    where :math:`\hat{\bf q}` is the unit scattering vector and
+    :math:`\widetilde{\bf M}` is the Fourier transform of the magnetisation.
+    The magnetic interaction vector is is dependent on the scattering geometry
+    and the scattering vector is defined as
+
+    .. math::
+
+        \begin{equation}
+            {\bf q} = {\bf k}_1 - {\bf k}_0.
+        \end{equation}
+
+    For this parallel geometry, the magnetic interaction vector can be written
+    as
+
+    .. math::
+
+        {\bf Q}_{\perp} = \begin{pmatrix}
+                            -\widetilde{\bf M}_x \\
+                            -\widetilde{\bf M}_y \cos^2\theta +
+                            \widetilde{\bf M}_z \sin\theta\cos\theta \\
+                            \widetilde{\bf M}_y \sin\theta\cos\theta -
+                            \widetilde{\bf M}_z \sin2\theta
+                           \end{pmatrix},
+
+    where :math:`\theta` is the angle between the scattering vector and the
+    :math:`x` axis.
+
     Parameters
     ----------
     field : discretisedfield.field
-        Magneisation field.
+        Magnetisation field.
 
     Returns
     -------
@@ -256,7 +363,7 @@ def _magnetic_interaction_perpendicular(field):
 
 
 def _magnetic_interaction_perpendicular_z(field):
-    """
+    r""" Testing a perpendicular function.
     Parameters
     ----------
     field : discretisedfield.field
@@ -283,7 +390,8 @@ def _magnetic_interaction_perpendicular_z(field):
 
 
 def _magnetic_interaction_perpendicular_z_2(field):
-    """
+    r""" Testing a perpendicular function.
+
     Parameters
     ----------
     field : discretisedfield.field
@@ -310,19 +418,73 @@ def _magnetic_interaction_perpendicular_z_2(field):
 
 
 def chiral_function(field, /, geometry):
-    """
+    r"""Calculation of the chiral function.
+
+    The chiral function can be calculated using
+
+    .. math::
+        \chi = Q_x Q_y^* - Q_x^* Qy
+
+    where :math:`{\bf Q}` is the magnetic interaction vector given by
+
+    .. math::
+        \begin{equation}
+            {\bf Q} = \hat{\bf q} \times \left[ \hat{\bf q} \times
+                       \widetilde{\bf M} \right].
+        \end{equation}
+
+    :math:`\hat{\bf q}` is the unit scattering vector and
+    :math:`\widetilde{\bf M}` is the Fourier transform of the magnetisation.
+    The magnetic interaction vector is is dependent on the scattering geometry
+    and the scattering vector is defined as
+
+    .. math::
+
+        \begin{equation}
+            {\bf q} = {\bf k}_1 - {\bf k}_0.
+        \end{equation}
+
+    In general :math:`\chi=0` for the parallel scattering geometry.
+
     Parameters
     ----------
     field : discretisedfield.field
         Magnetisation field.
     geometry : str
-        Define the experimental geometry as field parallel or perpendicular to
-        the neutron propagation vector.
+        The experimental geometry defined with the external magnetic field
+        `parallel` or `perpendicular` to the neutron propagation vector.
 
     Returns
     -------
     discretisedfield.Field
         Chiral function.
+
+    Examples
+    --------
+
+    .. plot::
+        :context: close-figs
+
+        1. Visualising the chiral function with ``matplotlib``.
+
+        >>> import discretisedfield as df
+        >>> import micromagneticmodel as mm
+        >>> import numpy as np
+        >>> import mag2exp
+        >>> mesh = df.Mesh(p1=(-25e-9, -25e-9, -25e-9),
+        ...                p2=(25e-9, 25e-9, 25e-9),
+        ...                cell=(1e-9, 1e-9, 1e-9))
+        >>> def v_fun(point):
+        ...     x, y, z = point
+        ...     q = 10e-9
+        ...     return (np.cos(2 * np.pi * y / q),
+        ...             np.sin(2 * np.pi * y / q),
+        ...             0)
+        >>> field = df.Field(mesh, dim=3, value=v_fun, norm=1e5)
+        >>> field.plane('x').mpl()
+        >>> cf = mag2exp.sans.chiral_function(field,
+        ...                                   geometry='perpendicular')
+        >>> cf.plane('x').imag.mpl.scalar()
     """
     magnetic_interaction = magnetic_interaction_vector(field,
                                                        geometry=geometry)
