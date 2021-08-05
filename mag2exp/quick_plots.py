@@ -4,6 +4,7 @@ import ubermagutil.units as uu
 from . import ltem
 from . import mfm
 from . import x_ray
+from . import sans
 
 
 def ltem_phase(field, /, kcx=0.1, kcy=0.1):
@@ -12,7 +13,7 @@ def ltem_phase(field, /, kcx=0.1, kcy=0.1):
     The phase is calculated using the :code:`ltem.phase`
     function and plotted using :code:`mpl.scalar`.
 
-    .. seealso:: :py:func:`~ltem.phase`
+    .. seealso:: :py:func:`mag2exp.ltem.phase`
     """
     phase, _ = ltem.phase(field, kcx=kcx, kcy=kcy)
     phase.real.mpl.scalar(cmap='gray',
@@ -27,7 +28,7 @@ def ltem_ft_phase(field, /, kcx=0.1, kcy=0.1):
     :code:`ltem.phase` function and plotted using
     :code:`mpl.scalar`.
 
-    .. seealso:: :py:func:`~ltem.phase`
+    .. seealso:: :py:func:`mag2exp.ltem.phase`
     """
     _, ft_phase = ltem.phase(field, kcx=kcx, kcy=kcy)
     fig, ax = plt.subplots()
@@ -55,10 +56,9 @@ def ltem_defocus(field, /, kcx=0.1, kcy=0.1,
     :code:`ltem.defocus_image`.	This is then plotted using
     :code:`mpl.scalar`.
 
-    .. seealso:: :
-
-    py:func:`~ltem.phase`
-    py:func:`~ltem.defocus_image`
+    .. seealso::
+        :py:func:`mag2exp.ltem.phase`
+        :py:func:`mag2exp.ltem.defocus_image`
     """
     phase, _ = ltem.phase(field, kcx=kcx, kcy=kcy)
     defocus = ltem.defocus_image(phase, cs=cs, df_length=df_length,
@@ -75,12 +75,10 @@ def ltem_integrated_mfd(field, /, kcx=0.1, kcy=0.1):
     :code:`ltem.integrated_magnetic_flux_density`.
     This is then plotted using :code:`mpl.lightness` and :code:`mpl.vector`.
 
-    .. seealso:: :
+    .. seealso::
+        :py:func:`mag2exp.ltem.phase`
+        :py:func:`mag2exp.ltem.integrated_magnetic_flux_density`
 
-    py:func:`~ltem.phase`
-    py:func:`~ltem.integrated_magnetic_flux_density`
-    py:func:`~mpl.lightness`
-    py:func:`~mpl.vector`
     """
     phase, _ = ltem.phase(field, kcx=kcx, kcy=kcy)
     imf = ltem.integrated_magnetic_flux_density(phase)
@@ -98,7 +96,7 @@ def mfm_phase_shift(system, /, tip_m=(0, 0, 0), quality=650, k=3, tip_q=0,
     The phase is calculated using the :code:`ltem.phase`
     function and plotted using :code:`mpl.scalar`.
 
-    .. seealso:: :py:func:`~ltem.phase`
+    .. seealso:: :py:func:`mag2exp.mfm.phase_shift`
     """
     phase_shift = mfm.phase_shift(system, tip_m=tip_m, quality=quality,
                                   k=k, tip_q=tip_q, fwhm=fwhm)
@@ -113,9 +111,54 @@ def x_ray_holography(field, /, fwhm=None):
     The phase is calculated using the :code:`ltem.phase`
     function and plotted using :code:`mpl.scalar`.
 
-    .. seealso:: :py:func:`~ltem.phase`
+    .. seealso:: :py:func:`mag2exp.x_ray.holography`
     """
     holo = x_ray.holography(field, fwhm=fwhm)
     holo.mpl.scalar(cmap='RdBu',
                     interpolation='spline16',
                     colorbar_label=r'Integrated Magnetisation (A)')
+
+
+def saxs(field):
+    r"""Quickplot of the small angle x-ray scattering pattern.
+
+    The small angle x-ray scattering pattern is calculated using the
+    :code:`x_ray.saxs` function and plotted using :code:`mpl.scalar`.
+
+    .. seealso:: :py:func:`mag2exp.x_ray.saxs`
+
+    """
+    cs = x_ray.saxs(field)
+    cs.mpl.scalar(cmap='gray',
+                  interpolation='spline16',
+                  colorbar_label=r'Intensity (arb.)')
+
+
+def sans_cross_section(field, /, method, geometry):
+    r"""Quickplot of the small angle neutron scattering pattern.
+
+    The small angle neutron scattering pattern is calculated using the
+    :code:`sans.cross_section` function and plotted using :code:`mpl.scalar`.
+
+    .. seealso:: :py:func:`mag2exp.sans.cross_section`
+
+    """
+    cs = sans.cross_section(field, method=method, geometry=geometry)
+    cs.mpl.scalar(cmap='gray',
+                  interpolation='spline16',
+                  colorbar_label=r'Intensity (arb.)')
+
+
+def sans_chiral_function(field, /, geometry):
+    r"""Quickplot of the small angle neutron scattering chiral function.
+
+    The small angle neutron scattering chiral function is calculated using the
+    :code:`sans.chiral_function` function and the imaginary component
+    plotted using :code:`mpl.scalar`.
+
+    .. seealso:: :py:func:`mag2exp.sans.chiral_function`
+    """
+    cf = sans.chiral_function(field, geometry=geometry)
+    cf.imga.mpl.scalar(cmap='gray',
+                       interpolation='spline16',
+                       colorbar_label=r'Cross section (arb.)')
