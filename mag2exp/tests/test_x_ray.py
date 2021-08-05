@@ -73,3 +73,19 @@ def test_xray_holography_analytical():
 
     an_holo = df.Field(holo.mesh, dim=1, value=a_fun).plane('z')
     assert np.isclose(holo.array, an_holo.array, rtol=1e-3).all()
+
+
+def test_xray_saxs_analytical():
+    region = df.Region(p1=(-50e-9, -100e-9, 0), p2=(50e-9, 100e-9, 30e-9))
+    mesh = df.Mesh(region=region, cell=(5e-9, 5e-9, 1e-9))
+    Ms = 1.1e6
+    qx = 20e-9
+
+    def m_fun(pos):
+        x, y, z = pos
+        return [0, 0, Ms*np.cos(2*np.pi*x/qx)]
+    m = df.Field(mesh, dim=3, value=m_fun)
+    saxs = mag2exp.x_ray.saxs(m)
+    idx = np.unravel_index(saxs.array.argmax(), saxs.array.shape)[0:3]
+    q = saxs.mesh.index2point(idx)[0]
+    assert np.isclose(q, -1/qx)

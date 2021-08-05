@@ -124,8 +124,8 @@ def test_phase_analytical():
         x, y, z = pos
         q = 30e-9
         analytical = - ((mm.consts.e*mm.consts.mu0*Ms*10e-9)/(mm.consts.h))
-        analytical *= ((np.sin(2*np.pi*(0.5e-9)/q))/(2*np.pi*0.5e-9/q)) * q
-        analytical *= np.cos(2*np.pi*x/q)
+        analytical *= np.cos(2*np.pi*x/q) * q
+        analytical *= ((np.sin(2*np.pi*(0.5e-9)/q))/(2*np.pi*0.5e-9/q))
         return analytical
 
     an_phase = df.Field(phase.mesh, dim=1, value=analytical_sol)
