@@ -83,18 +83,19 @@ def holography(field, /, fwhm=None):
 
 
 def saxs(field):
-    r""" Calculation of the scattering pattern obtained from X-ray holography.
+    r""" Calculation of the small angle X-ray scattering pattern.
 
-    X-ray holography uses magnetic circular dichroism to measure the magnetic
+    Small angle X-ray scattering uses magnetic circular dichroism to measure
+    the magnetic
     field parallel to the propagation direction of the light. Here, we define
     the experimental reference frame with the light propagating along :math:`z`
-    direction. The intensity of X-ray holographic scattering can be calculated
+    direction. The intensity of scattering can be calculated
     from the Fourier transform of the real space integral of the magnetisation
     along the beam direction multiplied by its complex conjugate.
 
     .. math::
         M_I = \int M dz, \\
-        I = \left\vert \widetilde{M_I} \right\vert ^2 .
+        I \propto \left\vert \widetilde{M_I} \right\vert ^2 .
 
     Parameters
     ----------
@@ -104,7 +105,7 @@ def saxs(field):
     Returns
     -------
     discretisedfield.Field
-        X-ray holographic scattering.
+        Small angle X-ray scattering intensity, arbitrary units.
 
     Examples
     --------

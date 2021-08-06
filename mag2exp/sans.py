@@ -80,7 +80,7 @@ def cross_section(field, /, method, geometry):
     Returns
     -------
     discretisedfield.Field
-        Scattering cross section.
+        Scattering cross section, arbitrary units.
 
     Examples
     --------
