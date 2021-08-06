@@ -27,13 +27,13 @@ def test_mfm_phase_tip_m():
     system.energy = mm.Demag()
     system.m = df.Field(mesh, dim=3, value=f_val, norm=Ms_fun)
     ps = mag2exp.mfm.phase_shift(system, tip_m=(0, 0, 1e-16),
-                               quality=650, k=3, tip_q=0)
+                                 quality=650, k=3, tip_q=0)
     assert (ps.array != 0).any()
     ps = mag2exp.mfm.phase_shift(system, tip_m=(0, 1e-16, 0),
-                               quality=650, k=3, tip_q=0)
+                                 quality=650, k=3, tip_q=0)
     assert (ps.array != 0).any()
     ps = mag2exp.mfm.phase_shift(system, tip_m=(1e-16, 0, 0),
-                               quality=650, k=3, tip_q=0)
+                                 quality=650, k=3, tip_q=0)
     assert (ps.array != 0).any()
 
 
@@ -59,7 +59,8 @@ def test_mfm_phase_tip_q():
     system = mm.System(name='Box2')
     system.energy = mm.Demag()
     system.m = df.Field(mesh, dim=3, value=f_val, norm=Ms_fun)
-    ps = mag2exp.mfm.phase_shift(system, tip_m=(0, 0, 0), quality=650, k=3, tip_q=1e-6)
+    ps = mag2exp.mfm.phase_shift(system, tip_m=(0, 0, 0), quality=650, k=3,
+                                 tip_q=1e-6)
     assert (ps.array != 0).any()
 
 
@@ -85,7 +86,8 @@ def test_mfm_phase_no_tip():
     system = mm.System(name='Box2')
     system.energy = mm.Demag()
     system.m = df.Field(mesh, dim=3, value=f_val, norm=Ms_fun)
-    ps = mag2exp.mfm.phase_shift(system, tip_m=(0, 0, 0), quality=650, k=3, tip_q=0)
+    ps = mag2exp.mfm.phase_shift(system, tip_m=(0, 0, 0), quality=650, k=3,
+                                 tip_q=0)
     assert (ps.array == 0).all()
 
 
