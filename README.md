@@ -1,4 +1,4 @@
-# exsim
+# mag2exp
 Samuel Holt<sup>1</sup>, James Loudon<sup>2</sup>, Thomas Hicken<sup>3</sup>, Geetha Balakrishnan<sup>1</sup>, David Cortés Ortuño<sup>4?</sup>, Martin Lang<sup>4</sup>, Marijan Beg<sup>5</sup>, and Hans Fangohr<sup>4,6</sup>
 
 <sup>1</sup> *Department of Physics, University of Warwick, Coventry, CV4 7AL, United Kingdom*  
@@ -12,14 +12,14 @@ Samuel Holt<sup>1</sup>, James Loudon<sup>2</sup>, Thomas Hicken<sup>3</sup>, Ge
 
 | Description | Badge |
 | --- | --- |
-| Tests | [![Build status](https://github.com/ubermag/exsim/workflows/workflow/badge.svg)](https://github.com/ubermag/exsim/actions?query=workflow%3Aworkflow) |
-|       | [![conda](https://github.com/ubermag/exsim/workflows/conda/badge.svg)](https://github.com/ubermag/exsim/actions?query=workflow%3Aconda) |
-| Releases | [![PyPI version](https://badge.fury.io/py/exsim.svg)](https://badge.fury.io/py/exsim) |
-|          | [![Anaconda-Server Badge](https://anaconda.org/conda-forge/exsim/badges/version.svg)](https://anaconda.org/conda-forge/exsim) |
-| Coverage | [![codecov](https://codecov.io/gh/ubermag/exsim/branch/master/graph/badge.svg?token=hcK4fofmrL)](https://codecov.io/gh/ubermag/exsim) |
-| Documentation | [![Documentation Status](https://readthedocs.org/projects/exsim/badge/?version=latest)](https://exsim.readthedocs.io/en/latest/?badge=latest) |
+| Tests | [![Build status](https://github.com/ubermag/mag2exp/workflows/workflow/badge.svg)](https://github.com/ubermag/mag2exp/actions?query=workflow%3Aworkflow) |
+|       | [![conda](https://github.com/ubermag/mag2exp/workflows/conda/badge.svg)](https://github.com/ubermag/mag2exp/actions?query=workflow%3Aconda) |
+| Releases | [![PyPI version](https://badge.fury.io/py/mag2exp.svg)](https://badge.fury.io/py/mag2exp) |
+|          | [![Anaconda-Server Badge](https://anaconda.org/conda-forge/mag2exp/badges/version.svg)](https://anaconda.org/conda-forge/mag2exp) |
+| Coverage | [![codecov](https://codecov.io/gh/ubermag/mag2exp/branch/master/graph/badge.svg?token=hcK4fofmrL)](https://codecov.io/gh/ubermag/mag2exp) |
+| Documentation | [![Documentation Status](https://readthedocs.org/projects/mag2exp/badge/?version=latest)](https://mag2exp.readthedocs.io/en/latest/?badge=latest) |
 | YouTube | [![YouTube](https://img.shields.io/badge/YouTube-ubermag-blue)](https://www.youtube.com/channel/UC7MSqVQSMFV42R1jAYmKGLg) |
-| Binder | [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/ubermag/exsim/HEAD?urlpath=lab/tree/docs/ipynb/index.ipynb) |
+| Binder | [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/ubermag/mag2exp/HEAD?urlpath=lab/tree/docs/ipynb/index.ipynb) |
 | Platforms | [![Platforms](https://anaconda.org/conda-forge/discretisedfield/badges/platforms.svg)](https://anaconda.org/conda-forge/discretisedfield) |
 | Downloads | [![Downloads](https://anaconda.org/conda-forge/discretisedfield/badges/downloads.svg)](https://anaconda.org/conda-forge/discretisedfield) |
 | License | [![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause) |
@@ -27,7 +27,7 @@ Samuel Holt<sup>1</sup>, James Loudon<sup>2</sup>, Thomas Hicken<sup>3</sup>, Ge
 
 ## About
 
-`exsim` is a Python package, integrated with Jupyter, providing:
+`mag2exp` is a Python package, integrated with Jupyter, providing:
 
 ...
 
