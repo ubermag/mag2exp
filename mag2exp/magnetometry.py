@@ -116,9 +116,9 @@ def torque(system, /, use_demag=True):
     >>> system = mm.System(name='Box2')
     >>> system.energy = mm.Zeeman(H=(0, 0, 1e6)) + mm.Demag()
     >>> system.m = df.Field(mesh, dim=3, value=(0, 0, 1), norm=1e6)
-    >>> mag2exp.magnetometry.torque(system, use_demag=True)
+    >>> np.allclose(mag2exp.magnetometry.torque(system, use_demag=True), 0)
     Running OOMMF...
-    (4.789058039023075e-12, 5.8468785368859244e-12, 0.0)
+    True
 
     2. Field along magnetisation direction without demagnetisation.
 
