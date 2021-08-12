@@ -174,7 +174,6 @@ def phase_shift(system, /, tip_m=(0, 0, 0), quality=650, k=3, tip_q=0,
         msg = '`k` has to be a positive non-zero number.'
         raise RuntimeError(msg)
 
-    # oommfc is a heavy dependency here. We could compute demag field directly (fidimag notebook as guidance). Missing functionality: demag tensor.
     stray_field = oc.compute(system.energy.demag.effective_field, system)
     dh_dz = stray_field.derivative('z', n=1)
     d2h_dz2 = stray_field.derivative('z', n=2)

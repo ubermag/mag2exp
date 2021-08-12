@@ -88,16 +88,16 @@ def phase(field, /, kcx=0.1, kcy=0.1):
         >>> phase.mpl.scalar()
 
     """
-    m_int = df.integral(field * df.dz, direction='z')  # More readable notation, direction arg will be removed soon.
+    # More readable notation, direction arg will be removed soon.
+    m_int = df.integral(field * df.dz, direction='z')
     m_ft = m_int.fftn
 
     k = df.Field(m_ft.mesh, dim=3, value=lambda x: x)
     denom = (k.x**2 + k.y**2) / (k.x**2 + k.y**2 +
                                  k.mesh.dx**2*kcx**2 + k.mesh.dy**2*kcy**2)**2
 
-    # const variable name should be avoided
-    const = 1j * mm.consts.e * mm.consts.mu0 / mm.consts.h  # should be changed when/if we move consts to ubermagutil
-    ft_phase = (m_ft & k).z * denom * const
+    prefactor = 1j * mm.consts.e * mm.consts.mu0 / mm.consts.h
+    ft_phase = (m_ft & k).z * denom * prefactor
     phase = ft_phase.ifftn.real
     return phase, ft_phase
 
@@ -219,7 +219,7 @@ def defocus_image(phase, /, cs=0, df_length=0.2e-3, voltage=None,
     ft_wavefn = df.Field(phase.mesh, dim=phase.dim,
                          value=np.exp(phase.array * 1j)).fftn
     k = df.Field(ft_wavefn.mesh, dim=3, value=lambda x: x)
-    ksquare = (k.x**2 + k.y**2).array  # Can we do this without exposing array?
+    ksquare = (k.x**2 + k.y**2)
 
     if wavelength is None:
         if voltage is None:
@@ -228,8 +228,8 @@ def defocus_image(phase, /, cs=0, df_length=0.2e-3, voltage=None,
             raise RuntimeError(msg)
         wavelength = relativistic_wavelength(voltage)
 
-    cts = -df_length + 0.5 * wavelength**2 * cs * ksquare  # This could probably work with ksquare being an array
-    exp = np.exp(np.pi * cts * 1j * ksquare * wavelength)  # Similarly, if we had df.exp, this could be simplified.
+    cts = -df_length + 0.5 * wavelength**2 * cs * ksquare
+    exp = np.exp(np.pi * cts * 1j * ksquare * wavelength)
     ft_def_wf_cts = ft_wavefn * exp
     def_wf_cts = ft_def_wf_cts.ifftn
     intensity_cts = def_wf_cts.conjugate * def_wf_cts
