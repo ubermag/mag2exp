@@ -1,3 +1,8 @@
+"""SANS submodule.
+
+Module for calculation of Small Angle Neutron Scattering related
+quantities.
+"""
 import numpy as np
 import discretisedfield as df
 
@@ -136,40 +141,44 @@ def cross_section(field, /, method, geometry):
     magnetic_interaction = magnetic_interaction_vector(field,
                                                        geometry=geometry)
     if method in ('polarised_pp', 'pp'):
-        return abs(magnetic_interaction.z)**2
+        cs = abs(magnetic_interaction.z)**2
     elif method in ('polarised_nn', 'nn'):
-        return abs(magnetic_interaction.z)**2
+        cs = abs(magnetic_interaction.z)**2
     elif method in ('polarised_pn', 'pn'):
-        return (abs(magnetic_interaction.x)**2 + abs(magnetic_interaction.y)**2
-                - (magnetic_interaction.x * magnetic_interaction.y.conjugate
-                   - magnetic_interaction.x.conjugate * magnetic_interaction.y)
-                * 1j)
+        cs = (abs(magnetic_interaction.x)**2 + abs(magnetic_interaction.y)**2
+              - (magnetic_interaction.x * magnetic_interaction.y.conjugate
+                 - magnetic_interaction.x.conjugate * magnetic_interaction.y)
+              * 1j)
     elif method in ('polarised_np', 'np'):
-        return (abs(magnetic_interaction.x)**2 + abs(magnetic_interaction.y)**2
-                + (magnetic_interaction.x * magnetic_interaction.y.conjugate
-                   - magnetic_interaction.x.conjugate * magnetic_interaction.y)
-                * 1j)
+        cs = (abs(magnetic_interaction.x)**2 + abs(magnetic_interaction.y)**2
+              + (magnetic_interaction.x * magnetic_interaction.y.conjugate
+                 - magnetic_interaction.x.conjugate * magnetic_interaction.y)
+              * 1j)
     elif method in ('half_polarised_p', 'p'):
-        pp = cross_section(field, method='polarised_pp',
-                           geometry=geometry)
-        pn = cross_section(field, method='polarised_pn',
-                           geometry=geometry)
-        return pp + pn
+        pp_cs = cross_section(field, method='polarised_pp',
+                              geometry=geometry)
+        pn_cs = cross_section(field, method='polarised_pn',
+                              geometry=geometry)
+        return pp_cs + pn_cs
     elif method in ('half_polarised_n', 'n'):
-        nn = cross_section(field, method='polarised_nn',
-                           geometry=geometry)
-        np = cross_section(field, method='polarised_np',
-                           geometry=geometry)
-        return nn + np
+        nn_cs = cross_section(field, method='polarised_nn',
+                              geometry=geometry)
+        np_cs = cross_section(field, method='polarised_np',
+                              geometry=geometry)
+        return nn_cs + np_cs
     elif method in ('unpolarised', 'unpol'):
-        p = cross_section(field, method='half_polarised_p',
-                          geometry=geometry)
-        n = cross_section(field, method='half_polarised_n',
-                          geometry=geometry)
-        return 0.5 * (p + n)
+        p_cs = cross_section(field, method='half_polarised_p',
+                             geometry=geometry)
+        n_cs = cross_section(field, method='half_polarised_n',
+                             geometry=geometry)
+        return 0.5 * (p_cs + n_cs)
     else:
         msg = f'Method {method} is unknown.'
         raise ValueError(msg)
+
+    cs *= (field.mesh.dx*field.mesh.dy)**2 * 8 * np.pi**3 * (2.91e8)**2
+    cs /= np.prod(field.mesh.region.pmax - np.array(field.mesh.region.pmin))
+    return cs
 
 
 def magnetic_interaction_vector(field, /, geometry):
