@@ -178,8 +178,11 @@ def cross_section(field, /, method, geometry):
         msg = f'Method {method} is unknown.'
         raise ValueError(msg)
 
+    norm_field = df.Field(field.mesh, dim=1,
+                          value=(field.norm.array != 0))
+    volume = df.integral(norm_field * df.dV, direction='xyz')
     cs *= (field.mesh.dx*field.mesh.dy)**2 * 8 * np.pi**3 * (2.91e8)**2
-    cs /= np.prod(field.mesh.region.pmax - np.array(field.mesh.region.pmin))
+    cs /= volume
     return cs
 
 
