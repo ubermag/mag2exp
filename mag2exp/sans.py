@@ -15,22 +15,24 @@ def cross_section(field, /, method, geometry):
 
     .. math::
         \begin{align}
-            \frac{d\sum^{\pm \pm}}{d\Omega} &\sim |{\bf Q}_z|^2 \\
-            \frac{d\sum^{\pm \mp}}{d\Omega} &\sim |{\bf Q}_x|^2 +
+            \frac{d\sum^{\pm \pm}}{d\Omega} &\sim K |{\bf Q}_z|^2 \\
+            \frac{d\sum^{\pm \mp}}{d\Omega} &\sim K \left[ |{\bf Q}_x|^2 +
                   |{\bf Q}_y|^2 \mp
                   i\left( {\bf Q}_x {\bf Q}^{\ast}_y -
-                  {\bf Q}^{\ast}_x {\bf Q}_y \right) .
+                  {\bf Q}^{\ast}_x {\bf Q}_y \right) \right].
         \end{align}
 
-    where :math:`{\bf Q}` is the magnetic interaction vector given by
+    where :math:`K=8\pi b_H^2/V`, :math:`b_H` is ratio of the atomic scatering
+    length to atomic magetic moment, :math:`V` is the scattering volume, and
+    :math:`{\bf Q}` is the magnetic interaction vector given by
 
     .. math::
         \begin{equation}
             {\bf Q} = \hat{\bf q} \times \left[ \hat{\bf q} \times
-                       \widetilde{\bf M} \right],
+                       \widetilde{\bf M} \right].
         \end{equation}
 
-    where :math:`\hat{\bf q}` is the unit scattering vector and
+    :math:`\hat{\bf q}` is the unit scattering vector and
     :math:`\widetilde{\bf M}` is the Fourier transform of the magnetisation.
     The magnetic interaction vector is is dependent on the scattering geometry
     and the scattering vector is defined as
@@ -85,7 +87,7 @@ def cross_section(field, /, method, geometry):
     Returns
     -------
     discretisedfield.Field
-        Scattering cross section, arbitrary units.
+        Scattering cross section, A$^{-4}$m$^{-3}$.
 
     Examples
     --------
