@@ -5,6 +5,7 @@ Module for calculation of x-ray based quantities.
 
 import mag2exp
 import discretisedfield as df
+import numpy as np
 
 
 def holography(field, /, fwhm=None):
@@ -95,7 +96,9 @@ def saxs(field):
 
     .. math::
         M_I = \int M dz, \\
-        I \propto \left\vert \widetilde{M_I} \right\vert ^2 .
+        I \propto \frac{1}{V}\left\vert \widetilde{M_I} \right\vert ^2,
+
+    where :math:`V` is the scattering volume.
 
     Parameters
     ----------
@@ -133,4 +136,9 @@ def saxs(field):
     # Direction arg will be removed soon.
     magnetisation = df.integral(field.z * df.dz, direction='z')
     m_fft = magnetisation.fftn
-    return (abs(m_fft)**2).real
+    norm_field = df.Field(field.mesh, dim=1,
+                          value=(field.norm.array != 0))
+    volume = df.integral(norm_field * df.dV, direction='xyz')
+    factor = (field.mesh.dx*field.mesh.dy)**2 * 1e10  # Arbitary constant
+    factor /= volume
+    return factor * (abs(m_fft)**2).real
