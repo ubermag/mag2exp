@@ -178,12 +178,12 @@ def cross_section(field, /, method, geometry):
         msg = f'Method {method} is unknown.'
         raise ValueError(msg)
 
-    norm_field = df.Field(field.mesh, dim=1,
-                          value=(field.norm.array != 0))
-    volume = df.integral(norm_field * df.dV, direction='xyz')
+    # norm_field = df.Field(field.mesh, dim=1,
+    #                       value=(field.norm.array != 0))
+    # volume = df.integral(norm_field * df.dV, direction='xyz')
+    # cs /= volume
     cs *= (field.mesh.dx*field.mesh.dy)**2 * 8 * np.pi**3 * (2.91e8)**2
-    cs /= volume
-    return cs
+    return cs.plane(z=0)
 
 
 def magnetic_interaction_vector(field, /, geometry):
@@ -294,7 +294,7 @@ def _magnetic_interaction_parallel(field):
     discretisedfield.Field
         Magnetic interaction vector.
     """
-    m_p_ft = (field * df.dz).integral(direction='z').fftn
+    m_p_ft = field.fftn
     theta = df.Field(m_p_ft.mesh, dim=1,
                      value=lambda x: np.arctan2(x[1], x[0]))
     magnetic_interaction_x = (-m_p_ft.x * np.sin(theta.array)**2 +
@@ -361,7 +361,7 @@ def _magnetic_interaction_perpendicular(field):
     discretisedfield.Field
         Magnetic interaction vector.
     """
-    m_p_ft = (field * df.dx).integral(direction='x').fftn
+    m_p_ft = field.fftn
     theta = df.Field(m_p_ft.mesh, dim=1,
                      value=lambda x: np.arctan2(x[2], x[1]))
     magnetic_interaction_x = -m_p_ft.x
