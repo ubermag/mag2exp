@@ -182,8 +182,15 @@ def cross_section(field, /, method, geometry):
     #                       value=(field.norm.array != 0))
     # volume = df.integral(norm_field * df.dV, direction='xyz')
     # cs /= volume
-    cs *= (field.mesh.dx*field.mesh.dy)**2 * 8 * np.pi**3 * (2.91e8)**2
-    return cs.plane(z=0)
+    cs *= (field.mesh.dV)**2 * 8 * np.pi**3 * (2.91e8)**2
+
+    if geometry == 'parallel':
+        return cs.plane(z=0)
+    elif geometry == 'perpendicular':
+        return cs.plane(x=0)
+    else:
+        msg = f'Geometry {geometry} is unknown.'
+        raise ValueError(msg)
 
 
 def magnetic_interaction_vector(field, /, geometry):
