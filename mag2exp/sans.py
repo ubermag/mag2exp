@@ -70,6 +70,13 @@ def cross_section2(field, /, method, polarisation=[0, 0, 1]):
         raise ValueError(msg)
 
 
+def chiral_function2(field, /, method, polarisation=[0, 0, 1]):
+    r""" Calculation of chiral function.
+    """
+    return -(cross_section2(field, method='pn', polarisation=polarisation) -
+             cross_section2(field, method='np', polarisation=polarisation))/2j
+
+
 def cross_section(field, /, method, geometry):
     r""" Calculation of scattering cross sections.
 
