@@ -5,6 +5,69 @@ quantities.
 """
 import numpy as np
 import discretisedfield as df
+from scipy.spatial.transform import Rotation as R
+
+
+def cross_section2(field, /, method, polarisation=[0, 0, 1]):
+    r""" Calculation of scattering cross sections.
+    """
+    m_fft = field.fftn
+    m_fft *= m_fft.mesh.dV
+    q = df.Field(m_fft.mesh,
+                 dim=3,
+                 value=(lambda x: (0, 0, 0)
+                        if 0 == np.linalg.norm(x) else x/np.linalg.norm(x)))
+    magnetic_interaction = q & m_fft & q
+
+    # Rotation of Pauli matrices
+    initial = [0, 0, 1]
+    if initial == polarisation:
+        r = R.identity()
+    else:
+        fixed = np.cross(initial, polarisation)
+        r = R.align_vectors([polarisation, fixed],
+                            [initial, fixed])[0]
+    p_x = [[0, 1], [1, 0]]
+    p_y = [[0, -1j], [1j, 0]]
+    p_z = [[1, 0], [0, -1]]
+    p = np.array([p_x, p_y, p_z])
+    p_new = np.einsum('ij,ibc->jbc', r.as_matrix(), p)  # Rotate Pauli matrices
+
+    # Apply function to Pauli
+    magnetic_interaction_new = np.einsum('ijkl,lbc->ijkbc',
+                                         magnetic_interaction.array,
+                                         p_new)
+    cross_s = np.power(np.abs(magnetic_interaction_new), 2)
+
+    if method in ('polarised_pp', 'pp'):
+        return df.Field(mesh=m_fft.mesh, dim=1,
+                        value=cross_s[..., 0, 0, np.newaxis])
+    elif method in ('polarised_pn', 'pn'):
+        return df.Field(mesh=m_fft.mesh, dim=1,
+                        value=cross_s[..., 1, 0, np.newaxis])
+    elif method in ('polarised_np', 'np'):
+        return df.Field(mesh=m_fft.mesh, dim=1,
+                        value=cross_s[..., 0, 1, np.newaxis])
+    elif method in ('polarised_nn', 'nn'):
+        return df.Field(mesh=m_fft.mesh, dim=1,
+                        value=cross_s[..., 1, 1, np.newaxis])
+    elif method in ('half_polarised_p', 'p'):
+        return df.Field(mesh=m_fft.mesh, dim=1,
+                        value=(cross_s[..., 0, 0, np.newaxis] +
+                               cross_s[..., 1, 0, np.newaxis]))
+    elif method in ('half_polarised_n', 'n'):
+        return df.Field(mesh=m_fft.mesh, dim=1,
+                        value=(cross_s[..., 1, 1, np.newaxis] +
+                               cross_s[..., 0, 1, np.newaxis]))
+    elif method in ('unpolarised', 'unpol'):
+        return df.Field(mesh=m_fft.mesh, dim=1,
+                        value=0.5*(cross_s[..., 0, 0, np.newaxis] +
+                                   cross_s[..., 1, 0, np.newaxis] +
+                                   cross_s[..., 0, 1, np.newaxis] +
+                                   cross_s[..., 1, 1, np.newaxis]))
+    else:
+        msg = f'Method {method} is unknown.'
+        raise ValueError(msg)
 
 
 def cross_section(field, /, method, geometry):
