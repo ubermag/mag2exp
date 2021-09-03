@@ -5,14 +5,192 @@ quantities.
 """
 import numpy as np
 import discretisedfield as df
-from scipy.spatial.transform import Rotation as R
+from scipy.spatial.transform import Rotation
 
 
-def cross_section2(field, /, method, polarisation=[0, 0, 1]):
+def cross_section2(field, /, method, polarisation=(0, 0, 1)):
     r""" Calculation of scattering cross sections.
+
+    The scattering cross sections can be calculated using
+
+    .. math::
+        \frac{d\sum}{d\Omega} \sim |{\bf Q} \cdot {\bf \sigma}|^2,
+
+    where :math:`{\bf \sigma}` is the Pauli vector
+
+    .. math::
+        {\bf \sigma} = \begin{bmatrix} \sigma_x \\
+                                       \sigma_y \\
+                                       \sigma_z \end{bmatrix},
+
+    and
+
+    .. math::
+        \begin{align}
+            \sigma_x &= \begin{pmatrix} 0 & 1 \\ 1 & 0 \end{pmatrix}, \\
+            \sigma_y &= \begin{pmatrix} 0 & -i \\ i & 0 \end{pmatrix}, \\
+            \sigma_z &= \begin{pmatrix} 1 & 0 \\ 0 & -1 \end{pmatrix}.
+        \end{align}
+
+    :math:`{\bf Q}` is the magnetic interaction vector given by
+
+    .. math::
+        \begin{equation}
+            {\bf Q} = \hat{\bf q} \times \widetilde{\bf M} \times \hat{\bf q}
+        \end{equation}
+
+    :math:`\hat{\bf q}` is the unit scattering vector and
+    :math:`\widetilde{\bf M}` is the Fourier transform of the magnetisation.
+    The magnetic interaction vector is is dependent on the scattering geometry
+    and the scattering vector is defined as
+
+    .. math::
+
+        \begin{equation}
+            {\bf q} = {\bf k}_1 - {\bf k}_0.
+        \end{equation}
+
+    The spin-flip and non-spin-flip neutron scattering cross sections can be
+    calculated for specific scattering geometries using
+
+    .. math::
+        \begin{equation}
+         \frac{d\sum}{d\Omega} = \begin{pmatrix}
+                                    \frac{d\sum^{++}}{d\Omega} &
+                                    \frac{d\sum^{-+}}{d\Omega}\\
+                                    \frac{d\sum^{+-}}{d\Omega} &
+                                    \frac{d\sum^{--}}{d\Omega}
+                                 \end{pmatrix}.
+        \end{equation}
+
+    The spin based cross sections then be combined in order to get the half
+    polarised cross sections
+
+    .. math::
+
+        \begin{align}
+            \frac{d\sum^{+}}{d\Omega} &= \frac{d\sum^{++}}{d\Omega} +
+            \frac{d\sum^{+-}}{d\Omega}, \\
+            \frac{d\sum^{-}}{d\Omega} &= \frac{d\sum^{--}}{d\Omega} +
+            \frac{d\sum^{-+}}{d\Omega}.
+        \end{align}
+
+    These can further be combined to get the unpolarised cross section
+
+    .. math::
+        \begin{align}
+            \frac{d\sum}{d\Omega} &= \frac{1}{2} \left(
+            \frac{d\sum^{+}}{d\Omega} + \frac{d\sum^{-}}{d\Omega} \right), \\
+            \frac{d\sum}{d\Omega} &= \frac{1}{2}
+            \left( \frac{d\sum^{++}}{d\Omega} + \frac{d\sum^{+-}}{d\Omega} +
+            \frac{d\sum^{--}}{d\Omega} + \frac{d\sum^{-+}}{d\Omega} \right).
+        \end{align}
+
+    Parameters
+    ----------
+    field : discretisedfield.field
+        Magnetisation field.
+    method : str
+        Used to select the relevant cross section and can take the value of
+
+            * pp - positive positive non-spin-flip cross section,
+            * nn - negative negative non-spin-flip cross section,
+            * pn - positive negative spin-flip cross section,
+            * np - negative positive spin-flip cross section,
+            * p - positive half polarised cross section,
+            * n - negitive half polarised cross section,
+            * unpol - unpolarised cross section.
+    geometry : str
+        Define the experimental geometry with applied magnetic field parallel
+        or perpendicular to the neutron propagation vector.
+
+    Returns
+    -------
+    discretisedfield.Field
+        Scattering cross section in arbitary units.
+
+    Examples
+    --------
+
+    .. plot::
+        :context: close-figs
+
+        1. Visualising unpolarised cross section with ``matplotlib``.
+
+        >>> import discretisedfield as df
+        >>> import micromagneticmodel as mm
+        >>> import numpy as np
+        >>> import mag2exp
+        >>> mesh = df.Mesh(p1=(-25e-9, -25e-9, -2e-9),
+        ...                p2=(25e-9, 25e-9, 50e-9),
+        ...                cell=(1e-9, 1e-9, 2e-9))
+        >>> def v_fun(point):
+        ...     x, y, z = point
+        ...     q = 10e-9
+        ...     return (np.sin(2 * np.pi * x / q),
+        ...             0,
+        ...             np.cos(2 * np.pi * x / q))
+        >>> field = df.Field(mesh, dim=3, value=v_fun, norm=1e5)
+        >>> field.plane('z').mpl()
+        >>> cs = mag2exp.sans.cross_section(field, method='unpol',
+        ...                                 geometry='parallel')
+        >>> cs.plane('z').real.mpl.scalar()
+
+    .. plot::
+        :context: close-figs
+
+        2. Visualising spin-flip cross section with ``matplotlib``.
+
+        >>> import discretisedfield as df
+        >>> import micromagneticmodel as mm
+        >>> import numpy as np
+        >>> import mag2exp
+        >>> mesh = df.Mesh(p1=(-25e-9, -25e-9, -2e-9),
+        ...                p2=(25e-9, 25e-9, 50e-9),
+        ...                cell=(1e-9, 1e-9, 2e-9))
+        >>> def v_fun(point):
+        ...     x, y, z = point
+        ...     q = 10e-9
+        ...     return (np.sin(2 * np.pi * x / q),
+        ...             0,
+        ...             np.cos(2 * np.pi * x / q))
+        >>> field = df.Field(mesh, dim=3, value=v_fun, norm=1e5)
+        >>> field.plane('z').mpl()
+        >>> cs = mag2exp.sans.cross_section(field, method='pn',
+        ...                                 geometry='parallel')
+        >>> cs.plane('z').real.mpl.scalar()
     """
+    cross_s = _cross_section_matrix(field, polarisation=polarisation)
+
+    if method in ('polarised_pp', 'pp'):
+        return cross_s.pp
+    elif method in ('polarised_pn', 'pn'):
+        return cross_s.pn
+    elif method in ('polarised_np', 'np'):
+        return cross_s.np
+    elif method in ('polarised_nn', 'nn'):
+        return cross_s.nn
+    elif method in ('half_polarised_p', 'p'):
+        return cross_s.pp + cross_s.pn
+    elif method in ('half_polarised_n', 'n'):
+        return cross_s.nn + cross_s.np
+    elif method in ('unpolarised', 'unpol'):
+        return 0.5*(cross_s.pp + cross_s.pn + cross_s.np + cross_s.nn)
+    else:
+        msg = f'Method {method} is unknown.'
+        raise ValueError(msg)
+
+
+def chiral_function2(field, /, polarisation=[0, 0, 1]):
+    r""" Calculation of chiral function.
+    """
+    cross_s = _cross_section_matrix(field, polarisation=polarisation)
+    return cross_s.pn - cross_s.np
+
+
+def _cross_section_matrix(field, /, polarisation):
     m_fft = field.fftn
-    m_fft *= m_fft.mesh.dV
+    m_fft *= m_fft.mesh.dV  # TODO:  Normalisation
     q = df.Field(m_fft.mesh,
                  dim=3,
                  value=(lambda x: (0, 0, 0)
@@ -22,11 +200,11 @@ def cross_section2(field, /, method, polarisation=[0, 0, 1]):
     # Rotation of Pauli matrices
     initial = [0, 0, 1]
     if initial == polarisation:
-        r = R.identity()
+        r = Rotation.identity()
     else:
         fixed = np.cross(initial, polarisation)
-        r = R.align_vectors([polarisation, fixed],
-                            [initial, fixed])[0]
+        r = Rotation.align_vectors([polarisation, fixed],
+                                   [initial, fixed])[0]
     p_x = [[0, 1], [1, 0]]
     p_y = [[0, -1j], [1j, 0]]
     p_z = [[1, 0], [0, -1]]
@@ -37,44 +215,10 @@ def cross_section2(field, /, method, polarisation=[0, 0, 1]):
     magnetic_interaction_new = np.einsum('ijkl,lbc->ijkbc',
                                          magnetic_interaction.array,
                                          p_new)
-    cross_s = np.power(np.abs(magnetic_interaction_new), 2)
-
-    if method in ('polarised_pp', 'pp'):
-        return df.Field(mesh=m_fft.mesh, dim=1,
-                        value=cross_s[..., 0, 0, np.newaxis])
-    elif method in ('polarised_pn', 'pn'):
-        return df.Field(mesh=m_fft.mesh, dim=1,
-                        value=cross_s[..., 1, 0, np.newaxis])
-    elif method in ('polarised_np', 'np'):
-        return df.Field(mesh=m_fft.mesh, dim=1,
-                        value=cross_s[..., 0, 1, np.newaxis])
-    elif method in ('polarised_nn', 'nn'):
-        return df.Field(mesh=m_fft.mesh, dim=1,
-                        value=cross_s[..., 1, 1, np.newaxis])
-    elif method in ('half_polarised_p', 'p'):
-        return df.Field(mesh=m_fft.mesh, dim=1,
-                        value=(cross_s[..., 0, 0, np.newaxis] +
-                               cross_s[..., 1, 0, np.newaxis]))
-    elif method in ('half_polarised_n', 'n'):
-        return df.Field(mesh=m_fft.mesh, dim=1,
-                        value=(cross_s[..., 1, 1, np.newaxis] +
-                               cross_s[..., 0, 1, np.newaxis]))
-    elif method in ('unpolarised', 'unpol'):
-        return df.Field(mesh=m_fft.mesh, dim=1,
-                        value=0.5*(cross_s[..., 0, 0, np.newaxis] +
-                                   cross_s[..., 1, 0, np.newaxis] +
-                                   cross_s[..., 0, 1, np.newaxis] +
-                                   cross_s[..., 1, 1, np.newaxis]))
-    else:
-        msg = f'Method {method} is unknown.'
-        raise ValueError(msg)
-
-
-def chiral_function2(field, /, method, polarisation=[0, 0, 1]):
-    r""" Calculation of chiral function.
-    """
-    return -(cross_section2(field, method='pn', polarisation=polarisation) -
-             cross_section2(field, method='np', polarisation=polarisation))/2j
+    cs = np.power(np.abs(magnetic_interaction_new), 2)
+    return df.Field(mesh=m_fft.mesh, dim=4,
+                    components=['pp', 'np', 'pn', 'nn'],
+                    values=cs.reshape([*cs.shape[:3], 4]))
 
 
 def cross_section(field, /, method, geometry):
