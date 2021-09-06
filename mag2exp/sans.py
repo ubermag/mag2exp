@@ -218,7 +218,7 @@ def _cross_section_matrix(field, /, polarisation):
     cs = np.power(np.abs(magnetic_interaction_new), 2)
     return df.Field(mesh=m_fft.mesh, dim=4,
                     components=['pp', 'np', 'pn', 'nn'],
-                    values=cs.reshape([*cs.shape[:3], 4]))
+                    value=cs.reshape([*cs.shape[:3], 4]))
 
 
 def cross_section(field, /, method, geometry):
