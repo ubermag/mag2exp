@@ -133,12 +133,6 @@ def saxs(field):
         >>> xrs.mpl.scalar()
 
     """
-    # Direction arg will be removed soon.
-    magnetisation = df.integral(field.z * df.dz, direction='z')
-    m_fft = magnetisation.fftn
-    norm_field = df.Field(field.mesh, dim=1,
-                          value=(field.norm.array != 0))
-    volume = df.integral(norm_field * df.dV, direction='xyz')
-    factor = (field.mesh.dx*field.mesh.dy)**2 * 1e10  # Arbitary constant
-    factor /= volume
+    m_fft = field.fftn.plane(z=0)
+    factor = (m_fft.mesh.dx*m_fft.mesh.dy)**2
     return factor * (abs(m_fft)**2).real
