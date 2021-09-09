@@ -16,7 +16,7 @@ def ltem_phase(field, /, kcx=0.1, kcy=0.1):
     .. seealso:: :py:func:`mag2exp.ltem.phase`
     """
     phase, _ = ltem.phase(field, kcx=kcx, kcy=kcy)
-    phase.real.mpl.scalar(cmap='gray',
+    phase.mpl.scalar(cmap='gray',
                           interpolation='spline16',
                           colorbar_label=r'$\phi$ (radians)')
 
@@ -34,7 +34,8 @@ def ltem_ft_phase(field, /, kcx=0.1, kcy=0.1):
     fig, ax = plt.subplots()
     (ft_phase.conjugate * ft_phase).plane('z').real.mpl.scalar(
         ax=ax, cmap='gray', interpolation='spline16',
-        colorbar_label=r'$\widetilde{\phi}$ (radians$^{-1}$)')
+        colorbar_label=(r'$\left\vert\widetilde{\phi}\right\vert^2$'
+                        '(radians$^{-2}$)'))
     multiplier = uu.si_max_multiplier(ft_phase.mesh.region.edges)
     ax.add_patch(matplotlib.patches.Ellipse(
         xy=(0, 0),
