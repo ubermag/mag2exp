@@ -133,6 +133,6 @@ def saxs(field):
         >>> xrs.mpl.scalar()
 
     """
-    m_fft = field.fftn.plane(z=0)
+    m_fft = field.fftn.z.plane(z=0)
     factor = (m_fft.mesh.dx*m_fft.mesh.dy)**2
-    return factor * (abs(m_fft)**2).real
+    return factor * abs(m_fft)**2
