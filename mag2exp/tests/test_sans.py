@@ -229,3 +229,33 @@ def test_sans_chiral_perpendicular():
     m = df.Field(mesh, dim=3, value=m_fun)
     cf = mag2exp.sans.chiral_function(m, polarisation=[1, 0, 0]).plane(z=0)
     assert np.isclose(cf.array, 0).all()
+
+
+def test_sans_normalisation():
+    Ms = 1.1e6
+
+    def m_fun(pos):
+        x, y, z = pos
+        qx = 25e-9
+        return (0, np.sin(2*np.pi*x/qx), np.cos(2*np.pi*x/qx))
+
+    region = df.Region(p1=(0, 0, 0), p2=(100e-9, 100e-9, 100e-9))
+    mesh = df.Mesh(region=region, cell=(4e-9, 4e-9, 4e-9))
+    field1 = df.Field(mesh, dim=3, value=m_fun, norm=Ms)
+    sans1 = mag2exp.sans.cross_section(field1, method='unpol')
+    m1 = abs(sans1.array).max()
+
+    region2 = df.Region(p1=(0, 0, 0), p2=(100e-9, 100e-9, 100e-9))
+    mesh2 = df.Mesh(region=region2, cell=(2e-9, 2e-9, 2e-9))
+    field2 = df.Field(mesh2, dim=3, value=m_fun, norm=Ms)
+    sans2 = mag2exp.sans.cross_section(field2, method='unpol')
+    m2 = abs(sans2.array).max()
+
+    region = df.Region(p1=(0, 0, 0), p2=(150e-9, 150e-9, 150e-9))
+    mesh = df.Mesh(region=region, cell=(5e-9, 5e-9, 5e-9))
+    field3 = df.Field(mesh, dim=3, value=m_fun, norm=Ms)
+    sans3 = mag2exp.sans.cross_section(field3, method='unpol')
+    m3 = abs(sans3.array).max()
+
+    assert np.isclose(m1, m2)
+    assert np.isclose(m1/m3, (100/150)**6)
