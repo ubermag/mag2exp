@@ -36,7 +36,7 @@ def magnetisation(field):
     ...                cell=(1e-9, 1e-9, 2e-9))
     >>> field= df.Field(mesh, dim=3, value=(0,0,1), norm=1e6)
     >>> mag2exp.magnetometry.magnetisation(field)
-    (0.0, 0.0, 1000000.0000004871)
+    (0.0, 0.0, 1000000.0)
 
     2. Spatially dependent magnetisation.
 
@@ -56,12 +56,10 @@ def magnetisation(field):
     ...         return (-1, 1, 0)
     >>> field= df.Field(mesh, dim=3, value=v_fun, norm=1e6)
     >>> mag2exp.magnetometry.magnetisation(field)
-    (-325269.1193457324, 405269.11934569944, 460000.0000001728)
+    (-325269.1193457478, 405269.1193455959, 460000.0)
 
     """
-    norm_field = df.Field(field.mesh, dim=1, value=(field.norm.array != 0))
-    volume = df.integral(norm_field * df.dV, direction='xyz')
-    return df.integral(field * df.dV / volume, direction='xyz')
+    return tuple(np.array(field.average)/field.orientation.norm.average)
 
 
 def torque(system, /, use_demag=True):
