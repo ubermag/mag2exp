@@ -134,5 +134,5 @@ def saxs(field):
 
     """
     m_fft = field.fftn.z.plane(z=0)
-    factor = (m_fft.mesh.dx*m_fft.mesh.dy)**2
-    return factor * abs(m_fft)**2
+    m_fft *= field.mesh.dV * 1e16
+    return abs(m_fft)**2
