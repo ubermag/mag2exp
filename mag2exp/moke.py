@@ -4,9 +4,10 @@ Module for calculation of magneto-optical Kerr effect
 quantities.
 """
 import numpy as np
+import discretisedfield as df
 
 
-def calculate_A(theta_j, nj, Q, field):
+def _calculate_A(theta_j, nj, Q, field):
     r"""Calculation of the boundary matrix.
 
     .. math::
@@ -41,18 +42,17 @@ def calculate_A(theta_j, nj, Q, field):
     a_yj = np.sin(theta_j)
     a_zj = np.cos(theta_j)
 
+    s = np.shape(m_arr)
     mx_arr = m_arr[..., 0].flatten()
     my_arr = m_arr[..., 1].flatten()
     mz_arr = m_arr[..., 2].flatten()
-    s = np.shape(mx_arr)
 
     A = []
-
     for (mx, my, mz) in zip(mx_arr, my_arr, mz_arr):
         A.append([[1, 0, 1, 0],
-                  [(1j*Q*a_yj**2)*(my*(1+a_zj**2)/(a_yj*a_zj) - mz)/2,
+                  [(1j*Q)*(a_yj*my*(1+a_zj**2)/a_zj - mz*a_yj**2)/2,
                    a_zj,
-                   -(1j*Q*a_yj**2)/2 * (my*(1+a_zj**2)/(a_yj*a_zj) + mz),
+                   -(1j*Q)/2 * (a_yj*my*(1+a_zj**2)/(a_zj) + mz*a_yj**2),
                    -a_zj],
                   [-(1j*Q*nj)/2 * (my*a_yj + mz*a_zj),
                    -nj,
@@ -62,10 +62,10 @@ def calculate_A(theta_j, nj, Q, field):
                    -(1j*Q*nj)/2 * (my*a_yj/a_zj - mz),
                    -nj*a_zj,
                    (1j*Q*nj)/2 * (my*a_yj/a_zj + mz)]])
-    return np.reshape(A, (*s, 4, 4))
+    return np.reshape(A, (*s[0:2], 4, 4))
 
 
-def calculate_D(theta_j, nj, Q, dj, wavelength, field):
+def _calculate_D(theta_j, nj, Q, dj, wavelength, field):
     r"""Calculation of the propagation matrix.
 
     .. math::
@@ -104,10 +104,10 @@ def calculate_D(theta_j, nj, Q, dj, wavelength, field):
     a_yj = np.sin(theta_j)
     a_zj = np.cos(theta_j)
 
+    s = np.shape(m_arr)
     mx_arr = m_arr[..., 0].flatten()
     my_arr = m_arr[..., 1].flatten()
     mz_arr = m_arr[..., 2].flatten()
-    s = np.shape(mx_arr)
 
     D = []
     for (mx, my, mz) in zip(mx_arr, my_arr, mz_arr):
@@ -121,10 +121,10 @@ def calculate_D(theta_j, nj, Q, dj, wavelength, field):
                   [-U*np.sin(di), U*np.cos(di), 0, 0],
                   [0, 0, np.cos(dr)/U, np.sin(dr)/U],
                   [0, 0, -np.sin(dr)/U, np.cos(dr)]])
-    return np.reshape(D, (*s, 4, 4))
+    return np.reshape(D, (*s[0:2], 4, 4))
 
 
-def angle_snell(theta0, n0, n1):
+def _angle_snell(theta0, n0, n1):
     r"""Calculation of the new angle from Snell's law.
 
     Snell's is
@@ -139,11 +139,23 @@ def angle_snell(theta0, n0, n1):
     return np.arcsin((n0*np.sin(theta0))/n1)
 
 
-def calculate_M(field, theta, n, Q, wavelength):
-    r""" Mueller matrix.
+def _calculate_M(field, theta_0, n, Q, wavelength):
+    r""" Product matrix.
+
+    The product matrix is the matrix used to describe light propagation in
+    a magnetic multilayer system. In this function, it has the form
+
+    .. math::
+        \begin{equation}
+            M = A_f^{-1} \prod_{j} A_{j} D_j A_j^{-1} A_f,
+        \end{equation}
+
+    where :math:`A_j` is the boundary matrix for the :math:`j`th layer,
+    :math:`D_j` is the propagation matrix for the :math:`j`th layer,
+    and :math:`A_f` is the boundary layer matrix for free space.
     """
     # Free space
-    A = calculate_A(theta, 1, 0, field.plane('z'))
+    A = _calculate_A(theta_0, 1, 0, field.plane('z'))
     M = np.linalg.inv(A)
 
     # Sample
@@ -152,18 +164,82 @@ def calculate_M(field, theta, n, Q, wavelength):
     z_step = field.mesh.cell[2]
     values = np.arange(z_min, z_max+1e-20, z_step)
 
-    theta = angle_snell(theta, 1, n)
+    theta = _angle_snell(theta_0, 1, n)
     for z in values:  # Think about direction of loop
-        A = calculate_A(theta, n, Q, field.plane(z=z))
+        A = _calculate_A(theta, n, Q, field.plane(z=z))
+        D = _calculate_D(theta, n, Q, field.mesh.dz,
+                         wavelength, field.plane(z=z))
         M = np.matmul(M, A)
-        D = calculate_D(theta, n, Q, field.mesh.dz,
-                        wavelength, field.plane(z=z))
         M = np.matmul(M, D)
-        A = calculate_A(theta, n, Q, field.plane(z=z))
         M = np.matmul(M, np.linalg.inv(A))
 
     # Free space
-    theta = angle_snell(theta, n, 1)
-    A = calculate_A(theta, 1, 0, field.plane('z')))
+    theta = theta_0
+    A = _calculate_A(theta, 1, 0, field.plane('z'))
     M = np.matmul(M, A)
     return M
+
+
+def _M_to_r(M):
+    r"""Product matrix to reflection matrix.
+    """
+    G_matrix = M[:, :, 0:2, 0:2]
+    I_matrix = M[:, :, 2:4, 0:2]
+    G_inv = np.linalg.inv(G_matrix)
+    return np.matmul(I_matrix, G_inv)
+
+
+def _M_to_t(M):
+    r"""Product matrix to transmission matrix.
+    """
+    G_matrix = M[:, :, 0:2, 0:2]
+    G_inv = np.linalg.inv(G_matrix)
+    return G_inv
+
+
+def intensity(field, theta, n, Q, wavelength, E_i, mode='reflection'):
+    r"""MOKE image.
+    """
+    E_f = e_field(field, theta, n, Q, wavelength, E_i, mode=mode)
+    return abs(E_f)**2
+
+
+def kerr_angle(field, theta, n, Q, wavelength, E_i, mode='reflection'):
+    r"""Kerr angle.
+    """
+    M = _calculate_M(field, theta, n, Q, wavelength)
+    if mode in ('reflection', 'r'):
+        m = _M_to_r(M)
+    elif mode in ('transmission', 't'):
+        m = _M_to_t(M)
+    else:
+        msg = f'Mode {mode} is unknown.'
+        raise ValueError(msg)
+
+    k_s = -m[..., 0, 0]/m[..., 0, 0]
+    k_p = -m[..., 0, 0]/m[..., 1, 1]
+
+    reshape((*m.shape[0:2], 1, 2))
+
+    return df.Field(mesh=field.integral('z').mesh, dim=1,
+                    value=E_f,
+                    components=['s', 'p'])
+
+
+def e_field(field, theta, n, Q, wavelength, E_i, mode='reflection'):
+    r"""Kerr angle.
+    """
+    M = _calculate_M(field, theta, n, Q, wavelength)
+    if mode in ('reflection', 'r'):
+        m = _M_to_r(M)
+    elif mode in ('transmission', 't'):
+        m = _M_to_t(M)
+    else:
+        msg = f'Mode {mode} is unknown.'
+        raise ValueError(msg)
+
+    E_f = np.matmul(m, E_i).reshape((*m.shape[0:2], 1, 2))
+
+    return df.Field(mesh=field.integral('z').mesh, dim=2,
+                    value=E_f,
+                    components=['s', 'p'])
