@@ -198,13 +198,24 @@ def _M_to_t(M):
 
 
 def intensity(field, theta, n, Q, wavelength, E_i, mode='reflection'):
-    r"""MOKE image.
+    r"""MOKE intensity.
+
+    Calculation of the intensity of the magneto-optical Kerr effect from an
+    incident wave decribed by
+
+    .. math::
+        \begin{pmatrix}
+            E^i_s // E^i_p ,
+        \end{pmatrix}
+
+    where E^i_s and E^i_p are the electric field components of incident linear
+    s and p polarisation modes.
     """
     E_f = e_field(field, theta, n, Q, wavelength, E_i, mode=mode)
     return abs(E_f)**2
 
 
-def kerr_angle(field, theta, n, Q, wavelength, E_i, mode='reflection'):
+def kerr_angle(field, theta, n, Q, wavelength, mode='reflection'):
     r"""Kerr angle.
     """
     M = _calculate_M(field, theta, n, Q, wavelength)
@@ -216,13 +227,18 @@ def kerr_angle(field, theta, n, Q, wavelength, E_i, mode='reflection'):
         msg = f'Mode {mode} is unknown.'
         raise ValueError(msg)
 
-    k_s = -m[..., 0, 0]/m[..., 0, 0]
-    k_p = -m[..., 0, 0]/m[..., 1, 1]
+    k_s_r = -np.real(m[..., 1, 0]/m[..., 0, 0])
+    k_p_r = np.real(m[..., 0, 1]/m[..., 1, 1])
+    k_s_i = -np.imag(m[..., 1, 0]/m[..., 0, 0]) * k_s_r
+    k_p_i = np.imag(m[..., 0, 1]/m[..., 1, 1]) / k_p_r
 
-    reshape((*m.shape[0:2], 1, 2))
+    k_s = k_s_r + 1j * k_s_i
+    k_p = k_p_r + 1j * k_p_i
 
-    return df.Field(mesh=field.integral('z').mesh, dim=1,
-                    value=E_f,
+    k_a = np.stack([k_s, k_p], axis=-1)
+
+    return df.Field(mesh=field.integral('z').mesh, dim=2,
+                    value=k_a[:, :, np.newaxis, :],
                     components=['s', 'p'])
 
 
