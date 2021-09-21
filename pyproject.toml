@@ -13,6 +13,10 @@ license = {file = "LICENSE"}
 
 authors = [
   {name = "Samuel Holt"},
+  {name = "James Loudon"},
+  {name = "Thomas Hicken"},
+  {name = "Geeta Balakrishnan"},
+  {name = "David Cortés Ortuño"},
   {name = "Martin Lang"},
   {name = "Marijan Beg"},
   {name = "Hans Fangohr"}
@@ -50,9 +54,6 @@ homepage = "https://ubermag.github.io"
 documentation = "https://ubermag.github.io/documentation/mag2exp"
 repository = "https://github.com/ubermag/mag2exp"
 
-[project.scripts]
-ovf2vtk = "discretisedfield.ovf2vtk:main"
-
 # to define additional information we use a custom table
 # we need to own the entry for tool.NAME on PyPI
 # see: https://www.python.org/dev/peps/pep-0518/#tool-table
@@ -60,7 +61,6 @@ ovf2vtk = "discretisedfield.ovf2vtk:main"
 doi = "10.5281/zenodo.3539461"
 copyright_holder = "Marijan Beg and Hans Fangohr"
 contributors = [
-
 ]
 about = """
 ...
