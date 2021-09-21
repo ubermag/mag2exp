@@ -12,6 +12,10 @@ license = {file = "LICENSE"}
 
 authors = [
   {name = "Samuel Holt"},
+  {name = "James Loudon"},
+  {name = "Thomas Hicken"},
+  {name = "Geeta Balakrishnan"},
+  {name = "David Cortés Ortuño"},
   {name = "Martin Lang"},
   {name = "Marijan Beg"},
   {name = "Hans Fangohr"}
@@ -48,10 +52,6 @@ dependencies = [
 homepage = "ubermag.github.io"
 documentation = "ubermag.github.io/documentation/mag2exp"
 repository = "github.com/ubermag/mag2exp"
-
-# console entry points
-[project.scripts]
-ovf2vtk = "discretisedfield.ovf2vtk:main"
 
 # to define additional information we use a custom table
 # we need to own the entry for tool.NAME on PyPI
