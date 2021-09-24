@@ -15,7 +15,6 @@ authors = [
   {name = "Samuel Holt"},
   {name = "James Loudon"},
   {name = "Thomas Hicken"},
-  {name = "Geeta Balakrishnan"},
   {name = "David Cortés Ortuño"},
   {name = "Martin Lang"},
   {name = "Marijan Beg"},
@@ -64,7 +63,9 @@ contributors = [
 
 ]
 about = """
-...
+- simulations of experimental techniques perfomed on magnetisation textures,
+- the ability to perform "virtual" experiments,
+- the functionality to compare of real experimental results agaist simulated experiments.
 """
 
 [tool.coverage.run]
