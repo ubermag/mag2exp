@@ -1,5 +1,5 @@
 PROJECT=mag2exp
-IPYNBPATH=docs/ipynb/*.ipynb
+IPYNBPATH=docs/*.ipynb
 PYTHON?=python
 
 test-unittests:
