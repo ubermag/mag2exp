@@ -1,5 +1,5 @@
 # mag2exp
-[Samuel Holt](https://github.com/samjrholt)<sup>1</sup>, James Loudon<sup>2</sup>, Thomas Hicken<sup>3</sup>, Geeta Balakrishnan<sup>1</sup>, [David Cortés Ortuño](https://github.com/davidcortesortuno)<sup>4</sup>, [Martin Lang](https://github.com/lang-m)<sup>4</sup>, [Marijan Beg](https://github.com/marijanbeg)<sup>5,4</sup>, [Hans Fangohr](https://github.com/fangohr)<sup>4,6,7</sup>
+[Samuel Holt](https://github.com/samjrholt)<sup>1</sup>, James Loudon<sup>2</sup>, Thomas Hicken<sup>3</sup>, [David Cortés Ortuño](https://github.com/davidcortesortuno)<sup>4</sup>, [Martin Lang](https://github.com/lang-m)<sup>4</sup>, [Marijan Beg](https://github.com/marijanbeg)<sup>5,4</sup>, [Hans Fangohr](https://github.com/fangohr)<sup>4,6,7</sup>
 
 <sup>1</sup> *Department of Physics, University of Warwick, Coventry CV4 7AL, UK*  
 <sup>2</sup> *Department of Materials Science and Metallurgy, University of Cambridge, Cambridge, CB3 0FS, United Kingdom*  
@@ -18,7 +18,7 @@
 | Coverage | [![codecov](https://codecov.io/gh/ubermag/mag2exp/branch/master/graph/badge.svg?token=hcK4fofmrL)](https://codecov.io/gh/ubermag/mag2exp) |
 | Documentation | [![Documentation](https://img.shields.io/badge/Docs-ubermag.github.io-blue)](https://ubermag.github.io/documentation/mag2exp.html) |
 | YouTube | [![YouTube](https://img.shields.io/badge/YouTube-ubermag-blue)](https://www.youtube.com/channel/UC7MSqVQSMFV42R1jAYmKGLg) |
-| Binder | [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/ubermag/mag2exp/stable?filepath=docs%2Fipynb%2Findex.ipynb) |
+| Binder | [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/ubermag/mag2exp/stable?urlpath=lab/tree/docs/ipynb/index.ipynb)|
 | Platforms | [![Platforms](https://anaconda.org/conda-forge/mag2exp/badges/platforms.svg)](https://anaconda.org/conda-forge/mag2exp) |
 | Downloads | [![Downloads](https://anaconda.org/conda-forge/mag2exp/badges/downloads.svg)](https://anaconda.org/conda-forge/mag2exp) |
 | License | [![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause) |
@@ -28,7 +28,9 @@
 
 `mag2exp` is a Python package, integrated with Jupyter, providing:
 
-...
+- simulations of experimental techniques perfomed on magnetisation textures,
+- the ability to perform "virtual" experiments,
+- the functionality to compare of real experimental results agaist simulated experiments.
 
 
 It is available on Windows, MacOS, and Linux. It requires Python 3.8+.
@@ -71,7 +73,7 @@ Licensed under the BSD 3-Clause "New" or "Revised" License. For details, please 
 
 2. M. Beg, R. A. Pepper, and H. Fangohr. User interfaces for computational science: A domain specific language for OOMMF embedded in Python. [*AIP Advances* **7**, 56025](http://aip.scitation.org/doi/10.1063/1.4977225) (2017).
 
-3. Samuel Holt, James Loudon, Thomas Hicken, Geeta Balakrishnan, David Cortés Ortuño, Martin Lang, Marijan Beg, Hans Fangohr. mag2exp: Simulate experimental measurements for magnetic materials DOI: [10.5281/zenodo.3539461](http://doi.org/10.5281/zenodo.3539461) (2021).
+3. Samuel Holt, James Loudon, Thomas Hicken, David Cortés Ortuño, Martin Lang, Marijan Beg, Hans Fangohr. mag2exp: Simulate experimental measurements for magnetic materials DOI: [10.5281/zenodo.3539461](http://doi.org/10.5281/zenodo.3539461) (2021).
 
 ## Acknowledgements
 
