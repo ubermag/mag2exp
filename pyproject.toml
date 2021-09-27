@@ -56,7 +56,7 @@ repository = "https://github.com/ubermag/mag2exp"
 # see: https://www.python.org/dev/peps/pep-0518/#tool-table
 [tool.ubermag]
 doi = "10.5281/zenodo.3539461"
-copyright_holder = "Marijan Beg and Hans Fangohr"
+copyright_holder = "Samuel Holt"
 contributors = [
 
 ]
