@@ -2,10 +2,17 @@
 
 Module for calculation of magneto-optical Kerr effect
 quantities.
+
+**The current version of MOKE microscopy is under development and currently
+the angle of incidence is approximated to be the same throughout
+the sample. This is not correct but allows roughly behaviour to be seen
+and we are looking to correct this in future releases. Please feel free to
+contact us or raise an issue if you have any comments on this technique.**
 """
 import numpy as np
 import discretisedfield as df
 import mag2exp
+import warnings
 
 
 def _calculate_A(theta_j, nj, voight, field):
@@ -134,7 +141,7 @@ def _angle_snell(theta0, n0, n1):
         n_0 \sin\theta_0 = n_1 \sin\theta_1
 
     where :math:`n_0` and :math:`n_1` are the refractive indexes of layer 0
-    and 1 repectively. :math:`\theta_0` and :math:`\theta_1` are the angles
+    and 1 respectively. :math:`\theta_0` and :math:`\theta_1` are the angles
     of light in layer 0 and 1, with respect to the surface normal.
     """
     return np.arcsin((n0*np.sin(theta0))/n1)
@@ -202,6 +209,12 @@ def intensity(field, theta, n, voight, wavelength, E_i,
               mode='reflection', fwhm=None):
     r"""MOKE intensity.
 
+    **The current version of MOKE microscopy is under development and currently
+    the angle of incidence is approximated to be the same throughout
+    the sample. This is not correct but allows roughly behaviour to be seen
+    and we are looking to correct this in future releases. Please feel free to
+    contact us or raise an issue if you have any comments on this technique.**
+
     Calculation of the intensity of the magneto-optical Kerr effect from an
     incident wave described by
 
@@ -218,7 +231,7 @@ def intensity(field, theta, n, voight, wavelength, E_i,
     field : discretisedfield.field
         Magnetisation field.
     theta : float
-        Defines the and of incidence of the beam rlative to the surface normal
+        Defines the and of incidence of the beam relative to the surface normal
         in the :math:`yz` plane
         with respect to the sample reference frame.
     n_0 : float
@@ -282,6 +295,11 @@ def intensity(field, theta, n, voight, wavelength, E_i,
 def kerr_angle(field, theta, n_0, voight, wavelength, fwhm=None):
     r"""Kerr angle.
 
+    **The current version of MOKE microscopy is under development and currently
+    the angle of incidence is approximated to be the same throughout
+    the sample. This is not correct but allows roughly behaviour to be seen
+    and we are looking to correct this in future releases. Please feel free to
+    contact us or raise an issue if you have any comments on this technique.**
     The Kerr rotation is calculated from
 
     .. math::
@@ -302,7 +320,7 @@ def kerr_angle(field, theta, n_0, voight, wavelength, fwhm=None):
     field : discretisedfield.field
         Magnetisation field.
     theta : float
-        Defines the and of incidence of the beam rlative to the surface normal
+        Defines the and of incidence of the beam relative to the surface normal
         in the :math:`yz` plane
         with respect to the sample reference frame.
     n_0 : float
@@ -345,6 +363,10 @@ def kerr_angle(field, theta, n_0, voight, wavelength, fwhm=None):
         >>> angle = mag2exp.moke.kerr_angle(field, 0, 2, 1, 600e-9)
         >>> angle.s.real.mpl()
     """
+    warnings.simplefilter("always", lineno=367)
+    warnings.warn('This technique is currently under development so results'
+                  ' may not be accurate.'
+                  ' Please see the documentation for further details.')
     M = _calculate_M(field, theta, n_0, voight, wavelength)
     m = _M_to_r(M)
 
@@ -368,6 +390,12 @@ def e_field(field, theta, n_0, voight, wavelength, E_i,
             mode='reflection', fwhm=None):
     r"""Electric field.
 
+    **The current version of MOKE microscopy is under development and currently
+    the angle of incidence is approximated to be the same throughout
+    the sample. This is not correct but allows roughly behaviour to be seen
+    and we are looking to correct this in future releases. Please feel free to
+    contact us or raise an issue if you have any comments on this technique.**
+
     Calculate the reflected or transmitted electric field using
 
     .. math::
@@ -379,7 +407,7 @@ def e_field(field, theta, n_0, voight, wavelength, E_i,
     where E^i_s and E^i_p are the electric field components of incident linear
     s and p polarisation modes.
 
-    The relection and transmission matrices are calculated from the product
+    The reflection and transmission matrices are calculated from the product
     matrix.
 
     The product matrix is the matrix used to describe light propagation in
@@ -400,14 +428,13 @@ def e_field(field, theta, n_0, voight, wavelength, E_i,
     The beam in incident in the :math:`yz` plane with :math:`\theta` the angle
     from the normal.
 
-    The current version does not deal with the refractive index correctly.
 
     Parameters
     ----------
     field : discretisedfield.field
         Magnetisation field.
     theta : float
-        Defines the and of incidence of the beam rlative to the surface normal
+        Defines the and of incidence of the beam relative to the surface normal
         in the :math:`yz` plane
         with respect to the sample reference frame.
     n_0 : float
@@ -428,7 +455,7 @@ def e_field(field, theta, n_0, voight, wavelength, E_i,
     Returns
     -------
     discretisedfield.Field
-        Electric field of relected and transmitted wave with coponents ``s``
+        Electric field of reflected and transmitted wave with components ``s``
         and ``p`` representing the polarisation.
 
     Examples
@@ -457,6 +484,10 @@ def e_field(field, theta, n_0, voight, wavelength, E_i,
         >>> E_f = mag2exp.moke.e_field(field, 0, 2, 1, 600e-9, E_i,
         ...                            mode='reflection')
     """
+    warnings.simplefilter("always", lineno=489)
+    warnings.warn('This technique is currently under development so results'
+                  ' may not be accurate.'
+                  ' Please see the documentation for further details.')
     M = _calculate_M(field, theta, n_0, voight, wavelength)
     if mode in ('reflection', 'r'):
         m = _M_to_r(M)
