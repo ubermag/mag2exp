@@ -5,6 +5,7 @@ quantities.
 """
 import numpy as np
 import discretisedfield as df
+import mag2exp
 
 
 def _calculate_A(theta_j, nj, voight, field):
@@ -197,7 +198,8 @@ def _M_to_t(M):
     return G_inv
 
 
-def intensity(field, theta, n, voight, wavelength, E_i, mode='reflection'):
+def intensity(field, theta, n, voight, wavelength, E_i,
+              mode='reflection', fwhm=None):
     r"""MOKE intensity.
 
     Calculation of the intensity of the magneto-optical Kerr effect from an
@@ -230,6 +232,9 @@ def intensity(field, theta, n, voight, wavelength, E_i, mode='reflection'):
         s and p polarisation modes.
     mode : str
         Reflection or transmission mode.
+    fwhm : array_like, optional
+        If specified, convolutes the output image with a 2 Dimensional Gaussian
+        with the full width half maximum (fwhm) specified.
 
     Returns
     -------
@@ -268,10 +273,13 @@ def intensity(field, theta, n, voight, wavelength, E_i, mode='reflection'):
 
     """
     E_f = e_field(field, theta, n, voight, wavelength, E_i, mode=mode)
-    return abs(E_f)**2
+    intensity = abs(E_f)**2
+    if fwhm is not None:
+        intensity = mag2exp.util.gaussian_filter(intensity, fwhm=fwhm)
+    return intensity
 
 
-def kerr_angle(field, theta, n, voight, wavelength):
+def kerr_angle(field, theta, n_0, voight, wavelength, fwhm=None):
     r"""Kerr angle.
 
     The Kerr rotation is calculated from
@@ -288,8 +296,56 @@ def kerr_angle(field, theta, n, voight, wavelength):
     where :math:`\phi'` is the Kerr rotation and
     :math:`\phi''` is the ellipticity for the s and p polarisations.
     :math:`r` are the components of the rotation matrix.
+
+    Parameters
+    ----------
+    field : discretisedfield.field
+        Magnetisation field.
+    theta : float
+        Defines the and of incidence of the beam rlative to the surface normal
+        in the :math:`yz` plane
+        with respect to the sample reference frame.
+    n_0 : float
+        Complex refractive index.
+    voight : float
+        Complex Voight parameter.
+    wavelength : float
+        Wavelength of the incident beam.
+    fwhm : array_like, optional
+        If specified, convolutes the output image with a 2 Dimensional Gaussian
+        with the full width half maximum (fwhm) specified.
+
+    Returns
+    -------
+    discretisedfield.Field
+        Kerr angle of the MOKE.
+
+    Examples
+    --------
+
+    .. plot::
+
+        1. Visualising the MOKE with ``matplotlib``.
+
+        >>> import discretisedfield as df
+        >>> import micromagneticmodel as mm
+        >>> import numpy as np
+        >>> import mag2exp
+        >>> mesh = df.Mesh(p1=(-25e-9, -25e-9, -25e-9),
+        ...                p2=(25e-9, 25e-9, 25e-9),
+        ...                cell=(1e-9, 1e-9, 1e-9))
+        >>> def v_fun(point):
+        ...     x, y, z = point
+        ...     q = 10e-9
+        ...     return (0,
+        ...             np.sin(2 * np.pi * x / q),
+        ...             np.cos(2 * np.pi * x / q))
+        >>> field = df.Field(mesh, dim=3, value=v_fun, norm=1e5)
+        >>> E_i = [1, 1j]
+        >>> angle = mag2exp.moke.kerr_angle(field, 0, 2, 1, 600e-9)
+        >>> angle.s.real.mpl()
     """
-    M = _calculate_M(field, theta, n, voight, wavelength)
+    M = _calculate_M(field, theta, n_0, voight, wavelength)
     m = _M_to_r(M)
 
     k_s = m[..., 1, 0]/m[..., 0, 0]
@@ -298,12 +354,18 @@ def kerr_angle(field, theta, n, voight, wavelength):
 
     k_a = np.stack([k_s, k_p], axis=-1)
 
-    return df.Field(mesh=field.plane('z').mesh, dim=2,
-                    value=k_a[:, :, np.newaxis, :],
-                    components=['s', 'p'])
+    angle = df.Field(mesh=field.plane('z').mesh, dim=2,
+                     value=k_a[:, :, np.newaxis, :],
+                     components=['s', 'p'])
+
+    if fwhm is not None:
+        angle = mag2exp.util.gaussian_filter(angle, fwhm=fwhm)
+
+    return angle
 
 
-def e_field(field, theta, n_0, voight, wavelength, E_i, mode='reflection'):
+def e_field(field, theta, n_0, voight, wavelength, E_i,
+            mode='reflection', fwhm=None):
     r"""Electric field.
 
     Calculate the reflected or transmitted electric field using
@@ -338,6 +400,8 @@ def e_field(field, theta, n_0, voight, wavelength, E_i, mode='reflection'):
     The beam in incident in the :math:`yz` plane with :math:`\theta` the angle
     from the normal.
 
+    The current version does not deal with the refractive index correctly.
+
     Parameters
     ----------
     field : discretisedfield.field
@@ -357,6 +421,9 @@ def e_field(field, theta, n_0, voight, wavelength, E_i, mode='reflection'):
         s and p polarisation modes.
     mode : str
         Reflection or transmission mode.
+    fwhm : array_like, optional
+        If specified, convolutes the output image with a 2 Dimensional Gaussian
+        with the full width half maximum (fwhm) specified.
 
     Returns
     -------
@@ -400,7 +467,10 @@ def e_field(field, theta, n_0, voight, wavelength, E_i, mode='reflection'):
         raise ValueError(msg)
 
     E_f = np.matmul(m, E_i)[:, :, np.newaxis, :]
+    E_f_field = df.Field(mesh=field.plane('z').mesh, dim=2,
+                         value=E_f,
+                         components=['s', 'p'])
+    if fwhm is not None:
+        E_f_field = mag2exp.util.gaussian_filter(E_f_field, fwhm=fwhm)
 
-    return df.Field(mesh=field.plane('z').mesh, dim=2,
-                    value=E_f,
-                    components=['s', 'p'])
+    return E_f_field

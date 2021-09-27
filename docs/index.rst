@@ -17,6 +17,7 @@
     ipynb/X-ray_Holography
     ipynb/SAXS
     ipynb/SANS
+    ipynb/MOKE
 
 
 API Reference
