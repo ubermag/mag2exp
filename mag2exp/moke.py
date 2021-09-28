@@ -5,7 +5,7 @@ quantities.
 
 **The current version of MOKE microscopy is under development and currently
 the angle of incidence is approximated to be the same throughout
-the sample. This is not correct but allows roughly behaviour to be seen
+the sample. This is not correct but allows the rough behaviour to be seen
 and we are looking to correct this in future releases. Please feel free to
 contact us or raise an issue if you have any comments on this technique.**
 """
@@ -211,7 +211,7 @@ def intensity(field, theta, n, voight, wavelength, E_i,
 
     **The current version of MOKE microscopy is under development and currently
     the angle of incidence is approximated to be the same throughout
-    the sample. This is not correct but allows roughly behaviour to be seen
+    the sample. This is not correct but allows the rough behaviour to be seen
     and we are looking to correct this in future releases. Please feel free to
     contact us or raise an issue if you have any comments on this technique.**
 
@@ -297,9 +297,10 @@ def kerr_angle(field, theta, n_0, voight, wavelength, fwhm=None):
 
     **The current version of MOKE microscopy is under development and currently
     the angle of incidence is approximated to be the same throughout
-    the sample. This is not correct but allows roughly behaviour to be seen
+    the sample. This is not correct but allows the rough behaviour to be seen
     and we are looking to correct this in future releases. Please feel free to
     contact us or raise an issue if you have any comments on this technique.**
+
     The Kerr rotation is calculated from
 
     .. math::
@@ -392,7 +393,7 @@ def e_field(field, theta, n_0, voight, wavelength, E_i,
 
     **The current version of MOKE microscopy is under development and currently
     the angle of incidence is approximated to be the same throughout
-    the sample. This is not correct but allows roughly behaviour to be seen
+    the sample. This is not correct but allows the rough behaviour to be seen
     and we are looking to correct this in future releases. Please feel free to
     contact us or raise an issue if you have any comments on this technique.**
 
@@ -463,7 +464,7 @@ def e_field(field, theta, n_0, voight, wavelength, E_i,
 
     .. plot::
 
-        1. Calculating the relected electric field from a circularly polarised
+        1. Calculating the reflected electric field from a circularly polarised
         wave.
 
         >>> import discretisedfield as df
