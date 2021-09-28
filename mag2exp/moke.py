@@ -388,7 +388,7 @@ def kerr_angle(field, theta, n_0, voight, wavelength, fwhm=None):
 
 
 def e_field(field, theta, n_0, voight, wavelength, E_i,
-            mode='reflection', fwhm=None):
+            mode='reflection'):
     r"""Electric field.
 
     **The current version of MOKE microscopy is under development and currently
@@ -449,9 +449,6 @@ def e_field(field, theta, n_0, voight, wavelength, E_i,
         s and p polarisation modes.
     mode : str
         Reflection or transmission mode.
-    fwhm : array_like, optional
-        If specified, convolutes the output image with a 2 Dimensional Gaussian
-        with the full width half maximum (fwhm) specified.
 
     Returns
     -------
@@ -502,7 +499,5 @@ def e_field(field, theta, n_0, voight, wavelength, E_i,
     E_f_field = df.Field(mesh=field.plane('z').mesh, dim=2,
                          value=E_f,
                          components=['s', 'p'])
-    if fwhm is not None:
-        E_f_field = mag2exp.util.gaussian_filter(E_f_field, fwhm=fwhm)
 
     return E_f_field
