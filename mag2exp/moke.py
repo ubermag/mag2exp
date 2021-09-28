@@ -292,7 +292,7 @@ def intensity(field, theta, n, voight, wavelength, E_i,
     return intensity
 
 
-def kerr_angle(field, theta, n_0, voight, wavelength, fwhm=None):
+def kerr_angle(field, theta, n_0, voight, wavelength):
     r"""Kerr angle.
 
     **The current version of MOKE microscopy is under development and currently
@@ -380,10 +380,6 @@ def kerr_angle(field, theta, n_0, voight, wavelength, fwhm=None):
     angle = df.Field(mesh=field.plane('z').mesh, dim=2,
                      value=k_a[:, :, np.newaxis, :],
                      components=['s', 'p'])
-
-    if fwhm is not None:
-        angle = mag2exp.util.gaussian_filter(angle, fwhm=fwhm)
-
     return angle
 
 
