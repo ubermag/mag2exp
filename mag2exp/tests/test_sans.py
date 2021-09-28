@@ -260,6 +260,7 @@ def test_sans_normalisation():
     assert np.isclose(m1, m2)
     assert np.isclose(m1/m3, (100/150)**6)
 
+
 def test_sans_cross_section_methods():
     region = df.Region(p1=(-50e-9, -100e-9, 0), p2=(50e-9, 100e-9, 30e-9))
     mesh = df.Mesh(region=region, cell=(5e-9, 5e-9, 3e-9))
