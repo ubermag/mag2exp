@@ -27,7 +27,7 @@ def gaussian_filter(field, /, fwhm):
         Gaussian filter only supports fields with field.dim=1.
     """
     if field.dim > 1:
-        msg = f'Gaussian filter only supports fields with field.dim=1.'
+        msg = 'Gaussian filter only supports fields with field.dim=1.'
         raise RuntimeError(msg)
     sigma = fwhm / (2 * np.sqrt(2 * np.log(2)))
     if field.mesh.attributes['isplane']:
