@@ -47,7 +47,7 @@ jobs:
 
     - name: Jupyter notebook tests
       run: make test-ipynb
-      if: matrix.os == 'windows-latest'
+      if: matrix.os != 'windows-latest'
 
     - name: Python code style
       run: make test-pycodestyle
