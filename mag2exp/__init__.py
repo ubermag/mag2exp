@@ -7,6 +7,7 @@ from . import util
 from . import x_ray
 from . import sans
 from . import magnetometry
+from . import moke
 
 
 __version__ = importlib.metadata.version(__name__)

@@ -1,4 +1,4 @@
-# import pytest
+import pytest
 import discretisedfield as df
 import numpy as np
 import mag2exp
@@ -259,3 +259,25 @@ def test_sans_normalisation():
 
     assert np.isclose(m1, m2)
     assert np.isclose(m1/m3, (100/150)**6)
+
+
+def test_sans_cross_section_methods():
+    region = df.Region(p1=(-50e-9, -100e-9, 0), p2=(50e-9, 100e-9, 30e-9))
+    mesh = df.Mesh(region=region, cell=(5e-9, 5e-9, 3e-9))
+    Ms = 1.1e6
+    qx = 20e-9
+
+    def m_fun(pos):
+        x, y, z = pos
+        return [0, Ms*np.sin(2*np.pi*x/qx), Ms*np.cos(2*np.pi*x/qx)]
+    m = df.Field(mesh, dim=3, value=m_fun)
+
+    mag2exp.sans.cross_section(m, method='unpol')
+    mag2exp.sans.cross_section(m, method='p')
+    mag2exp.sans.cross_section(m, method='n')
+    mag2exp.sans.cross_section(m, method='np')
+    mag2exp.sans.cross_section(m, method='pn')
+    mag2exp.sans.cross_section(m, method='nn')
+    mag2exp.sans.cross_section(m, method='pp')
+    with pytest.raises(ValueError):
+        mag2exp.sans.cross_section(m, method='blah')

@@ -5,7 +5,6 @@ Module for calculation of x-ray based quantities.
 
 import mag2exp
 import discretisedfield as df
-import numpy as np
 
 
 def holography(field, /, fwhm=None):

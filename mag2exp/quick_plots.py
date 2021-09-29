@@ -135,7 +135,7 @@ def saxs(field):
                   colorbar_label=r'Intensity (arb.)')
 
 
-def sans_cross_section(field, /, method, geometry):
+def sans_cross_section(field, /, method, polarisation=(0, 0, 1)):
     r"""Quickplot of the small angle neutron scattering pattern.
 
     The small angle neutron scattering pattern is calculated using the
@@ -144,13 +144,13 @@ def sans_cross_section(field, /, method, geometry):
     .. seealso:: :py:func:`mag2exp.sans.cross_section`
 
     """
-    cs = sans.cross_section(field, method=method, geometry=geometry)
-    cs.mpl.scalar(cmap='gray',
-                  interpolation='spline16',
-                  colorbar_label=r'Intensity (arb.)')
+    cs = sans.cross_section(field, method=method, polarisation=polarisation)
+    cs.plane(z=0).mpl.scalar(cmap='gray',
+                             interpolation='spline16',
+                             colorbar_label=r'Intensity (arb.)')
 
 
-def sans_chiral_function(field, /, geometry):
+def sans_chiral_function(field, /, polarisation=(0, 0, 1)):
     r"""Quickplot of the small angle neutron scattering chiral function.
 
     The small angle neutron scattering chiral function is calculated using the
@@ -159,7 +159,7 @@ def sans_chiral_function(field, /, geometry):
 
     .. seealso:: :py:func:`mag2exp.sans.chiral_function`
     """
-    cf = sans.chiral_function(field, geometry=geometry)
-    cf.imga.mpl.scalar(cmap='gray',
-                       interpolation='spline16',
-                       colorbar_label=r'Cross section (arb.)')
+    cf = sans.chiral_function(field, polarisation=polarisation)
+    cf.plane(z=0).mpl.scalar(cmap='gray',
+                             interpolation='spline16',
+                             colorbar_label=r'Cross section (arb.)')

@@ -4,13 +4,30 @@ import discretisedfield as df
 
 
 def gaussian_filter(field, /, fwhm):
-    """
+    """ Gaussian filter.
+
+    Convolution of a field with a 1 dimensional filter.
+
     Parameters
     ----------
-    ...
+    field : discretisedfield.field
+        Magnetisation field.
+    fwhm : array_like, optional
+        If specified, convolutes the output image with a 2 Dimensional Gaussian
+        with the full width half maximum (fwhm) specified.
+
+    Returns
+    -------
+    discretisedfield.Field
+        Convoluted field.
+
+    Raises
+    ------
+    RuntimeError
+        Gaussian filter only supports fields with field.dim=1.
     """
     if field.dim > 1:
-        msg = f'Gaussian filter only supports fields with {field.dim=}'
+        msg = 'Gaussian filter only supports fields with field.dim=1.'
         raise RuntimeError(msg)
     sigma = fwhm / (2 * np.sqrt(2 * np.log(2)))
     if field.mesh.attributes['isplane']:
