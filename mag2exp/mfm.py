@@ -27,6 +27,7 @@ def phase_shift(system, /, tip_m=(0, 0, 0), quality=650, k=3, tip_q=0,
         \Delta \phi = \frac{Q\mu_0}{k} \left( q \frac{\partial
         {\bf H}_{sz}}{\partial z} + {\bf M}_t \cdot
         \frac{\partial^2{\bf H}_{s}}{\partial z^2} \right),
+
     where
     :math:`Q` is the quality factor of the cantilever,
     :math:`k` is the spring constant of the cantilever in
