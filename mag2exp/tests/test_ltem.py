@@ -89,7 +89,7 @@ def test_defocus_image_df():
     phase, ft_phase = mag2exp.ltem.phase(field)
     dfi = mag2exp.ltem.defocus_image(phase, cs=0, df_length=0.2e-3,
                                      voltage=300e3)
-    assert (dfi.array != 1).any()
+    assert np.allclose(dfi.array, 1)
 
 
 def test_integrated_magnetic_flux_density():
