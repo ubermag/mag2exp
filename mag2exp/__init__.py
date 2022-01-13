@@ -1,3 +1,4 @@
+"""Main package"""
 import pytest
 import importlib
 from . import ltem
