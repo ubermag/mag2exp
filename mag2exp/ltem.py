@@ -217,7 +217,8 @@ def defocus_image(phase, /, cs=0, df_length=0.2e-3, voltage=None,
     # scalars, (2) df.exp(). For consistency, we could also add df.sim(),
     # df.cos(), df.sqrt(), etc. to mimic numpy's behaviour.
     ft_wavefn = df.Field(phase.mesh, dim=phase.dim,
-                         value=np.exp(phase.array * 1j)).fftn
+                         value=np.exp(phase.array * 1j),
+                         dtype=np.complex128).fftn
     k = df.Field(ft_wavefn.mesh, dim=3, value=lambda x: x)
     ksquare = (k.x**2 + k.y**2)
 

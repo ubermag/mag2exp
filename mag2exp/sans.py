@@ -244,7 +244,8 @@ def _cross_section_matrix(field, /, polarisation):
     q = df.Field(m_fft.mesh,
                  dim=3,
                  value=(lambda x: (0, 0, 0)
-                        if 0 == np.linalg.norm(x) else x/np.linalg.norm(x)))
+                        if 0 == np.linalg.norm(x) else x/np.linalg.norm(x)),
+                 dtype=np.complex128)  # required in here for q & m_fft
     magnetic_interaction = q & m_fft & q
 
     # Rotation of Pauli matrices
@@ -268,4 +269,5 @@ def _cross_section_matrix(field, /, polarisation):
     cs = np.power(np.abs(magnetic_interaction_new), 2)
     return df.Field(mesh=m_fft.mesh, dim=4,
                     components=['pp', 'np', 'pn', 'nn'],
-                    value=cs.reshape([*cs.shape[:3], 4]))
+                    value=cs.reshape([*cs.shape[:3], 4]),
+                    dtype=np.complex128)
