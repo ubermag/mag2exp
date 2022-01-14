@@ -219,7 +219,8 @@ def defocus_image(phase, /, cs=0, df_length=0.2e-3, voltage=None,
     ft_wavefn = df.Field(phase.mesh, dim=phase.dim,
                          value=np.exp(phase.array * 1j),
                          dtype=np.complex128).fftn
-    k = df.Field(ft_wavefn.mesh, dim=3, value=lambda x: x)
+    k = df.Field(ft_wavefn.mesh, dim=3, value=lambda x: x,
+                 dtype=np.complex128)
     ksquare = (k.x**2 + k.y**2)
 
     if wavelength is None:
