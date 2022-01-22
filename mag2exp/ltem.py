@@ -211,13 +211,7 @@ def defocus_image(phase, /, cs=0, df_length=0.2e-3, voltage=None,
         :py:func:`~mag2exp.ltem.relativistic_wavelength`
 
     """
-    # Perhaps we can add more functionality to discretisedfield to simplify
-    # these operations. The following line would then be: df.exp(phase *
-    # 1j).fft2. The missing functionalities: (1) multiplication with complex
-    # scalars, (2) df.exp(). For consistency, we could also add df.sim(),
-    # df.cos(), df.sqrt(), etc. to mimic numpy's behaviour.
-    ft_wavefn = df.Field(phase.mesh, dim=phase.dim,
-                         value=np.exp(phase.array * 1j)).fftn
+    ft_wavefn = np.exp(phase * 1j).fftn
     k = df.Field(ft_wavefn.mesh, dim=3, value=lambda x: x,
                  dtype=np.complex128)
     ksquare = (k.x**2 + k.y**2)
