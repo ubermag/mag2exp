@@ -78,3 +78,6 @@ about = """
 
 [tool.coverage.run]
 omit = ["mag2exp/tests/*"]
+
+[tool.isort]
+skip_gitignore = true  # ignores files listed in .gitignore
