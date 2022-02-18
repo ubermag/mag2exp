@@ -1,4 +1,4 @@
-"""Main package"""
+"""Simulate experimental measurements."""
 import pytest
 import importlib
 from . import ltem
