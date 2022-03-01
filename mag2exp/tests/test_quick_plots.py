@@ -1,6 +1,7 @@
 # import pytest
 import discretisedfield as df
 import micromagneticmodel as mm
+
 import mag2exp
 
 

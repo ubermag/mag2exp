@@ -9,10 +9,12 @@ the sample. This is not correct but allows the rough behaviour to be seen
 and we are looking to correct this in future releases. Please feel free to
 contact us or raise an issue if you have any comments on this technique.**
 """
-import numpy as np
-import discretisedfield as df
-import mag2exp
 import warnings
+
+import discretisedfield as df
+import numpy as np
+
+import mag2exp
 
 
 def _calculate_A(theta_j, nj, voight, field):
@@ -401,6 +403,7 @@ def e_field(field, theta, n_0, voight, wavelength, E_i,
             \begin{pmatrix} r_{ss} & r_{sp} \\ r_{ps} & r_{pp} \end{pmatrix}
             \begin{pmatrix} E^i_s \\ E^i_p \end{pmatrix}
         \end{equation},
+
     where E^i_s and E^i_p are the electric field components of incident linear
     s and p polarisation modes.
 

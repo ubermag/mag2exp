@@ -1,6 +1,6 @@
-import scipy.ndimage
-import numpy as np
 import discretisedfield as df
+import numpy as np
+import scipy.ndimage
 
 
 def gaussian_filter(field, /, fwhm):

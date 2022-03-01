@@ -1,6 +1,7 @@
-import pytest
 import discretisedfield as df
 import numpy as np
+import pytest
+
 import mag2exp
 
 

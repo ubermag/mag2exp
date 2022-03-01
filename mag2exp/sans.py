@@ -3,8 +3,8 @@
 Module for calculation of Small Angle Neutron Scattering related
 quantities.
 """
-import numpy as np
 import discretisedfield as df
+import numpy as np
 from scipy.spatial.transform import Rotation
 
 

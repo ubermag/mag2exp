@@ -2,9 +2,9 @@
 
 Module for calculation of magnetometry based techniques.
 """
-import numpy as np
 import discretisedfield as df
 import micromagneticmodel as mm
+import numpy as np
 import oommfc as oc
 
 

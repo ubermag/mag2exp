@@ -3,8 +3,9 @@
 Module for calculation of x-ray based quantities.
 """
 
-import mag2exp
 import discretisedfield as df
+
+import mag2exp
 
 
 def holography(field, /, fwhm=None):

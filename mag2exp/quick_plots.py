@@ -1,10 +1,8 @@
-import matplotlib.pyplot as plt
 import matplotlib
+import matplotlib.pyplot as plt
 import ubermagutil.units as uu
-from . import ltem
-from . import mfm
-from . import x_ray
-from . import sans
+
+from . import ltem, mfm, sans, x_ray
 
 
 def ltem_phase(field, /, kcx=0.1, kcy=0.1):
