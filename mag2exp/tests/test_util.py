@@ -33,4 +33,4 @@ def test_util_gaussian_filter_fwhm():
     fwhm = (1e-9, 1e-9, 1e-9)
     new_field = mag2exp.util.gaussian_filter(field.z, fwhm)
     fwhm = (1e-9, 1e-9, 1e-9, 1e-9)
-    new_field = mag2exp.util.gaussian_filter(field.z, fwhm)
+    mag2exp.util.gaussian_filter(field.z, fwhm)
