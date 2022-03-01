@@ -1,15 +1,9 @@
 """Simulate experimental measurements."""
-import pytest
 import importlib
-from . import ltem
-from . import quick_plots
-from . import mfm
-from . import util
-from . import x_ray
-from . import sans
-from . import magnetometry
-from . import moke
 
+import pytest
+
+from . import ltem, magnetometry, mfm, moke, quick_plots, sans, util, x_ray
 
 __version__ = importlib.metadata.version(__name__)
 

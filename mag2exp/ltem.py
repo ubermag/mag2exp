@@ -3,9 +3,9 @@
 Module for calculation of Lorentz Transmission Electron Microscopy related
 quantities.
 """
-import numpy as np
 import discretisedfield as df
 import micromagneticmodel as mm
+import numpy as np
 from scipy import constants
 
 

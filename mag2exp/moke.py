@@ -9,10 +9,12 @@ the sample. This is not correct but allows the rough behaviour to be seen
 and we are looking to correct this in future releases. Please feel free to
 contact us or raise an issue if you have any comments on this technique.**
 """
-import numpy as np
-import discretisedfield as df
-import mag2exp
 import warnings
+
+import discretisedfield as df
+import numpy as np
+
+import mag2exp
 
 
 def _calculate_A(theta_j, nj, voight, field):
