@@ -9,7 +9,7 @@ import mag2exp
 
 
 def holography(field, /, fwhm=None):
-    r""" Calculation of the pattern obtained from X-ray holography.
+    r"""Calculation of the pattern obtained from X-ray holography.
 
     X-ray holography uses magnetic circular dichroism to measure the magnetic
     field parallel to the propagation direction of the light. Here, we define
@@ -77,7 +77,7 @@ def holography(field, /, fwhm=None):
         >>> xrh2.mpl.scalar()
     """
     # Direction arg will be removed soon.
-    magnetisation = df.integral(field.z * df.dz, direction='z')
+    magnetisation = df.integral(field.z * df.dz, direction="z")
     if fwhm is not None:
         magnetisation = mag2exp.util.gaussian_filter(magnetisation, fwhm=fwhm)
     return magnetisation
@@ -135,4 +135,4 @@ def saxs(field):
     """
     m_fft = field.fftn.z.plane(z=0)
     m_fft *= field.mesh.dV * 1e16
-    return abs(m_fft)**2
+    return abs(m_fft) ** 2

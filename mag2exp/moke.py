@@ -59,19 +59,33 @@ def _calculate_A(theta_j, nj, voight, field):
 
     A = []
     for (mx, my, mz) in zip(mx_arr, my_arr, mz_arr):
-        A.append([[1, 0, 1, 0],
-                  [(1j*voight)*(a_yj*my*(1+a_zj**2)/a_zj - mz*a_yj**2)/2,
-                   a_zj,
-                   -(1j*voight)/2 * (a_yj*my*(1+a_zj**2)/(a_zj) + mz*a_yj**2),
-                   -a_zj],
-                  [-(1j*voight*nj)/2 * (my*a_yj + mz*a_zj),
-                   -nj,
-                   -(1j*voight*nj)/2 * (my*a_yj - mz*a_zj),
-                   -nj],
-                  [nj*a_zj,
-                   -(1j*voight*nj)/2 * (my*a_yj/a_zj - mz),
-                   -nj*a_zj,
-                   (1j*voight*nj)/2 * (my*a_yj/a_zj + mz)]])
+        A.append(
+            [
+                [1, 0, 1, 0],
+                [
+                    (1j * voight)
+                    * (a_yj * my * (1 + a_zj**2) / a_zj - mz * a_yj**2)
+                    / 2,
+                    a_zj,
+                    -(1j * voight)
+                    / 2
+                    * (a_yj * my * (1 + a_zj**2) / (a_zj) + mz * a_yj**2),
+                    -a_zj,
+                ],
+                [
+                    -(1j * voight * nj) / 2 * (my * a_yj + mz * a_zj),
+                    -nj,
+                    -(1j * voight * nj) / 2 * (my * a_yj - mz * a_zj),
+                    -nj,
+                ],
+                [
+                    nj * a_zj,
+                    -(1j * voight * nj) / 2 * (my * a_yj / a_zj - mz),
+                    -nj * a_zj,
+                    (1j * voight * nj) / 2 * (my * a_yj / a_zj + mz),
+                ],
+            ]
+        )
     return np.reshape(A, (*s[0:2], 4, 4))
 
 
@@ -121,16 +135,20 @@ def _calculate_D(theta_j, nj, voight, dj, wavelength, field):
 
     D = []
     for (mx, my, mz) in zip(mx_arr, my_arr, mz_arr):
-        gi = mz*a_zj + my*a_yj
-        gr = mz*a_zj - my*a_yj
-        di = -np.pi*nj*voight*dj*gi/(wavelength*a_zj)
-        dr = -np.pi*nj*voight*dj*gr/(wavelength*a_zj)
-        U = np.exp(-2j*np.pi*nj*a_zj*dj/wavelength)
+        gi = mz * a_zj + my * a_yj
+        gr = mz * a_zj - my * a_yj
+        di = -np.pi * nj * voight * dj * gi / (wavelength * a_zj)
+        dr = -np.pi * nj * voight * dj * gr / (wavelength * a_zj)
+        U = np.exp(-2j * np.pi * nj * a_zj * dj / wavelength)
 
-        D.append([[U*np.cos(di), U*np.sin(di), 0, 0],
-                  [-U*np.sin(di), U*np.cos(di), 0, 0],
-                  [0, 0, np.cos(dr)/U, np.sin(dr)/U],
-                  [0, 0, -np.sin(dr)/U, np.cos(dr)]])
+        D.append(
+            [
+                [U * np.cos(di), U * np.sin(di), 0, 0],
+                [-U * np.sin(di), U * np.cos(di), 0, 0],
+                [0, 0, np.cos(dr) / U, np.sin(dr) / U],
+                [0, 0, -np.sin(dr) / U, np.cos(dr)],
+            ]
+        )
     return np.reshape(D, (*s[0:2], 4, 4))
 
 
@@ -146,11 +164,11 @@ def _angle_snell(theta0, n0, n1):
     and 1 respectively. :math:`\theta_0` and :math:`\theta_1` are the angles
     of light in layer 0 and 1, with respect to the surface normal.
     """
-    return np.arcsin((n0*np.sin(theta0))/n1)
+    return np.arcsin((n0 * np.sin(theta0)) / n1)
 
 
 def _calculate_M(field, theta_0, n_0, voight, wavelength):
-    r""" Product matrix.
+    r"""Product matrix.
 
     The product matrix is the matrix used to describe light propagation in
     a magnetic multilayer system. In this function, it has the form
@@ -165,34 +183,34 @@ def _calculate_M(field, theta_0, n_0, voight, wavelength):
     and :math:`A_f` is the boundary layer matrix for free space.
     """
     # Free space
-    A = _calculate_A(theta_0, 1, 0, field.plane('z'))
+    A = _calculate_A(theta_0, 1, 0, field.plane("z"))
     M = np.linalg.inv(A)
 
     # Sample
     z_min = field.mesh.index2point((0, 0, 0))[2]
     z_max = field.mesh.index2point(np.subtract(field.mesh.n, 1))[2]
     z_step = field.mesh.cell[2]
-    values = np.arange(z_min, z_max+1e-20, z_step)
+    values = np.arange(z_min, z_max + 1e-20, z_step)
 
     theta = _angle_snell(theta_0, 1, n_0)
     for z in values:  # Think about direction of loop
         A = _calculate_A(theta, n_0, voight, field.plane(z=z))
-        D = _calculate_D(theta, n_0, voight, field.mesh.dz,
-                         wavelength, field.plane(z=z))
+        D = _calculate_D(
+            theta, n_0, voight, field.mesh.dz, wavelength, field.plane(z=z)
+        )
         M = np.matmul(M, A)
         M = np.matmul(M, D)
         M = np.matmul(M, np.linalg.inv(A))
 
     # Free space
     theta = theta_0
-    A = _calculate_A(theta, 1, 0, field.plane('z'))
+    A = _calculate_A(theta, 1, 0, field.plane("z"))
     M = np.matmul(M, A)
     return M
 
 
 def _M_to_r(M):
-    r"""Product matrix to reflection matrix.
-    """
+    r"""Product matrix to reflection matrix."""
     G_matrix = M[:, :, 0:2, 0:2]
     I_matrix = M[:, :, 2:4, 0:2]
     G_inv = np.linalg.inv(G_matrix)
@@ -200,15 +218,13 @@ def _M_to_r(M):
 
 
 def _M_to_t(M):
-    r"""Product matrix to transmission matrix.
-    """
+    r"""Product matrix to transmission matrix."""
     G_matrix = M[:, :, 0:2, 0:2]
     G_inv = np.linalg.inv(G_matrix)
     return G_inv
 
 
-def intensity(field, theta, n, voight, wavelength, E_i,
-              mode='reflection', fwhm=None):
+def intensity(field, theta, n, voight, wavelength, E_i, mode="reflection", fwhm=None):
     r"""MOKE intensity.
 
     **The current version of MOKE microscopy is under development and currently
@@ -288,7 +304,7 @@ def intensity(field, theta, n, voight, wavelength, E_i,
 
     """
     E_f = e_field(field, theta, n, voight, wavelength, E_i, mode=mode)
-    intensity = abs(E_f)**2
+    intensity = abs(E_f) ** 2
     if fwhm is not None:
         intensity = mag2exp.util.gaussian_filter(intensity, fwhm=fwhm)
     return intensity
@@ -367,26 +383,30 @@ def kerr_angle(field, theta, n_0, voight, wavelength):
         >>> angle.s.real.mpl()
     """
     warnings.simplefilter("always", lineno=367)
-    warnings.warn('This technique is currently under development so results'
-                  ' may not be accurate.'
-                  ' Please see the documentation for further details.')
+    warnings.warn(
+        "This technique is currently under development so results"
+        " may not be accurate."
+        " Please see the documentation for further details."
+    )
     M = _calculate_M(field, theta, n_0, voight, wavelength)
     m = _M_to_r(M)
 
-    k_s = m[..., 1, 0]/m[..., 0, 0]
-    k_p = m[..., 0, 1]/m[..., 1, 1]
-    k_p = -k_p.real + 1j*k_p.imag
+    k_s = m[..., 1, 0] / m[..., 0, 0]
+    k_p = m[..., 0, 1] / m[..., 1, 1]
+    k_p = -k_p.real + 1j * k_p.imag
 
     k_a = np.stack([k_s, k_p], axis=-1)
 
-    angle = df.Field(mesh=field.plane('z').mesh, dim=2,
-                     value=k_a[:, :, np.newaxis, :],
-                     components=['s', 'p'])
+    angle = df.Field(
+        mesh=field.plane("z").mesh,
+        dim=2,
+        value=k_a[:, :, np.newaxis, :],
+        components=["s", "p"],
+    )
     return angle
 
 
-def e_field(field, theta, n_0, voight, wavelength, E_i,
-            mode='reflection'):
+def e_field(field, theta, n_0, voight, wavelength, E_i, mode="reflection"):
     r"""Electric field.
 
     **The current version of MOKE microscopy is under development and currently
@@ -482,21 +502,23 @@ def e_field(field, theta, n_0, voight, wavelength, E_i,
         ...                            mode='reflection')
     """
     warnings.simplefilter("always", lineno=489)
-    warnings.warn('This technique is currently under development so results'
-                  ' may not be accurate.'
-                  ' Please see the documentation for further details.')
+    warnings.warn(
+        "This technique is currently under development so results"
+        " may not be accurate."
+        " Please see the documentation for further details."
+    )
     M = _calculate_M(field, theta, n_0, voight, wavelength)
-    if mode in ('reflection', 'r'):
+    if mode in ("reflection", "r"):
         m = _M_to_r(M)
-    elif mode in ('transmission', 't'):
+    elif mode in ("transmission", "t"):
         m = _M_to_t(M)
     else:
-        msg = f'Mode {mode} is unknown.'
+        msg = f"Mode {mode} is unknown."
         raise ValueError(msg)
 
     E_f = np.matmul(m, E_i)[:, :, np.newaxis, :]
-    E_f_field = df.Field(mesh=field.plane('z').mesh, dim=2,
-                         value=E_f,
-                         components=['s', 'p'])
+    E_f_field = df.Field(
+        mesh=field.plane("z").mesh, dim=2, value=E_f, components=["s", "p"]
+    )
 
     return E_f_field

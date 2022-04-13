@@ -14,9 +14,9 @@ def ltem_phase(field, /, kcx=0.1, kcy=0.1):
     .. seealso:: :py:func:`mag2exp.ltem.phase`
     """
     phase, _ = ltem.phase(field, kcx=kcx, kcy=kcy)
-    phase.mpl.scalar(cmap='gray',
-                          interpolation='spline16',
-                          colorbar_label=r'$\phi$ (radians)')
+    phase.mpl.scalar(
+        cmap="gray", interpolation="spline16", colorbar_label=r"$\phi$ (radians)"
+    )
 
 
 def ltem_ft_phase(field, /, kcx=0.1, kcy=0.1):
@@ -30,24 +30,32 @@ def ltem_ft_phase(field, /, kcx=0.1, kcy=0.1):
     """
     _, ft_phase = ltem.phase(field, kcx=kcx, kcy=kcy)
     fig, ax = plt.subplots()
-    (ft_phase.conjugate * ft_phase).plane('z').real.mpl.scalar(
-        ax=ax, cmap='gray', interpolation='spline16',
-        colorbar_label=(r'$\left\vert\widetilde{\phi}\right\vert^2$'
-                        '(radians$^{-2}$)'))
+    (ft_phase.conjugate * ft_phase).plane("z").real.mpl.scalar(
+        ax=ax,
+        cmap="gray",
+        interpolation="spline16",
+        colorbar_label=(
+            r"$\left\vert\widetilde{\phi}\right\vert^2$" "(radians$^{-2}$)"
+        ),
+    )
     multiplier = uu.si_max_multiplier(ft_phase.mesh.region.edges)
-    ax.add_patch(matplotlib.patches.Ellipse(
-        xy=(0, 0),
-        width=ft_phase.mesh.cell[0] * kcx * 2 / multiplier,
-        height=ft_phase.mesh.cell[1] * kcy * 2 / multiplier,
-        edgecolor='red',
-        facecolor='none',
-        linewidth=3,
-        label='Tikhonov filter'))
+    ax.add_patch(
+        matplotlib.patches.Ellipse(
+            xy=(0, 0),
+            width=ft_phase.mesh.cell[0] * kcx * 2 / multiplier,
+            height=ft_phase.mesh.cell[1] * kcy * 2 / multiplier,
+            edgecolor="red",
+            facecolor="none",
+            linewidth=3,
+            label="Tikhonov filter",
+        )
+    )
     ax.legend(frameon=True)
 
 
-def ltem_defocus(field, /, kcx=0.1, kcy=0.1,
-                 cs=0, df_length=0.2e-3, voltage=None, wavelength=None):
+def ltem_defocus(
+    field, /, kcx=0.1, kcy=0.1, cs=0, df_length=0.2e-3, voltage=None, wavelength=None
+):
     r"""Quickplot of the LTEM defocus image.
 
     The phase is calculated using the :code:`ltem.phase`
@@ -60,10 +68,12 @@ def ltem_defocus(field, /, kcx=0.1, kcy=0.1,
         :py:func:`mag2exp.ltem.defocus_image`
     """
     phase, _ = ltem.phase(field, kcx=kcx, kcy=kcy)
-    defocus = ltem.defocus_image(phase, cs=cs, df_length=df_length,
-                                 voltage=voltage, wavelength=wavelength)
-    defocus.mpl.scalar(cmap='gray', interpolation='spline16',
-                       colorbar_label='Intensity (counts)')
+    defocus = ltem.defocus_image(
+        phase, cs=cs, df_length=df_length, voltage=voltage, wavelength=wavelength
+    )
+    defocus.mpl.scalar(
+        cmap="gray", interpolation="spline16", colorbar_label="Intensity (counts)"
+    )
 
 
 def ltem_integrated_mfd(field, /, kcx=0.1, kcy=0.1):
@@ -82,14 +92,20 @@ def ltem_integrated_mfd(field, /, kcx=0.1, kcy=0.1):
     phase, _ = ltem.phase(field, kcx=kcx, kcy=kcy)
     imf = ltem.integrated_magnetic_flux_density(phase)
     fig, ax = plt.subplots()
-    imf.mpl.lightness(ax=ax, clim=[0, 0.5], interpolation='spline16',
-                      colorwheel_args=dict(width=.75, height=.75),
-                      colorwheel_xlabel=r'$m_x$', colorwheel_ylabel=r'$m_y$')
-    imf.mpl.vector(ax=ax, use_color=False, color='w')
+    imf.mpl.lightness(
+        ax=ax,
+        clim=[0, 0.5],
+        interpolation="spline16",
+        colorwheel_args=dict(width=0.75, height=0.75),
+        colorwheel_xlabel=r"$m_x$",
+        colorwheel_ylabel=r"$m_y$",
+    )
+    imf.mpl.vector(ax=ax, use_color=False, color="w")
 
 
-def mfm_phase_shift(system, /, tip_m=(0, 0, 0), quality=650, k=3, tip_q=0,
-                    fwhm=None, z0=0):
+def mfm_phase_shift(
+    system, /, tip_m=(0, 0, 0), quality=650, k=3, tip_q=0, fwhm=None, z0=0
+):
     r"""Quickplot of the magnetic phase shift.
 
     The phase is calculated using the :code:`ltem.phase`
@@ -97,11 +113,13 @@ def mfm_phase_shift(system, /, tip_m=(0, 0, 0), quality=650, k=3, tip_q=0,
 
     .. seealso:: :py:func:`mag2exp.mfm.phase_shift`
     """
-    phase_shift = mfm.phase_shift(system, tip_m=tip_m, quality=quality,
-                                  k=k, tip_q=tip_q, fwhm=fwhm)
+    phase_shift = mfm.phase_shift(
+        system, tip_m=tip_m, quality=quality, k=k, tip_q=tip_q, fwhm=fwhm
+    )
     phase_shift_p = phase_shift.plane(z=z0)
-    phase_shift_p.mpl.scalar(interpolation='spline16',
-                             colorbar_label=r'Phase shift (radians.)')
+    phase_shift_p.mpl.scalar(
+        interpolation="spline16", colorbar_label=r"Phase shift (radians.)"
+    )
 
 
 def x_ray_holography(field, /, fwhm=None):
@@ -113,9 +131,11 @@ def x_ray_holography(field, /, fwhm=None):
     .. seealso:: :py:func:`mag2exp.x_ray.holography`
     """
     holo = x_ray.holography(field, fwhm=fwhm)
-    holo.mpl.scalar(cmap='RdBu',
-                    interpolation='spline16',
-                    colorbar_label=r'Integrated Magnetisation (A)')
+    holo.mpl.scalar(
+        cmap="RdBu",
+        interpolation="spline16",
+        colorbar_label=r"Integrated Magnetisation (A)",
+    )
 
 
 def saxs(field):
@@ -128,9 +148,9 @@ def saxs(field):
 
     """
     cs = x_ray.saxs(field)
-    cs.mpl.scalar(cmap='gray',
-                  interpolation='spline16',
-                  colorbar_label=r'Intensity (arb.)')
+    cs.mpl.scalar(
+        cmap="gray", interpolation="spline16", colorbar_label=r"Intensity (arb.)"
+    )
 
 
 def sans_cross_section(field, /, method, polarisation=(0, 0, 1)):
@@ -143,9 +163,9 @@ def sans_cross_section(field, /, method, polarisation=(0, 0, 1)):
 
     """
     cs = sans.cross_section(field, method=method, polarisation=polarisation)
-    cs.plane(z=0).mpl.scalar(cmap='gray',
-                             interpolation='spline16',
-                             colorbar_label=r'Intensity (arb.)')
+    cs.plane(z=0).mpl.scalar(
+        cmap="gray", interpolation="spline16", colorbar_label=r"Intensity (arb.)"
+    )
 
 
 def sans_chiral_function(field, /, polarisation=(0, 0, 1)):
@@ -158,6 +178,6 @@ def sans_chiral_function(field, /, polarisation=(0, 0, 1)):
     .. seealso:: :py:func:`mag2exp.sans.chiral_function`
     """
     cf = sans.chiral_function(field, polarisation=polarisation)
-    cf.plane(z=0).mpl.scalar(cmap='gray',
-                             interpolation='spline16',
-                             colorbar_label=r'Cross section (arb.)')
+    cf.plane(z=0).mpl.scalar(
+        cmap="gray", interpolation="spline16", colorbar_label=r"Cross section (arb.)"
+    )

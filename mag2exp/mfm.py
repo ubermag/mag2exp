@@ -9,9 +9,8 @@ import oommfc as oc
 import mag2exp
 
 
-def phase_shift(system, /, tip_m=(0, 0, 0), quality=650, k=3, tip_q=0,
-                fwhm=None):
-    r""" Calculation of the phase shift of an MFM tip.
+def phase_shift(system, /, tip_m=(0, 0, 0), quality=650, k=3, tip_q=0, fwhm=None):
+    r"""Calculation of the phase shift of an MFM tip.
 
     The contrast in MFM images originates from the magnetic interaction between
     the magnetic tip of an oscillating cantilever and the samples stray field.
@@ -173,14 +172,13 @@ def phase_shift(system, /, tip_m=(0, 0, 0), quality=650, k=3, tip_q=0,
     """
 
     if k <= 0:
-        msg = '`k` has to be a positive non-zero number.'
+        msg = "`k` has to be a positive non-zero number."
         raise RuntimeError(msg)
 
     stray_field = oc.compute(system.energy.demag.effective_field, system)
-    dh_dz = stray_field.derivative('z', n=1)
-    d2h_dz2 = stray_field.derivative('z', n=2)
-    phase_shift = (quality * mm.consts.mu0 / k) * (tip_q * dh_dz.z
-                                                   + d2h_dz2 @ tip_m)
+    dh_dz = stray_field.derivative("z", n=1)
+    d2h_dz2 = stray_field.derivative("z", n=2)
+    phase_shift = (quality * mm.consts.mu0 / k) * (tip_q * dh_dz.z + d2h_dz2 @ tip_m)
     if fwhm is not None:
         phase_shift = mag2exp.util.gaussian_filter(phase_shift, fwhm=fwhm)
     return phase_shift

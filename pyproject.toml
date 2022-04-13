@@ -78,4 +78,8 @@ about = """
 omit = ["mag2exp/tests/*"]
 
 [tool.isort]
+profile = "black"
 skip_gitignore = true  # ignores files listed in .gitignore
+
+[tool.black]
+experimental-string-processing = true

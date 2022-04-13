@@ -9,7 +9,7 @@ import oommfc as oc
 
 
 def magnetisation(field):
-    r""" Calculation of the magnetisation.
+    r"""Calculation of the magnetisation.
 
     Calculates the magnetisation in the regions where the norm is non-zero.
 
@@ -59,11 +59,11 @@ def magnetisation(field):
     (-325269.1193457478, 405269.1193455959, 460000.0)
 
     """
-    return tuple(np.array(field.average)/field.orientation.norm.average)
+    return tuple(np.array(field.average) / field.orientation.norm.average)
 
 
 def torque(system, /, use_demag=True):
-    r""" Calculation of the torque.
+    r"""Calculation of the torque.
 
     The torque is calculated using
 
@@ -147,14 +147,14 @@ def torque(system, /, use_demag=True):
     (-1256637.061435814, 0.0, 0.0)
     """
     if use_demag:
-        total_field = (mm.consts.mu0 *
-                       (oc.compute(system.energy.demag.effective_field, system)
-                        + system.energy.zeeman.H))
+        total_field = mm.consts.mu0 * (
+            oc.compute(system.energy.demag.effective_field, system)
+            + system.energy.zeeman.H
+        )
     else:
         total_field = mm.consts.mu0 * np.array(system.energy.zeeman.H)
-    norm_field = df.Field(system.m.mesh, dim=1,
-                          value=(system.m.norm.array != 0))
-    volume = df.integral(norm_field * df.dV, direction='xyz')
+    norm_field = df.Field(system.m.mesh, dim=1, value=(system.m.norm.array != 0))
+    volume = df.integral(norm_field * df.dV, direction="xyz")
     moment = system.m * volume
-    torque = (moment & total_field)
-    return (df.integral(torque * df.dV / volume**2, direction='xyz'))
+    torque = moment & total_field
+    return df.integral(torque * df.dV / volume**2, direction="xyz")

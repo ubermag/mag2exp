@@ -89,12 +89,13 @@ def phase(field, /, kcx=0.1, kcy=0.1):
 
     """
     # More readable notation, direction arg will be removed soon.
-    m_int = df.integral(field * df.dz, direction='z')
+    m_int = df.integral(field * df.dz, direction="z")
     m_ft = m_int.fftn
 
     k = df.Field(m_ft.mesh, dim=3, value=lambda x: x)
-    denom = (k.x**2 + k.y**2) / (k.x**2 + k.y**2 +
-                                 k.mesh.dx**2*kcx**2 + k.mesh.dy**2*kcy**2)**2
+    denom = (k.x**2 + k.y**2) / (
+        k.x**2 + k.y**2 + k.mesh.dx**2 * kcx**2 + k.mesh.dy**2 * kcy**2
+    ) ** 2
 
     prefactor = 1j * mm.consts.e * mm.consts.mu0 / mm.consts.h
     ft_phase = (m_ft & k).z * denom * prefactor
@@ -102,8 +103,7 @@ def phase(field, /, kcx=0.1, kcy=0.1):
     return phase, ft_phase
 
 
-def defocus_image(phase, /, cs=0, df_length=0.2e-3, voltage=None,
-                  wavelength=None):
+def defocus_image(phase, /, cs=0, df_length=0.2e-3, voltage=None, wavelength=None):
     r"""Calculating the defocused image.
 
     The wavefunction of the electrons is created from the magnetic phase shift
@@ -212,14 +212,12 @@ def defocus_image(phase, /, cs=0, df_length=0.2e-3, voltage=None,
 
     """
     ft_wavefn = np.exp(phase * 1j).fftn
-    k = df.Field(ft_wavefn.mesh, dim=3, value=lambda x: x,
-                 dtype=np.complex128)
-    ksquare = (k.x**2 + k.y**2)
+    k = df.Field(ft_wavefn.mesh, dim=3, value=lambda x: x, dtype=np.complex128)
+    ksquare = k.x**2 + k.y**2
 
     if wavelength is None:
         if voltage is None:
-            msg = ('Either `wavelength` or acceleration `voltage` needs'
-                   'to be specified.')
+            msg = "Either `wavelength` or acceleration `voltage` needsto be specified."
             raise RuntimeError(msg)
         wavelength = relativistic_wavelength(voltage)
 
@@ -287,7 +285,7 @@ def integrated_magnetic_flux_density(phase):
         >>> imf.mpl()
 
     """
-    imfd = -phase.real.derivative('y') << phase.real.derivative('x')
+    imfd = -phase.real.derivative("y") << phase.real.derivative("x")
     return mm.consts.hbar / mm.consts.e * imfd
 
 
@@ -325,5 +323,9 @@ def relativistic_wavelength(voltage):
 
     """
     return constants.h / np.sqrt(
-        2 * constants.m_e * voltage * constants.e
-        * (1 + constants.e * voltage / (2 * constants.m_e * constants.c**2)))
+        2
+        * constants.m_e
+        * voltage
+        * constants.e
+        * (1 + constants.e * voltage / (2 * constants.m_e * constants.c**2))
+    )
