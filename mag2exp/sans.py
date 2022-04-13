@@ -162,22 +162,22 @@ def cross_section(field, /, method, polarisation=(0, 0, 1)):
     """
     cross_s = _cross_section_matrix(field, polarisation=polarisation)
 
-    if method in ('polarised_pp', 'pp'):
+    if method in ("polarised_pp", "pp"):
         return cross_s.pp
-    elif method in ('polarised_pn', 'pn'):
+    elif method in ("polarised_pn", "pn"):
         return cross_s.pn
-    elif method in ('polarised_np', 'np'):
+    elif method in ("polarised_np", "np"):
         return cross_s.np
-    elif method in ('polarised_nn', 'nn'):
+    elif method in ("polarised_nn", "nn"):
         return cross_s.nn
-    elif method in ('half_polarised_p', 'p'):
+    elif method in ("half_polarised_p", "p"):
         return cross_s.pp + cross_s.pn
-    elif method in ('half_polarised_n', 'n'):
+    elif method in ("half_polarised_n", "n"):
         return cross_s.nn + cross_s.np
-    elif method in ('unpolarised', 'unpol'):
-        return 0.5*(cross_s.pp + cross_s.pn + cross_s.np + cross_s.nn)
+    elif method in ("unpolarised", "unpol"):
+        return 0.5 * (cross_s.pp + cross_s.pn + cross_s.np + cross_s.nn)
     else:
-        msg = f'Method {method} is unknown.'
+        msg = f"Method {method} is unknown."
         raise ValueError(msg)
 
 
@@ -241,10 +241,13 @@ def chiral_function(field, /, polarisation=(0, 0, 1)):
 def _cross_section_matrix(field, /, polarisation):
     m_fft = field.fftn
     m_fft *= field.mesh.dV * 1e16  # TODO:  Normalisation
-    q = df.Field(m_fft.mesh,
-                 dim=3,
-                 value=(lambda x: (0, 0, 0) if np.linalg.norm(x) == 0
-                        else x/np.linalg.norm(x)))
+    q = df.Field(
+        m_fft.mesh,
+        dim=3,
+        value=(
+            lambda x: (0, 0, 0) if np.linalg.norm(x) == 0 else x / np.linalg.norm(x)
+        ),
+    )
     magnetic_interaction = q & m_fft & q
 
     # Rotation of Pauli matrices
@@ -253,19 +256,21 @@ def _cross_section_matrix(field, /, polarisation):
         r = Rotation.identity()
     else:
         fixed = np.cross(initial, polarisation)
-        r = Rotation.align_vectors([polarisation, fixed],
-                                   [initial, fixed])[0]
+        r = Rotation.align_vectors([polarisation, fixed], [initial, fixed])[0]
     p_x = [[0, 1], [1, 0]]
     p_y = [[0, -1j], [1j, 0]]
     p_z = [[1, 0], [0, -1]]
     p = np.array([p_x, p_y, p_z])
-    p_new = np.einsum('ij,ibc->jbc', r.as_matrix(), p)  # Rotate Pauli matrices
+    p_new = np.einsum("ij,ibc->jbc", r.as_matrix(), p)  # Rotate Pauli matrices
 
     # Apply function to Pauli
-    magnetic_interaction_new = np.einsum('ijkl,lbc->ijkbc',
-                                         magnetic_interaction.array,
-                                         p_new)
+    magnetic_interaction_new = np.einsum(
+        "ijkl,lbc->ijkbc", magnetic_interaction.array, p_new
+    )
     cs = np.power(np.abs(magnetic_interaction_new), 2)
-    return df.Field(mesh=m_fft.mesh, dim=4,
-                    components=['pp', 'np', 'pn', 'nn'],
-                    value=cs.reshape([*cs.shape[:3], 4]))
+    return df.Field(
+        mesh=m_fft.mesh,
+        dim=4,
+        components=["pp", "np", "pn", "nn"],
+        value=cs.reshape([*cs.shape[:3], 4]),
+    )

@@ -6,8 +6,9 @@ import mag2exp
 
 
 def test_xray_holography_inplane():
-    mesh = df.Mesh(p1=(-5e-9, -4e-9, -2e-9), p2=(5e-9, 4e-9, 6e-9),
-                   cell=(2e-9, 1e-9, 2e-9))
+    mesh = df.Mesh(
+        p1=(-5e-9, -4e-9, -2e-9), p2=(5e-9, 4e-9, 6e-9), cell=(2e-9, 1e-9, 2e-9)
+    )
 
     field = df.Field(mesh, dim=3, value=(1, 1, 0), norm=384e3)
     xrh = mag2exp.x_ray.holography(field)
@@ -15,8 +16,9 @@ def test_xray_holography_inplane():
 
 
 def test_xray_holography_outofplane():
-    mesh = df.Mesh(p1=(-5e-9, -4e-9, -2e-9), p2=(5e-9, 4e-9, 6e-9),
-                   cell=(2e-9, 1e-9, 2e-9))
+    mesh = df.Mesh(
+        p1=(-5e-9, -4e-9, -2e-9), p2=(5e-9, 4e-9, 6e-9), cell=(2e-9, 1e-9, 2e-9)
+    )
 
     field = df.Field(mesh, dim=3, value=(0, 0, 1), norm=384e3)
     xrh = mag2exp.x_ray.holography(field)
@@ -24,8 +26,9 @@ def test_xray_holography_outofplane():
 
 
 def test_xray_holography_filter():
-    mesh = df.Mesh(p1=(-5e-9, -4e-9, -2e-9), p2=(5e-9, 4e-9, 6e-9),
-                   cell=(2e-9, 1e-9, 2e-9))
+    mesh = df.Mesh(
+        p1=(-5e-9, -4e-9, -2e-9), p2=(5e-9, 4e-9, 6e-9), cell=(2e-9, 1e-9, 2e-9)
+    )
 
     field = df.Field(mesh, dim=3, value=(0, 0, 1), norm=384e3)
     xrh = mag2exp.x_ray.holography(field, [2e-9, 2e-9])
@@ -41,7 +44,8 @@ def test_xray_holography_analytical():
         x, y, z = pos
         qx = 30e-9
         qz = 20e-9
-        return [0, 0, Ms*np.cos(2*np.pi*x/qx)*np.sin(2*np.pi*z/qz)]
+        return [0, 0, Ms * np.cos(2 * np.pi * x / qx) * np.sin(2 * np.pi * z / qz)]
+
     m = df.Field(mesh, dim=3, value=m_fun)
     holo = mag2exp.x_ray.holography(m)
 
@@ -49,17 +53,23 @@ def test_xray_holography_analytical():
         x, y, z = pos
         qx = 30e-9
         qz = 20e-9
-        analytical = (- qz/(2*np.pi) * Ms *
-                      np.cos(2*np.pi*x/qx) * (np.cos(2*np.pi*30e-9/qz)-1))
+        analytical = (
+            -qz
+            / (2 * np.pi)
+            * Ms
+            * np.cos(2 * np.pi * x / qx)
+            * (np.cos(2 * np.pi * 30e-9 / qz) - 1)
+        )
         return analytical
 
-    an_holo = df.Field(holo.mesh, dim=1, value=a_fun).plane('z')
+    an_holo = df.Field(holo.mesh, dim=1, value=a_fun).plane("z")
     assert np.isclose(holo.array, an_holo.array, rtol=1e-3).all()
 
 
 def test_xray_saxs():
-    mesh = df.Mesh(p1=(-5e-9, -4e-9, -2e-9), p2=(5e-9, 4e-9, 6e-9),
-                   cell=(2e-9, 1e-9, 2e-9))
+    mesh = df.Mesh(
+        p1=(-5e-9, -4e-9, -2e-9), p2=(5e-9, 4e-9, 6e-9), cell=(2e-9, 1e-9, 2e-9)
+    )
 
     field = df.Field(mesh, dim=3, value=(0, 0, 1), norm=384e3)
     xrh = mag2exp.x_ray.saxs(field)
@@ -68,8 +78,9 @@ def test_xray_saxs():
 
 
 def test_xray_saxs_inplane():
-    mesh = df.Mesh(p1=(-5e-9, -4e-9, -2e-9), p2=(5e-9, 4e-9, 6e-9),
-                   cell=(2e-9, 1e-9, 2e-9))
+    mesh = df.Mesh(
+        p1=(-5e-9, -4e-9, -2e-9), p2=(5e-9, 4e-9, 6e-9), cell=(2e-9, 1e-9, 2e-9)
+    )
 
     field = df.Field(mesh, dim=3, value=(1, 1, 0), norm=384e3)
     xrh = mag2exp.x_ray.saxs(field)
@@ -84,12 +95,13 @@ def test_xray_saxs_analytical():
 
     def m_fun(pos):
         x, y, z = pos
-        return [0, 0, Ms*np.cos(2*np.pi*x/qx)]
+        return [0, 0, Ms * np.cos(2 * np.pi * x / qx)]
+
     m = df.Field(mesh, dim=3, value=m_fun)
     saxs = mag2exp.x_ray.saxs(m)
     idx = np.unravel_index(saxs.array.argmax(), saxs.array.shape)[0:3]
     q = saxs.mesh.index2point(idx)[0]
-    assert np.isclose(abs(q), 1/qx)
+    assert np.isclose(abs(q), 1 / qx)
     peaks = (saxs.array > 10).sum()
     assert peaks == 2
 
@@ -100,7 +112,7 @@ def test_xray_saxs_normalisation():
     def m_fun(pos):
         x, y, z = pos
         qx = 25e-9
-        return (0, np.sin(2*np.pi*x/qx), np.cos(2*np.pi*x/qx))
+        return (0, np.sin(2 * np.pi * x / qx), np.cos(2 * np.pi * x / qx))
 
     region = df.Region(p1=(0, 0, 0), p2=(100e-9, 100e-9, 100e-9))
     mesh = df.Mesh(region=region, cell=(4e-9, 4e-9, 4e-9))
@@ -121,4 +133,4 @@ def test_xray_saxs_normalisation():
     m3 = abs(saxs3.array).max()
 
     assert np.isclose(m1, m2)
-    assert np.isclose(m1/m3, (100/150)**6)
+    assert np.isclose(m1 / m3, (100 / 150) ** 6)

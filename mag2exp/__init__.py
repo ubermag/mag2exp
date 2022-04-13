@@ -20,5 +20,4 @@ def test():
     >>> # mag2exp.test()
 
     """
-    return pytest.main(['-v', '--pyargs',
-                        'mag2exp', '-l'])  # pragma: no cover
+    return pytest.main(["-v", "--pyargs", "mag2exp", "-l"])  # pragma: no cover
