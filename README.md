@@ -16,7 +16,8 @@
 | --- | --- |
 | Tests | [![Build status](https://github.com/ubermag/mag2exp/workflows/workflow/badge.svg)](https://github.com/ubermag/mag2exp/actions?query=workflow%3Aworkflow) |
 |       | [![conda](https://github.com/ubermag/mag2exp/workflows/conda/badge.svg)](https://github.com/ubermag/mag2exp/actions?query=workflow%3Aconda) |
-| Linting | [![pre-commit.ci status](https://results.pre-commit.ci/badge/github/ubermag/mag2exp/master.svg)](https://results.pre-commit.ci/latest/github/ubermag/mag2exp/master)
+| Linting | [![pre-commit.ci status](https://results.pre-commit.ci/badge/github/ubermag/mag2exp/master.svg)](https://results.pre-commit.ci/latest/github/ubermag/mag2exp/master) |
+|         | [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black) |
 | Releases | [![PyPI version](https://badge.fury.io/py/mag2exp.svg)](https://badge.fury.io/py/mag2exp) |
 |          | [![Anaconda-Server Badge](https://anaconda.org/conda-forge/mag2exp/badges/version.svg)](https://anaconda.org/conda-forge/mag2exp) |
 | Coverage | [![codecov](https://codecov.io/gh/ubermag/mag2exp/branch/master/graph/badge.svg?token=hcK4fofmrL)](https://codecov.io/gh/ubermag/mag2exp) |
