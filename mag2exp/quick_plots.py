@@ -104,7 +104,7 @@ def ltem_integrated_mfd(field, /, kcx=0.1, kcy=0.1):
 
 
 def mfm_phase_shift(
-    system, /, tip_m=(0, 0, 0), quality=650, k=3, tip_q=0, fwhm=None, z0=0
+    field, /, tip_m=(0, 0, 0), quality=650, k=3, tip_q=0, fwhm=None, z0=0
 ):
     r"""Quickplot of the magnetic phase shift.
 
@@ -114,7 +114,7 @@ def mfm_phase_shift(
     .. seealso:: :py:func:`mag2exp.mfm.phase_shift`
     """
     phase_shift = mfm.phase_shift(
-        system, tip_m=tip_m, quality=quality, k=k, tip_q=tip_q, fwhm=fwhm
+        field, tip_m=tip_m, quality=quality, k=k, tip_q=tip_q, fwhm=fwhm
     )
     phase_shift_p = phase_shift.plane(z=z0)
     phase_shift_p.mpl.scalar(
