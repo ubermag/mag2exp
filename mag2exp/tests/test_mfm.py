@@ -163,6 +163,4 @@ def test_mfm_phase_fwhm():
             return 0
 
     field = df.Field(mesh, dim=3, value=f_val, norm=Ms_fun)
-    mag2exp.mfm.phase_shift(
-        field, tip_m=(0, 0, 1e-16), fwhm=(1e-9, 1e-9, 1e-9)
-    )
+    mag2exp.mfm.phase_shift(field, tip_m=(0, 0, 1e-16), fwhm=(1e-9, 1e-9, 1e-9))
