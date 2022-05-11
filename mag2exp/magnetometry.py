@@ -62,7 +62,7 @@ def magnetisation(field):
     return tuple(np.array(field.average) / field.orientation.norm.average)
 
 
-def torque(system, /, use_demag=True):
+def torque(field, H, /, use_demag=True):
     r"""Calculation of the torque.
 
     The torque is calculated using
@@ -91,9 +91,11 @@ def torque(system, /, use_demag=True):
 
     Parameters
     ----------
-    system : micromagneticmodel.System
-        Micromagnetic system which must include the magnetisation
-        configuration and an energy equation which includes demagnetisation.
+    field : discretisedfield.Field
+        Magnetisation field.
+
+    H : turple, discretisedfield.Field
+        Applied magnetic flux density in :math:`\textrm{Am}^{-1}`.
 
     Returns
     -------
@@ -114,8 +116,8 @@ def torque(system, /, use_demag=True):
     >>> system = mm.System(name='Box2')
     >>> system.energy = mm.Zeeman(H=(0, 0, 1e6)) + mm.Demag()
     >>> system.m = df.Field(mesh, dim=3, value=(0, 0, 1), norm=1e6)
-    >>> np.allclose(mag2exp.magnetometry.torque(system, use_demag=True), 0)
-    Running OOMMF...
+    >>> np.allclose(mag2exp.magnetometry.torque(system.m, system.energy.zeeman.H,
+    ...                                         use_demag=True), 0)
     True
 
     2. Field along magnetisation direction without demagnetisation.
@@ -129,7 +131,7 @@ def torque(system, /, use_demag=True):
     >>> system = mm.System(name='Box2')
     >>> system.energy = mm.Zeeman(H=(0, 0, 1e6))
     >>> system.m = df.Field(mesh, dim=3, value=(0, 0, 1), norm=1e6)
-    >>> mag2exp.magnetometry.torque(system, use_demag=False)
+    >>> mag2exp.magnetometry.torque(system.m, system.energy.zeeman.H, use_demag=False)
     (0.0, 0.0, 0.0)
 
     3. Field perpendicular to magnetisation direction without demagnetisation.
@@ -143,18 +145,23 @@ def torque(system, /, use_demag=True):
     >>> system = mm.System(name='Box2')
     >>> system.energy = mm.Zeeman(H=(0, 1e6, 0))
     >>> system.m = df.Field(mesh, dim=3, value=(0, 0, 1), norm=1e6)
-    >>> mag2exp.magnetometry.torque(system, use_demag=False)
+    >>> mag2exp.magnetometry.torque(system.m, system.energy.zeeman.H, use_demag=False)
     (-1256637.061435814, 0.0, 0.0)
     """
     if use_demag:
-        total_field = mm.consts.mu0 * (
-            oc.compute(system.energy.demag.effective_field, system)
-            + system.energy.zeeman.H
-        )
+        demag_field = _calculate_demag_field(field)
+        total_field = mm.consts.mu0 * (demag_field + H)
     else:
-        total_field = mm.consts.mu0 * np.array(system.energy.zeeman.H)
-    norm_field = df.Field(system.m.mesh, dim=1, value=(system.m.norm.array != 0))
+        total_field = mm.consts.mu0 * np.array(H)
+    norm_field = df.Field(field.mesh, dim=1, value=(field.norm.array != 0))
     volume = df.integral(norm_field * df.dV, direction="xyz")
-    moment = system.m * volume
+    moment = field * volume
     torque = moment & total_field
     return df.integral(torque * df.dV / volume**2, direction="xyz")
+
+
+def _calculate_demag_field(field):
+    system = mm.System(name="demag_calculation")
+    system.energy = mm.Demag()
+    system.m = field
+    return oc.compute(system.energy.demag.effective_field, system, verbose=0)

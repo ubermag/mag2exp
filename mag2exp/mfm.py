@@ -9,7 +9,7 @@ import oommfc as oc
 import mag2exp
 
 
-def phase_shift(system, /, tip_m=(0, 0, 0), quality=650, k=3, tip_q=0, fwhm=None):
+def phase_shift(field, /, tip_m=(0, 0, 0), quality=650, k=3, tip_q=0, fwhm=None):
     r"""Calculation of the phase shift of an MFM tip.
 
     The contrast in MFM images originates from the magnetic interaction between
@@ -41,9 +41,8 @@ def phase_shift(system, /, tip_m=(0, 0, 0), quality=650, k=3, tip_q=0, fwhm=None
 
     Parameters
     ----------
-    system : micromagneticmodel.System
-        Micromagnetic system which must include the magnetisation
-        configuration and an energy equation which includes demagnetisation.
+    field : discretisedfield.Field
+        Magnetisation field.
 
     tip_m : numbers.Real, array_like
         The effective magnetic dipole moment of the tip in the :math:`x`,
@@ -94,11 +93,8 @@ def phase_shift(system, /, tip_m=(0, 0, 0), quality=650, k=3, tip_q=0, fwhm=None
         ...         return 384e3
         ...     else:
         ...         return 0
-        >>> system = mm.System(name='Box2')
-        >>> system.energy = mm.Demag()
-        >>> system.m = df.Field(mesh, dim=3, value=v_fun, norm=Ms_fun)
-        >>> ps = mag2exp.mfm.phase_shift(system, tip_m=(0, 0, 1e-16))
-        Running OOMMF...
+        >>> field = df.Field(mesh, dim=3, value=v_fun, norm=Ms_fun)
+        >>> ps = mag2exp.mfm.phase_shift(field, tip_m=(0, 0, 1e-16))
         >>> ps.plane(z=10e-9).mpl.scalar()
         >>> ps.plane(z=40e-9).mpl.scalar()
 
@@ -131,8 +127,7 @@ def phase_shift(system, /, tip_m=(0, 0, 0), quality=650, k=3, tip_q=0, fwhm=None
         >>> system = mm.System(name='Box2')
         >>> system.energy = mm.Demag()
         >>> system.m = df.Field(mesh, dim=3, value=v_fun, norm=Ms_fun)
-        >>> ps = mag2exp.mfm.phase_shift(system, tip_m=(1e-16, 0, 0))
-        Running OOMMF...
+        >>> ps = mag2exp.mfm.phase_shift(system.m, tip_m=(1e-16, 0, 0))
         >>> ps.plane(z=10e-9).mpl.scalar()
         >>> ps.plane(z=40e-9).mpl.scalar()
 
@@ -165,8 +160,7 @@ def phase_shift(system, /, tip_m=(0, 0, 0), quality=650, k=3, tip_q=0, fwhm=None
         >>> system = mm.System(name='Box2')
         >>> system.energy = mm.Demag()
         >>> system.m = df.Field(mesh, dim=3, value=v_fun, norm=Ms_fun)
-        >>> ps = mag2exp.mfm.phase_shift(system, tip_q=1e-9)
-        Running OOMMF...
+        >>> ps = mag2exp.mfm.phase_shift(system.m, tip_q=1e-9)
         >>> ps.plane(z=10e-9).mpl.scalar()
         >>> ps.plane(z=40e-9).mpl.scalar()
     """
@@ -175,10 +169,17 @@ def phase_shift(system, /, tip_m=(0, 0, 0), quality=650, k=3, tip_q=0, fwhm=None
         msg = "`k` has to be a positive non-zero number."
         raise RuntimeError(msg)
 
-    stray_field = oc.compute(system.energy.demag.effective_field, system)
+    stray_field = _calculate_demag_field(field)
     dh_dz = stray_field.derivative("z", n=1)
     d2h_dz2 = stray_field.derivative("z", n=2)
     phase_shift = (quality * mm.consts.mu0 / k) * (tip_q * dh_dz.z + d2h_dz2 @ tip_m)
     if fwhm is not None:
         phase_shift = mag2exp.util.gaussian_filter(phase_shift, fwhm=fwhm)
     return phase_shift
+
+
+def _calculate_demag_field(field):
+    system = mm.System(name="demag_calculation")
+    system.energy = mm.Demag()
+    system.m = field
+    return oc.compute(system.energy.demag.effective_field, system, verbose=0)
