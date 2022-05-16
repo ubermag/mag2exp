@@ -1,8 +1,8 @@
 import discretisedfield as df
-import numpy as np
-import scipy.ndimage
 import micromagneticmodel as mm
+import numpy as np
 import oommfc as oc
+import scipy.ndimage
 
 
 def gaussian_filter(field, /, fwhm):
