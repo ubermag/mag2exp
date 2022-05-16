@@ -1,6 +1,8 @@
 import discretisedfield as df
 import numpy as np
 import scipy.ndimage
+import micromagneticmodel as mm
+import oommfc as oc
 
 
 def gaussian_filter(field, /, fwhm):
@@ -45,3 +47,25 @@ def gaussian_filter(field, /, fwhm):
         ]
 
     return df.Field(field.mesh, dim=1, value=value)
+
+
+def calculate_demag_field(field):
+    """Calculate demagnetisation field.
+
+    Calculate demagnetisation field using OOMMF.
+
+    Parameters
+    ----------
+    field : discretisedfield.field
+        Magnetisation field.
+
+    Returns
+    -------
+    discretisedfield.Field
+        Demagnetisation field.
+
+    """
+    system = mm.System(name="demag_calculation")
+    system.energy = mm.Demag()
+    system.m = field
+    return oc.compute(system.energy.demag.effective_field, system, verbose=0)

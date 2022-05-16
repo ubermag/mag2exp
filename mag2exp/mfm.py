@@ -5,7 +5,6 @@ Module for calculation of Magnetic Force Microscopy related quantities.
 
 import micromagneticmodel as mm
 import oommfc as oc
-
 import mag2exp
 
 
@@ -169,7 +168,7 @@ def phase_shift(field, /, tip_m=(0, 0, 0), quality=650, k=3, tip_q=0, fwhm=None)
         msg = "`k` has to be a positive non-zero number."
         raise RuntimeError(msg)
 
-    stray_field = _calculate_demag_field(field)
+    stray_field = mag2exp.util.calculate_demag_field(field)
     dh_dz = stray_field.derivative("z", n=1)
     d2h_dz2 = stray_field.derivative("z", n=2)
     phase_shift = (quality * mm.consts.mu0 / k) * (tip_q * dh_dz.z + d2h_dz2 @ tip_m)

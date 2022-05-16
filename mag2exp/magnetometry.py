@@ -5,7 +5,7 @@ Module for calculation of magnetometry based techniques.
 import discretisedfield as df
 import micromagneticmodel as mm
 import numpy as np
-import oommfc as oc
+import mag2exp
 
 
 def magnetisation(field):
@@ -149,7 +149,7 @@ def torque(field, H, /, use_demag=True):
     (-1256637.061435814, 0.0, 0.0)
     """
     if use_demag:
-        demag_field = _calculate_demag_field(field)
+        demag_field = mag2exp.util.calculate_demag_field(field)
         total_field = mm.consts.mu0 * (demag_field + H)
     else:
         total_field = mm.consts.mu0 * np.array(H)
@@ -158,10 +158,3 @@ def torque(field, H, /, use_demag=True):
     moment = field * volume
     torque = moment & total_field
     return df.integral(torque * df.dV / volume**2, direction="xyz")
-
-
-def _calculate_demag_field(field):
-    system = mm.System(name="demag_calculation")
-    system.energy = mm.Demag()
-    system.m = field
-    return oc.compute(system.energy.demag.effective_field, system, verbose=0)
