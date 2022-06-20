@@ -100,7 +100,7 @@ def ltem_integrated_mfd(field, /, kcx=0.1, kcy=0.1):
         colorwheel_xlabel=r"$m_x$",
         colorwheel_ylabel=r"$m_y$",
     )
-    imf.mpl.vector(ax=ax, use_color=False, color="w")
+    imf.mpl.vector(ax=ax, vdims=['x', 'y'], use_color=False, color="w")
 
 
 def mfm_phase_shift(
