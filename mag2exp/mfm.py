@@ -4,8 +4,6 @@ Module for calculation of Magnetic Force Microscopy related quantities.
 """
 
 import micromagneticmodel as mm
-import oommfc as oc
-
 import mag2exp
 
 
@@ -176,10 +174,3 @@ def phase_shift(field, /, tip_m=(0, 0, 0), quality=650, k=3, tip_q=0, fwhm=None)
     if fwhm is not None:
         phase_shift = mag2exp.util.gaussian_filter(phase_shift, fwhm=fwhm)
     return phase_shift
-
-
-def _calculate_demag_field(field):
-    system = mm.System(name="demag_calculation")
-    system.energy = mm.Demag()
-    system.m = field
-    return oc.compute(system.energy.demag.effective_field, system, verbose=0)
