@@ -95,7 +95,7 @@ def torque(field, H, /, use_demag=True):
     field : discretisedfield.Field
         Magnetisation field.
 
-    H : turple, discretisedfield.Field
+    H : tuple, discretisedfield.Field
         Applied magnetic flux density in :math:`\textrm{Am}^{-1}`.
 
     Returns
