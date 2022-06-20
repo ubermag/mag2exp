@@ -4,6 +4,7 @@ Module for calculation of Magnetic Force Microscopy related quantities.
 """
 
 import micromagneticmodel as mm
+
 import mag2exp
 
 
