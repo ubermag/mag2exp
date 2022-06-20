@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "mag2exp"
-version = "0.61.0"
+version = "0.61.1"
 description = "Simulate experimental measurements for magnetic materials"
 readme = "README.md"
 requires-python = ">=3.8"
@@ -38,7 +38,7 @@ classifiers = [
 ]
 
 dependencies = [
-    "oommfc~=0.61.0",
+    "oommfc>=0.62.0",
     "numpy>=1.19",
     "scipy>=1.6"
 ]
