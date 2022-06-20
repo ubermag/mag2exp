@@ -16,10 +16,8 @@ def test_magnetisation_analytical():
 def test_torque_analytical_nodemag():
     mesh = df.Mesh(p1=(0, 0, 0), p2=(6e-9, 4e-9, 1e-9), cell=(2e-9, 1e-9, 0.5e-9))
     field = df.Field(mesh, dim=3, value=(0, 0, 1))
-    system = mm.System(name="Box2")
-    system.energy = mm.Demag() + mm.Zeeman(H=(0, 1, 0))
-    system.m = field
-    torque = mag2exp.magnetometry.torque(system, use_demag=False)
+    H = (0, 1, 0)
+    torque = mag2exp.magnetometry.torque(field, H, use_demag=False)
     assert np.isclose(torque[0], -mm.consts.mu0)
     assert np.isclose(torque[1], 0)
     assert np.isclose(torque[2], 0)
@@ -28,20 +26,16 @@ def test_torque_analytical_nodemag():
 def test_torque_analytical_parallel_nodemag():
     mesh = df.Mesh(p1=(0, 0, 0), p2=(6e-9, 4e-9, 1e-9), cell=(2e-9, 1e-9, 0.5e-9))
     field = df.Field(mesh, dim=3, value=(0, 0, 1))
-    system = mm.System(name="Box2")
-    system.energy = mm.Demag() + mm.Zeeman(H=(0, 0, 1))
-    system.m = field
-    torque = mag2exp.magnetometry.torque(system, use_demag=False)
+    H = (0, 0, 1)
+    torque = mag2exp.magnetometry.torque(field, H, use_demag=False)
     assert np.isclose(torque, 0).all()
 
 
 def test_torque_analytical_demag():
     mesh = df.Mesh(p1=(0, 0, 0), p2=(6e-9, 4e-9, 1e-9), cell=(2e-9, 1e-9, 0.5e-9))
     field = df.Field(mesh, dim=3, value=(0, 1e5, 0))
-    system = mm.System(name="Box2")
-    system.energy = mm.Demag() + mm.Zeeman(H=(0, 0, 1e5))
-    system.m = field
-    torque = mag2exp.magnetometry.torque(system)
+    H = (0, 0, 1e5)
+    torque = mag2exp.magnetometry.torque(field, H)
     assert np.isclose(torque[0], mm.consts.mu0 * 1e10)
     assert np.isclose(torque[1], 0)
     assert np.isclose(torque[2], 0)
@@ -50,8 +44,6 @@ def test_torque_analytical_demag():
 def test_torque_analytical__parallel_demag():
     mesh = df.Mesh(p1=(0, 0, 0), p2=(6e-9, 4e-9, 1e-9), cell=(2e-9, 1e-9, 0.5e-9))
     field = df.Field(mesh, dim=3, value=(0, 1e5, 0))
-    system = mm.System(name="Box2")
-    system.energy = mm.Demag() + mm.Zeeman(H=(0, 1e5, 0))
-    system.m = field
-    torque = mag2exp.magnetometry.torque(system)
+    H = (0, 1e5, 0)
+    torque = mag2exp.magnetometry.torque(field, H)
     assert np.isclose(torque, 0).all()

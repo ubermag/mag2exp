@@ -37,3 +37,11 @@ def test_util_gaussian_filter_fwhm():
     mag2exp.util.gaussian_filter(field.z, fwhm)
     fwhm = (1e-9, 1e-9, 1e-9, 1e-9)
     mag2exp.util.gaussian_filter(field.z, fwhm)
+
+
+def test_util_calculate_demag():
+    mesh = df.Mesh(
+        p1=(-5e-9, -4e-9, -1e-9), p2=(5e-9, 4e-9, 1e-9), cell=(2e-9, 1e-9, 0.5e-9)
+    )
+    field = df.Field(mesh, dim=3, value=(0, 0, 1))
+    mag2exp.util.calculate_demag_field(field)

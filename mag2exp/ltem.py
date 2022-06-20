@@ -282,7 +282,6 @@ def integrated_magnetic_flux_density(phase):
         ...                                     df_length=0.2e-3,
         ...                                     voltage=300e3)
         >>> imf = mag2exp.ltem.integrated_magnetic_flux_density(phase)
-        >>> imf.mpl()
 
     """
     imfd = -phase.real.derivative("y") << phase.real.derivative("x")

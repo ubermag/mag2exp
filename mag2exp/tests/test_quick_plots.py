@@ -1,6 +1,5 @@
 # import pytest
 import discretisedfield as df
-import micromagneticmodel as mm
 
 import mag2exp
 
@@ -68,10 +67,8 @@ def test_quick_plots_mfm_phase_shift():
         else:
             return 0
 
-    system = mm.System(name="Box2")
-    system.energy = mm.Demag()
-    system.m = df.Field(mesh, dim=3, value=v_fun, norm=Ms_fun)
-    mag2exp.quick_plots.mfm_phase_shift(system)
+    field = df.Field(mesh, dim=3, value=v_fun, norm=Ms_fun)
+    mag2exp.quick_plots.mfm_phase_shift(field)
 
 
 def test_quick_plots_x_ray_holography():
