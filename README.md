@@ -1,14 +1,14 @@
 # mag2exp
 
-[Samuel Holt](https://github.com/samjrholt)<sup>1,2</sup>, James Loudon<sup>3</sup>, Thomas Hicken<sup>4</sup>, [David Cortés Ortuño](https://github.com/davidcortesortuno)<sup>5</sup>, [Martin Lang](https://github.com/lang-m)<sup>1</sup>, [Marijan Beg](https://github.com/marijanbeg)<sup>6,1</sup>, and [Hans Fangohr](https://github.com/fangohr)<sup>1,7,8</sup>
+[Samuel Holt](https://github.com/samjrholt)<sup>1,2</sup>, [Martin Lang](https://github.com/lang-m)<sup>1</sup>, James Loudon<sup>3</sup>, Thomas Hicken<sup>4</sup>, [Swapneel Amit Pathak](https://github.com/swapneelap)<sup>1,5</sup>, [David Cortés Ortuño](https://github.com/davidcortesortuno)<sup>6</sup>, [Marijan Beg](https://github.com/marijanbeg)<sup>7,1</sup>, and [Hans Fangohr](https://github.com/fangohr)<sup>1,5,8</sup>
 
 <sup>1</sup> *Faculty of Engineering and Physical Sciences, University of Southampton, Southampton SO17 1BJ, UK*  
 <sup>2</sup> *Department of Physics, University of Warwick, Coventry CV4 7AL, UK*  
 <sup>3</sup> *Department of Materials Science and Metallurgy, University of Cambridge, Cambridge, CB3 0FS, United Kingdom*  
 <sup>4</sup> *Department of Physics, Durham University, Durham, DH1 3LE, United Kingdom*  
-<sup>5</sup> *Paleomagnetic Laboratory Fort Hoofddijk, Utrecht University, Utrecht, 3584 CD, Netherlands*  
-<sup>6</sup> *Department of Earth Science and Engineering, Imperial College London, London SW7 2AZ, UK*  
-<sup>7</sup> *Max Planck Institute for the Structure and Dynamics of Matter, Luruper Chaussee 149, 22761 Hamburg, Germany*  
+<sup>5</sup> *Max Planck Institute for the Structure and Dynamics of Matter, Luruper Chaussee 149, 22761 Hamburg, Germany*  
+<sup>6</sup> *Paleomagnetic Laboratory Fort Hoofddijk, Utrecht University, Utrecht, 3584 CD, Netherlands*  
+<sup>7</sup> *Department of Earth Science and Engineering, Imperial College London, London SW7 2AZ, UK*  
 <sup>8</sup> *Center for Free-Electron Laser Science, Luruper Chaussee 149, 22761 Hamburg, Germany*  
 
 
@@ -77,7 +77,7 @@ Licensed under the BSD 3-Clause "New" or "Revised" License. For details, please 
 
 2. M. Beg, R. A. Pepper, and H. Fangohr. User interfaces for computational science: A domain specific language for OOMMF embedded in Python. [*AIP Advances* **7**, 56025](http://aip.scitation.org/doi/10.1063/1.4977225) (2017).
 
-3. Samuel Holt, James Loudon, Thomas Hicken, David Cortés Ortuño, Martin Lang, Marijan Beg, and Hans Fangohr. mag2exp: Simulate experimental measurements for magnetic materials DOI: [10.5281/zenodo.3539461](http://doi.org/10.5281/zenodo.3539461) (2022).
+3. Samuel Holt, Martin Lang, James Loudon, Thomas Hicken, Swapneel Amit Pathak, David Cortés Ortuño, Marijan Beg, and Hans Fangohr. mag2exp: Simulate experimental measurements for magnetic materials DOI: [10.5281/zenodo.3539461](http://doi.org/10.5281/zenodo.3539461) (2022).
 
 ## Acknowledgements
 
