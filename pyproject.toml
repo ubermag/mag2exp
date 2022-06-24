@@ -12,10 +12,11 @@ license = {file = "LICENSE"}
 
 authors = [
     {name = "Samuel Holt"},
+    {name = "Martin Lang"},
     {name = "James Loudon"},
     {name = "Thomas Hicken"},
+    {name = "Swapneel Amit Pathak"},
     {name = "David Cortés Ortuño"},
-    {name = "Martin Lang"},
     {name = "Marijan Beg"},
     {name = "Hans Fangohr"}
 ]
