@@ -1,6 +1,5 @@
 [build-system]
-# 40.8.0 is the first version compatible with PEP 517
-requires = ["setuptools>=40.8.0", "wheel"]
+requires = ["setuptools"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -13,10 +12,11 @@ license = {file = "LICENSE"}
 
 authors = [
     {name = "Samuel Holt"},
+    {name = "Martin Lang"},
     {name = "James Loudon"},
     {name = "Thomas Hicken"},
+    {name = "Swapneel Amit Pathak"},
     {name = "David Cortés Ortuño"},
-    {name = "Martin Lang"},
     {name = "Marijan Beg"},
     {name = "Hans Fangohr"}
 ]
@@ -60,8 +60,17 @@ repository = "https://github.com/ubermag/mag2exp"
 
 
 
+[tool.black]
+experimental-string-processing = true
+
+[tool.coverage.run]
+omit = ["mag2exp/tests/*"]
+
+[tool.isort]
+profile = "black"
+skip_gitignore = true  # ignores files listed in .gitignore
+
 # to define additional information we use a custom table
-# we need to own the entry for tool.NAME on PyPI
 # see: https://www.python.org/dev/peps/pep-0518/#tool-table
 [tool.ubermag]
 doi = "10.5281/zenodo.3539461"
@@ -73,13 +82,3 @@ about = """
 - the ability to perform "virtual" experiments,
 - the functionality to compare of real experimental results agaist simulated experiments.
 """
-
-[tool.coverage.run]
-omit = ["mag2exp/tests/*"]
-
-[tool.isort]
-profile = "black"
-skip_gitignore = true  # ignores files listed in .gitignore
-
-[tool.black]
-experimental-string-processing = true
