@@ -102,6 +102,21 @@ def phase(field, /, kcx=0.1, kcy=0.1):
     phase = ft_phase.ifftn.real
     return phase, ft_phase
 
+def phase_no_filter(field):
+    m_int = df.integral(field * df.dz, direction="z")
+    m_ft = m_int.fftn
+
+    k = df.Field(m_ft.mesh, dim=3, value=lambda x: x)
+    denom = k.x**2 + k.y**2
+
+    prefactor = 1j * mm.consts.e * mm.consts.mu0 / mm.consts.h
+    ft_phase = df.Field(k.mesh, dim=1, value=np.divide((m_ft & k).z.array ,
+                         denom.array, out=(m_ft & k).z.array,
+                         where=(denom.array!=0.0)))
+    ft_phase *= prefactor
+    phase = ft_phase.ifftn.real
+    return phase, ft_phase
+
 
 def defocus_image(phase, /, cs=0, df_length=0.2e-3, voltage=None, wavelength=None):
     r"""Calculating the defocused image.
