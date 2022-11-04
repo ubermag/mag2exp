@@ -115,6 +115,24 @@ def torque(field, H):
     >>> system.m = df.Field(mesh, dim=3, value=(0, 0, 1), norm=1e6)
     >>> np.allclose(mag2exp.magnetometry.torque(system.m, system.energy.zeeman.H), 0)
     True
+
+    2. Field perpendicular to magnetisation direction.
+
+    >>> import numpy as np
+    >>> import discretisedfield as df
+    >>> import micromagneticmodel as mm
+    >>> import mag2exp
+    >>> mesh = df.Mesh(p1=(-25e-9, -25e-9, -2e-9),
+    ...                p2=(25e-9, 25e-9, 50e-9),
+    ...                cell=(1e-9, 1e-9, 2e-9))
+    >>> system = mm.System(name='Box2')
+    >>> system.energy = mm.Zeeman(H=(1e6, 0, 0)) + mm.Demag()
+    >>> system.m = df.Field(mesh, dim=3, value=(0, 0, 1), norm=1e6)
+    >>> np.allclose(
+    ...     mag2exp.magnetometry.torque(system.m, system.energy.zeeman.H),
+    ...     (0, mm.consts.mu0*1e12, 0))
+    ...)
+    True
     """
     total_field = mm.consts.mu0 * np.array(H)
     norm_field = df.Field(field.mesh, dim=1, value=(field.norm.array != 0))
