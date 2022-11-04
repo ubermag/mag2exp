@@ -130,8 +130,8 @@ def torque(field, H):
     >>> system.m = df.Field(mesh, dim=3, value=(0, 0, 1), norm=1e6)
     >>> np.allclose(
     ...     mag2exp.magnetometry.torque(system.m, system.energy.zeeman.H),
-    ...     (0, mm.consts.mu0*1e12, 0))
-    ...)
+    ...     (0, mm.consts.mu0*1e12, 0)
+    ... )
     True
     """
     total_field = mm.consts.mu0 * np.array(H)
