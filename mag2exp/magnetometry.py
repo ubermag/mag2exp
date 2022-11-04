@@ -6,8 +6,6 @@ import discretisedfield as df
 import micromagneticmodel as mm
 import numpy as np
 
-import mag2exp
-
 
 def magnetisation(field):
     r"""Calculation of the magnetisation.
@@ -63,7 +61,7 @@ def magnetisation(field):
     return tuple(np.array(field.average) / field.orientation.norm.average)
 
 
-def torque(field, H, /, use_demag=True):
+def torque(field, H):
     r"""Calculation of the torque.
 
     The torque is calculated using
@@ -81,14 +79,12 @@ def torque(field, H, /, use_demag=True):
 
     where :math:`dV` is a volume element.
 
-    These equations can be written in terms of its constituent components
+    These equations can be written as
 
     .. math::
-        {\bf \tau} = {\mu_0 {\bf m} \times \left( {\bf H}_{app} +
-                      {\bf H}_{demag} \right)},
+        {\bf \tau} = {\mu_0 {\bf m} \times {\bf H}_{app}},
 
-    where :math:`{\bf H}_{app}` is the applied magnetic field, and
-    :math:`{\bf H}_{demag}` is the demagnetisation field.
+    where :math:`{\bf H}_{app}` is the applied magnetic field.
 
     Parameters
     ----------
@@ -106,7 +102,7 @@ def torque(field, H, /, use_demag=True):
     Examples
     --------
 
-    1. Field along magnetisation direction with demagnetisation.
+    1. Field along magnetisation direction.
 
     >>> import discretisedfield as df
     >>> import micromagneticmodel as mm
@@ -117,43 +113,10 @@ def torque(field, H, /, use_demag=True):
     >>> system = mm.System(name='Box2')
     >>> system.energy = mm.Zeeman(H=(0, 0, 1e6)) + mm.Demag()
     >>> system.m = df.Field(mesh, dim=3, value=(0, 0, 1), norm=1e6)
-    >>> np.allclose(mag2exp.magnetometry.torque(system.m, system.energy.zeeman.H,
-    ...                                         use_demag=True), 0)
+    >>> np.allclose(mag2exp.magnetometry.torque(system.m, system.energy.zeeman.H), 0)
     True
-
-    2. Field along magnetisation direction without demagnetisation.
-
-    >>> import discretisedfield as df
-    >>> import micromagneticmodel as mm
-    >>> import mag2exp
-    >>> mesh = df.Mesh(p1=(-25e-9, -25e-9, -2e-9),
-    ...                p2=(25e-9, 25e-9, 50e-9),
-    ...                cell=(1e-9, 1e-9, 2e-9))
-    >>> system = mm.System(name='Box2')
-    >>> system.energy = mm.Zeeman(H=(0, 0, 1e6))
-    >>> system.m = df.Field(mesh, dim=3, value=(0, 0, 1), norm=1e6)
-    >>> mag2exp.magnetometry.torque(system.m, system.energy.zeeman.H, use_demag=False)
-    (0.0, 0.0, 0.0)
-
-    3. Field perpendicular to magnetisation direction without demagnetisation.
-
-    >>> import discretisedfield as df
-    >>> import micromagneticmodel as mm
-    >>> import mag2exp
-    >>> mesh = df.Mesh(p1=(-25e-9, -25e-9, -2e-9),
-    ...                p2=(25e-9, 25e-9, 50e-9),
-    ...                cell=(1e-9, 1e-9, 2e-9))
-    >>> system = mm.System(name='Box2')
-    >>> system.energy = mm.Zeeman(H=(0, 1e6, 0))
-    >>> system.m = df.Field(mesh, dim=3, value=(0, 0, 1), norm=1e6)
-    >>> mag2exp.magnetometry.torque(system.m, system.energy.zeeman.H, use_demag=False)
-    (-1256637.061435814, 0.0, 0.0)
     """
-    if use_demag:
-        demag_field = mag2exp.util.calculate_demag_field(field)
-        total_field = mm.consts.mu0 * (demag_field + H)
-    else:
-        total_field = mm.consts.mu0 * np.array(H)
+    total_field = mm.consts.mu0 * np.array(H)
     norm_field = df.Field(field.mesh, dim=1, value=(field.norm.array != 0))
     volume = df.integral(norm_field * df.dV, direction="xyz")
     moment = field * volume
