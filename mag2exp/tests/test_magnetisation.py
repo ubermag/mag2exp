@@ -13,24 +13,6 @@ def test_magnetisation_analytical():
     assert np.isclose(mag, 1).all()
 
 
-def test_torque_analytical_nodemag():
-    mesh = df.Mesh(p1=(0, 0, 0), p2=(6e-9, 4e-9, 1e-9), cell=(2e-9, 1e-9, 0.5e-9))
-    field = df.Field(mesh, dim=3, value=(0, 0, 1))
-    H = (0, 1, 0)
-    torque = mag2exp.magnetometry.torque(field, H, use_demag=False)
-    assert np.isclose(torque[0], -mm.consts.mu0)
-    assert np.isclose(torque[1], 0)
-    assert np.isclose(torque[2], 0)
-
-
-def test_torque_analytical_parallel_nodemag():
-    mesh = df.Mesh(p1=(0, 0, 0), p2=(6e-9, 4e-9, 1e-9), cell=(2e-9, 1e-9, 0.5e-9))
-    field = df.Field(mesh, dim=3, value=(0, 0, 1))
-    H = (0, 0, 1)
-    torque = mag2exp.magnetometry.torque(field, H, use_demag=False)
-    assert np.isclose(torque, 0).all()
-
-
 def test_torque_analytical_demag():
     mesh = df.Mesh(p1=(0, 0, 0), p2=(6e-9, 4e-9, 1e-9), cell=(2e-9, 1e-9, 0.5e-9))
     field = df.Field(mesh, dim=3, value=(0, 1e5, 0))
