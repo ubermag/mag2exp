@@ -62,9 +62,9 @@ def phase(field, /, kcx=0.1, kcy=0.1):
     >>> import discretisedfield as df
     >>> import mag2exp
     >>> mesh = df.Mesh(p1=(0, 0, 0), p2=(10, 10, 1), cell=(1, 1, 1))
-    >>> field = df.Field(mesh, dim=3, value=(0, 0, 1))
+    >>> field = df.Field(mesh, nvdim=3, value=(0, 0, 1))
     >>> phase, ft_phase = mag2exp.ltem.phase(field)
-    >>> phase.array.mean()
+    >>> phase.mean()
     0.0
 
     .. plot::
@@ -83,23 +83,24 @@ def phase(field, /, kcx=0.1, kcy=0.1):
         ...     else:
         ...         return (0, 1, 0)
         ...
-        >>> field = df.Field(mesh, dim=3, value=value_fun)
+        >>> field = df.Field(mesh, nvdim=3, value=value_fun)
         >>> phase, ft_phase = mag2exp.ltem.phase(field)
         >>> phase.mpl.scalar()
 
     """
     # More readable notation, direction arg will be removed soon.
-    m_int = df.integral(field * df.dz, direction="z")
-    m_ft = m_int.fftn
+    m_int = field.integrate(direction="z")
+    m_ft = m_int.fftn()
 
-    k = df.Field(m_ft.mesh, dim=3, value=lambda x: x)
+    k = df.Field(m_ft.mesh, nvdim=3, value=lambda x: (x[0], x[1], 0))
     denom = (k.x**2 + k.y**2) / (
-        k.x**2 + k.y**2 + k.mesh.dx**2 * kcx**2 + k.mesh.dy**2 * kcy**2
+        k.x**2 + k.y**2 + k.mesh.dk_x**2 * kcx**2 + k.mesh.dk_y**2 * kcy**2
     ) ** 2
 
     prefactor = 1j * mm.consts.e * mm.consts.mu0 / mm.consts.h
-    ft_phase = (m_ft & k).z * denom * prefactor
-    phase = ft_phase.ifftn.real
+    ft_phase = (m_ft & k).ft_z * denom * prefactor
+    phase = ft_phase.ifftn().real
+    phase.mesh.translate(field.mesh.region.center[:2], inplace=True)
     return phase, ft_phase
 
 
@@ -174,7 +175,7 @@ def defocus_image(phase, /, cs=0, df_length=0.2e-3, voltage=None, wavelength=Non
     ...     else:
     ...         return (0, 1, 0)
     ...
-    >>> field = df.Field(mesh, dim=3, value=value_fun)
+    >>> field = df.Field(mesh, nvdim=3, value=value_fun)
     >>> phase, ft_phase = mag2exp.ltem.phase(field)
     >>> df_img = mag2exp.ltem.defocus_image(phase, cs=0, df_length=0,
     ...                                     voltage=300e3)
@@ -198,7 +199,7 @@ def defocus_image(phase, /, cs=0, df_length=0.2e-3, voltage=None, wavelength=Non
         ...     else:
         ...         return (0, 1, 0)
         ...
-        >>> field = df.Field(mesh, dim=3, value=value_fun)
+        >>> field = df.Field(mesh, nvdim=3, value=value_fun)
         >>> phase, ft_phase = mag2exp.ltem.phase(field)
         >>> df_img = mag2exp.ltem.defocus_image(phase, cs=8000,
         ...                                     df_length=0.2e-3,
@@ -211,8 +212,10 @@ def defocus_image(phase, /, cs=0, df_length=0.2e-3, voltage=None, wavelength=Non
         :py:func:`~mag2exp.ltem.relativistic_wavelength`
 
     """
-    ft_wavefn = np.exp(phase * 1j).fftn
-    k = df.Field(ft_wavefn.mesh, dim=3, value=lambda x: x, dtype=np.complex128)
+    ft_wavefn = np.exp(phase * 1j).fftn()
+    k = df.Field(
+        ft_wavefn.mesh, nvdim=3, value=lambda x: (x[0], x[1], 0), dtype=np.complex128
+    )
     ksquare = k.x**2 + k.y**2
 
     if wavelength is None:
@@ -224,8 +227,9 @@ def defocus_image(phase, /, cs=0, df_length=0.2e-3, voltage=None, wavelength=Non
     cts = -df_length + 0.5 * wavelength**2 * cs * ksquare
     exp = np.exp(np.pi * cts * 1j * ksquare * wavelength)
     ft_def_wf_cts = ft_wavefn * exp
-    def_wf_cts = ft_def_wf_cts.ifftn
+    def_wf_cts = ft_def_wf_cts.ifftn()
     intensity_cts = def_wf_cts.conjugate * def_wf_cts
+    intensity_cts.mesh.translate(phase.mesh.region.center, inplace=True)
     return intensity_cts.real
 
 
@@ -276,7 +280,7 @@ def integrated_magnetic_flux_density(phase):
         ...     else:
         ...         return (0, 1, 0)
         ...
-        >>> field = df.Field(mesh, dim=3, value=value_fun)
+        >>> field = df.Field(mesh, nvdim=3, value=value_fun)
         >>> phase, ft_phase = mag2exp.ltem.phase(field)
         >>> df_img = mag2exp.ltem.defocus_image(phase, cs=8000,
         ...                                     df_length=0.2e-3,
@@ -284,7 +288,7 @@ def integrated_magnetic_flux_density(phase):
         >>> imf = mag2exp.ltem.integrated_magnetic_flux_density(phase)
 
     """
-    imfd = -phase.real.derivative("y") << phase.real.derivative("x")
+    imfd = -phase.real.diff("y") << phase.real.diff("x")
     return mm.consts.hbar / mm.consts.e * imfd
 
 

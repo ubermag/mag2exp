@@ -30,7 +30,7 @@ def ltem_ft_phase(field, /, kcx=0.1, kcy=0.1):
     """
     _, ft_phase = ltem.phase(field, kcx=kcx, kcy=kcy)
     fig, ax = plt.subplots()
-    (ft_phase.conjugate * ft_phase).plane("z").real.mpl.scalar(
+    (ft_phase.conjugate * ft_phase).real.mpl.scalar(
         ax=ax,
         cmap="gray",
         interpolation="spline16",
@@ -116,7 +116,7 @@ def mfm_phase_shift(
     phase_shift = mfm.phase_shift(
         field, tip_m=tip_m, quality=quality, k=k, tip_q=tip_q, fwhm=fwhm
     )
-    phase_shift_p = phase_shift.plane(z=z0)
+    phase_shift_p = phase_shift.sel(z=z0)
     phase_shift_p.mpl.scalar(
         interpolation="spline16", colorbar_label=r"Phase shift (radians.)"
     )
@@ -163,7 +163,7 @@ def sans_cross_section(field, /, method, polarisation=(0, 0, 1)):
 
     """
     cs = sans.cross_section(field, method=method, polarisation=polarisation)
-    cs.plane(z=0).mpl.scalar(
+    cs.sel(k_z=0).mpl.scalar(
         cmap="gray", interpolation="spline16", colorbar_label=r"Intensity (arb.)"
     )
 
@@ -178,6 +178,6 @@ def sans_chiral_function(field, /, polarisation=(0, 0, 1)):
     .. seealso:: :py:func:`mag2exp.sans.chiral_function`
     """
     cf = sans.chiral_function(field, polarisation=polarisation)
-    cf.plane(z=0).mpl.scalar(
+    cf.sel(k_z=0).mpl.scalar(
         cmap="gray", interpolation="spline16", colorbar_label=r"Cross section (arb.)"
     )

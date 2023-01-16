@@ -26,19 +26,19 @@ def gaussian_filter(field, /, fwhm):
     Raises
     ------
     RuntimeError
-        Gaussian filter only supports fields with field.dim=1.
+        Gaussian filter only supports fields with field.nvdim=1.
     """
-    if field.dim > 1:
-        msg = "Gaussian filter only supports fields with field.dim=1."
+    if field.nvdim > 1:
+        msg = "Gaussian filter only supports fields with field.nvdim=1."
         raise RuntimeError(msg)
     sigma = fwhm / (2 * np.sqrt(2 * np.log(2)))
-    if field.mesh.attributes["isplane"]:
+    if field.mesh.region.ndim == 2:
         sigma = (
-            sigma[0] / field.mesh.cell[field.mesh.attributes["axis1"]],
-            sigma[1] / field.mesh.cell[field.mesh.attributes["axis2"]],
+            sigma[0] / field.mesh.cell[0],
+            sigma[1] / field.mesh.cell[1],
         )
         value = scipy.ndimage.gaussian_filter(field.array.squeeze(), sigma=sigma)[
-            ..., np.newaxis, np.newaxis
+            ..., np.newaxis
         ]
     else:
         sigma = [sigma[i] / field.mesh.cell[i] for i in range(3)]
@@ -46,7 +46,7 @@ def gaussian_filter(field, /, fwhm):
             ..., np.newaxis
         ]
 
-    return df.Field(field.mesh, dim=1, value=value)
+    return df.Field(field.mesh, nvdim=1, value=value)
 
 
 def calculate_demag_field(field):

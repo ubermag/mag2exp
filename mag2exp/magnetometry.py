@@ -33,7 +33,7 @@ def magnetisation(field):
     >>> mesh = df.Mesh(p1=(-25e-9, -25e-9, -2e-9),
     ...                p2=(25e-9, 25e-9, 50e-9),
     ...                cell=(1e-9, 1e-9, 2e-9))
-    >>> field= df.Field(mesh, dim=3, value=(0,0,1), norm=1e6)
+    >>> field= df.Field(mesh, nvdim=3, value=(0,0,1), norm=1e6)
     >>> mag2exp.magnetometry.magnetisation(field)
     (0.0, 0.0, 1000000.0)
 
@@ -53,12 +53,13 @@ def magnetisation(field):
     ...         return (0, 1, 0)
     ...     else:
     ...         return (-1, 1, 0)
-    >>> field= df.Field(mesh, dim=3, value=v_fun, norm=1e6)
+    >>> field= df.Field(mesh, nvdim=3, value=v_fun, norm=1e6)
     >>> mag2exp.magnetometry.magnetisation(field)
     (-325269.1193457478, 405269.1193455959, 460000.0)
 
     """
-    return tuple(np.array(field.average) / field.orientation.norm.average)
+    # TODO: Valid volume
+    return field.mean() / field.orientation.norm.mean()
 
 
 def torque(field, H):
@@ -112,7 +113,7 @@ def torque(field, H):
     ...                cell=(1e-9, 1e-9, 2e-9))
     >>> system = mm.System(name='Box2')
     >>> system.energy = mm.Zeeman(H=(0, 0, 1e6)) + mm.Demag()
-    >>> system.m = df.Field(mesh, dim=3, value=(0, 0, 1), norm=1e6)
+    >>> system.m = df.Field(mesh, nvdim=3, value=(0, 0, 1), norm=1e6)
     >>> np.allclose(mag2exp.magnetometry.torque(system.m, system.energy.zeeman.H), 0)
     True
 
@@ -127,16 +128,18 @@ def torque(field, H):
     ...                cell=(1e-9, 1e-9, 2e-9))
     >>> system = mm.System(name='Box2')
     >>> system.energy = mm.Zeeman(H=(1e6, 0, 0)) + mm.Demag()
-    >>> system.m = df.Field(mesh, dim=3, value=(0, 0, 1), norm=1e6)
+    >>> system.m = df.Field(mesh, nvdim=3, value=(0, 0, 1), norm=1e6)
     >>> np.allclose(
     ...     mag2exp.magnetometry.torque(system.m, system.energy.zeeman.H),
     ...     (0, mm.consts.mu0*1e12, 0)
     ... )
     True
     """
+    # TODO: Valid volume
+    # TODO: Field of H
     total_field = mm.consts.mu0 * np.array(H)
-    norm_field = df.Field(field.mesh, dim=1, value=(field.norm.array != 0))
-    volume = df.integral(norm_field * df.dV, direction="xyz")
-    moment = field * volume
+    norm_field = df.Field(field.mesh, nvdim=1, value=(field.norm.array != 0))
+    volume = norm_field.integrate()
+    moment = field * volume[0]
     torque = moment & total_field
-    return df.integral(torque * df.dV / volume**2, direction="xyz")
+    return torque.integrate() / volume**2

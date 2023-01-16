@@ -25,7 +25,7 @@ def test_mfm_phase_tip_m():
         else:
             return 0
 
-    field = df.Field(mesh, dim=3, value=f_val, norm=Ms_fun)
+    field = df.Field(mesh, nvdim=3, value=f_val, norm=Ms_fun)
     ps = mag2exp.mfm.phase_shift(field, tip_m=(0, 0, 1e-16))
     assert (ps.array != 0).any()
     ps = mag2exp.mfm.phase_shift(field, tip_m=(0, 1e-16, 0))
@@ -55,7 +55,7 @@ def test_mfm_phase_tip_q():
         else:
             return 0
 
-    field = df.Field(mesh, dim=3, value=f_val, norm=Ms_fun)
+    field = df.Field(mesh, nvdim=3, value=f_val, norm=Ms_fun)
     ps = mag2exp.mfm.phase_shift(field, tip_m=(0, 0, 0), quality=650, k=3, tip_q=1e-6)
     assert (ps.array != 0).any()
 
@@ -81,7 +81,7 @@ def test_mfm_phase_no_tip():
         else:
             return 0
 
-    field = df.Field(mesh, dim=3, value=f_val, norm=Ms_fun)
+    field = df.Field(mesh, nvdim=3, value=f_val, norm=Ms_fun)
     ps = mag2exp.mfm.phase_shift(field, tip_m=(0, 0, 0), quality=650, k=3, tip_q=0)
     assert (ps.array == 0).all()
 
@@ -107,7 +107,7 @@ def test_mfm_phase_quality():
         else:
             return 0
 
-    field = df.Field(mesh, dim=3, value=f_val, norm=Ms_fun)
+    field = df.Field(mesh, nvdim=3, value=f_val, norm=Ms_fun)
     ps = mag2exp.mfm.phase_shift(field, tip_m=(0, 0, 1e-16), quality=0)
     assert (ps.array == 0).all()
 
@@ -133,7 +133,7 @@ def test_mfm_phase_k():
         else:
             return 0
 
-    field = df.Field(mesh, dim=3, value=f_val, norm=Ms_fun)
+    field = df.Field(mesh, nvdim=3, value=f_val, norm=Ms_fun)
     with pytest.raises(RuntimeError):
         mag2exp.mfm.phase_shift(field, tip_m=(0, 0, 1e-16), k=0)
     with pytest.raises(RuntimeError):
@@ -161,5 +161,5 @@ def test_mfm_phase_fwhm():
         else:
             return 0
 
-    field = df.Field(mesh, dim=3, value=f_val, norm=Ms_fun)
+    field = df.Field(mesh, nvdim=3, value=f_val, norm=Ms_fun)
     mag2exp.mfm.phase_shift(field, tip_m=(0, 0, 1e-16), fwhm=(1e-9, 1e-9, 1e-9))

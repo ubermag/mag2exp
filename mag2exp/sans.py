@@ -130,11 +130,11 @@ def cross_section(field, /, method, polarisation=(0, 0, 1)):
         ...     return (0,
         ...             np.sin(2 * np.pi * x / q),
         ...             np.cos(2 * np.pi * x / q))
-        >>> field = df.Field(mesh, dim=3, value=v_fun, norm=1e5)
-        >>> field.plane('z').mpl()
+        >>> field = df.Field(mesh, nvdim=3, value=v_fun, norm=1e5)
+        >>> field.sel('z').mpl()
         >>> cs = mag2exp.sans.cross_section(field, method='unpol',
         ...                                 polarisation=(0, 0, 1))
-        >>> cs.plane(z=0).real.mpl.scalar()
+        >>> cs.sel(z=0).real.mpl.scalar()
 
     .. plot::
         :context: close-figs
@@ -154,13 +154,14 @@ def cross_section(field, /, method, polarisation=(0, 0, 1)):
         ...     return (0,
         ...             np.sin(2 * np.pi * x / q),
         ...             np.cos(2 * np.pi * x / q))
-        >>> field = df.Field(mesh, dim=3, value=v_fun, norm=1e5)
-        >>> field.plane('z').mpl()
+        >>> field = df.Field(mesh, nvdim=3, value=v_fun, norm=1e5)
+        >>> field.sel('z').mpl()
         >>> cs = mag2exp.sans.cross_section(field, method='pn',
         ...                                 polarisation=(0, 0, 1))
-        >>> cs.plane(z=0).real.mpl.scalar()
+        >>> cs.sel(z=0).real.mpl.scalar()
     """
     cross_s = _cross_section_matrix(field, polarisation=polarisation)
+    # TODO: make more efficient!
 
     if method in ("polarised_pp", "pp"):
         return cross_s.pp
@@ -228,27 +229,27 @@ def chiral_function(field, /, polarisation=(0, 0, 1)):
         ...     return (0,
         ...             np.sin(2 * np.pi * x / q),
         ...             np.cos(2 * np.pi * x / q))
-        >>> field = df.Field(mesh, dim=3, value=v_fun, norm=1e5)
-        >>> field.plane('z').mpl()
+        >>> field = df.Field(mesh, nvdim=3, value=v_fun, norm=1e5)
+        >>> field.sel('z').mpl()
         >>> cf = mag2exp.sans.chiral_function(field,
         ...                                   polarisation=(1, 0, 0))
-        >>> cf.plane(z=0).mpl.scalar()
+        >>> cf.sel(z=0).mpl.scalar()
     """
     cross_s = _cross_section_matrix(field, polarisation=polarisation)
     return cross_s.pn - cross_s.np
 
 
 def _cross_section_matrix(field, /, polarisation):
-    m_fft = field.fftn
+    m_fft = field.fftn()
     m_fft *= field.mesh.dV * 1e16  # TODO:  Normalisation
     q = df.Field(
         m_fft.mesh,
-        dim=3,
+        nvdim=3,
         value=(
             lambda x: (0, 0, 0) if np.linalg.norm(x) == 0 else x / np.linalg.norm(x)
         ),
     )
-    magnetic_interaction = q & m_fft & q
+    magnetic_interaction = q.cross(m_fft.cross(q))
 
     # Rotation of Pauli matrices
     initial = (0, 0, 1)
@@ -270,7 +271,7 @@ def _cross_section_matrix(field, /, polarisation):
     cs = np.power(np.abs(magnetic_interaction_new), 2)
     return df.Field(
         mesh=m_fft.mesh,
-        dim=4,
-        components=["pp", "np", "pn", "nn"],
+        nvdim=4,
+        vdims=["pp", "np", "pn", "nn"],
         value=cs.reshape([*cs.shape[:3], 4]),
     )

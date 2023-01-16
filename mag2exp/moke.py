@@ -183,7 +183,7 @@ def _calculate_M(field, theta_0, n_0, voight, wavelength):
     and :math:`A_f` is the boundary layer matrix for free space.
     """
     # Free space
-    A = _calculate_A(theta_0, 1, 0, field.plane("z"))
+    A = _calculate_A(theta_0, 1, 0, field.sel("z"))
     M = np.linalg.inv(A)
 
     # Sample
@@ -194,17 +194,15 @@ def _calculate_M(field, theta_0, n_0, voight, wavelength):
 
     theta = _angle_snell(theta_0, 1, n_0)
     for z in values:  # Think about direction of loop
-        A = _calculate_A(theta, n_0, voight, field.plane(z=z))
-        D = _calculate_D(
-            theta, n_0, voight, field.mesh.dz, wavelength, field.plane(z=z)
-        )
+        A = _calculate_A(theta, n_0, voight, field.sel(z=z))
+        D = _calculate_D(theta, n_0, voight, field.mesh.dz, wavelength, field.sel(z=z))
         M = np.matmul(M, A)
         M = np.matmul(M, D)
         M = np.matmul(M, np.linalg.inv(A))
 
     # Free space
     theta = theta_0
-    A = _calculate_A(theta, 1, 0, field.plane("z"))
+    A = _calculate_A(theta, 1, 0, field.sel("z"))
     M = np.matmul(M, A)
     return M
 
@@ -292,7 +290,7 @@ def intensity(field, theta, n, voight, wavelength, E_i, mode="reflection", fwhm=
         ...     return (0,
         ...             np.sin(2 * np.pi * x / q),
         ...             np.cos(2 * np.pi * x / q))
-        >>> field = df.Field(mesh, dim=3, value=v_fun, norm=1e5)
+        >>> field = df.Field(mesh, nvdim=3, value=v_fun, norm=1e5)
         >>> E_i = [1, 1j]
         >>> intensity = mag2exp.moke.intensity(field, 0, 2, 1, 600e-9, E_i,
         ...                                    mode='reflection')
@@ -377,7 +375,7 @@ def kerr_angle(field, theta, n_0, voight, wavelength):
         ...     return (0,
         ...             np.sin(2 * np.pi * x / q),
         ...             np.cos(2 * np.pi * x / q))
-        >>> field = df.Field(mesh, dim=3, value=v_fun, norm=1e5)
+        >>> field = df.Field(mesh, nvdim=3, value=v_fun, norm=1e5)
         >>> E_i = [1, 1j]
         >>> angle = mag2exp.moke.kerr_angle(field, 0, 2, 1, 600e-9)
         >>> angle.s.real.mpl()
@@ -398,9 +396,9 @@ def kerr_angle(field, theta, n_0, voight, wavelength):
     k_a = np.stack([k_s, k_p], axis=-1)
 
     angle = df.Field(
-        mesh=field.plane("z").mesh,
-        dim=2,
-        value=k_a[:, :, np.newaxis, :],
+        mesh=field.sel("z").mesh,
+        nvdim=2,
+        value=k_a,
         components=["s", "p"],
     )
     return angle
@@ -496,7 +494,7 @@ def e_field(field, theta, n_0, voight, wavelength, E_i, mode="reflection"):
         ...     return (0,
         ...             np.sin(2 * np.pi * x / q),
         ...             np.cos(2 * np.pi * x / q))
-        >>> field = df.Field(mesh, dim=3, value=v_fun, norm=1e5)
+        >>> field = df.Field(mesh, nvdim=3, value=v_fun, norm=1e5)
         >>> E_i = [1, 1j]
         >>> E_f = mag2exp.moke.e_field(field, 0, 2, 1, 600e-9, E_i,
         ...                            mode='reflection')
@@ -516,9 +514,9 @@ def e_field(field, theta, n_0, voight, wavelength, E_i, mode="reflection"):
         msg = f"Mode {mode} is unknown."
         raise ValueError(msg)
 
-    E_f = np.matmul(m, E_i)[:, :, np.newaxis, :]
+    E_f = np.matmul(m, E_i)
     E_f_field = df.Field(
-        mesh=field.plane("z").mesh, dim=2, value=E_f, components=["s", "p"]
+        mesh=field.sel("z").mesh, nvdim=2, value=E_f, components=["s", "p"]
     )
 
     return E_f_field

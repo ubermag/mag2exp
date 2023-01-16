@@ -3,8 +3,6 @@
 Module for calculation of x-ray based quantities.
 """
 
-import discretisedfield as df
-
 import mag2exp
 
 
@@ -50,7 +48,7 @@ def holography(field, /, fwhm=None):
         ...         return (0, 1, 0)
         ...     else:
         ...         return (0, 0, -1)
-        >>> field = df.Field(mesh, dim=3, value=value_fun, norm=0.3e6)
+        >>> field = df.Field(mesh, nvdim=3, value=value_fun, norm=0.3e6)
         >>> xrh = mag2exp.x_ray.holography(field)
         >>> xrh.mpl.scalar()
 
@@ -72,12 +70,12 @@ def holography(field, /, fwhm=None):
         ...         return (0, 1, 0)
         ...     else:
         ...         return (0, 0, -1)
-        >>> field = df.Field(mesh, dim=3, value=value_fun, norm=0.3e6)
+        >>> field = df.Field(mesh, nvdim=3, value=value_fun, norm=0.3e6)
         >>> xrh2 = mag2exp.x_ray.holography(field, fwhm=(2e-9,2e-9))
         >>> xrh2.mpl.scalar()
     """
     # Direction arg will be removed soon.
-    magnetisation = df.integral(field.z * df.dz, direction="z")
+    magnetisation = field.z.integrate(direction="z")
     if fwhm is not None:
         magnetisation = mag2exp.util.gaussian_filter(magnetisation, fwhm=fwhm)
     return magnetisation
@@ -128,11 +126,11 @@ def saxs(field):
         ...     return (np.sin(2 * np.pi * x/ qx),
         ...             0,
         ...             np.cos(2 * np.pi * x/ qx))
-        >>> field = df.Field(mesh, dim=3, value=value_fun, norm=0.3e6)
+        >>> field = df.Field(mesh, nvdim=3, value=value_fun, norm=0.3e6)
         >>> xrs = mag2exp.x_ray.saxs(field)
         >>> xrs.mpl.scalar()
 
     """
-    m_fft = field.fftn.z.plane(z=0)
+    m_fft = field.fftn().ft_z.sel(k_z=0)
     m_fft *= field.mesh.dV * 1e16
     return abs(m_fft) ** 2
