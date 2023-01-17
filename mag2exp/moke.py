@@ -302,7 +302,7 @@ def intensity(field, theta, n, voight, wavelength, E_i, mode="reflection", fwhm=
 
     """
     E_f = e_field(field, theta, n, voight, wavelength, E_i, mode=mode)
-    intensity = abs(E_f) ** 2
+    intensity = abs(E_f.s) ** 2 + abs(E_f.p) ** 2
     if fwhm is not None:
         intensity = mag2exp.util.gaussian_filter(intensity, fwhm=fwhm)
     return intensity
@@ -400,6 +400,7 @@ def kerr_angle(field, theta, n_0, voight, wavelength):
         nvdim=2,
         value=k_a,
         vdims=["s", "p"],
+        vdim_mapping={},
     )
     return angle
 
@@ -515,6 +516,12 @@ def e_field(field, theta, n_0, voight, wavelength, E_i, mode="reflection"):
         raise ValueError(msg)
 
     E_f = np.matmul(m, E_i)
-    E_f_field = df.Field(mesh=field.sel("z").mesh, nvdim=2, value=E_f, vdims=["s", "p"])
+    E_f_field = df.Field(
+        mesh=field.sel("z").mesh,
+        nvdim=2,
+        value=E_f,
+        vdims=["s", "p"],
+        vdim_mapping={},
+    )
 
     return E_f_field
