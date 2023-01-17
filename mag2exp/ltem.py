@@ -65,7 +65,7 @@ def phase(field, /, kcx=0.1, kcy=0.1):
     >>> field = df.Field(mesh, nvdim=3, value=(0, 0, 1))
     >>> phase, ft_phase = mag2exp.ltem.phase(field)
     >>> phase.mean()
-    0.0
+    array([0.])
 
     .. plot::
         :context: close-figs

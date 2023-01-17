@@ -35,7 +35,7 @@ def magnetisation(field):
     ...                cell=(1e-9, 1e-9, 2e-9))
     >>> field= df.Field(mesh, nvdim=3, value=(0,0,1), norm=1e6)
     >>> mag2exp.magnetometry.magnetisation(field)
-    (0.0, 0.0, 1000000.0)
+    array([      0.,       0., 1000000.])
 
     2. Spatially dependent magnetisation.
 
@@ -55,7 +55,7 @@ def magnetisation(field):
     ...         return (-1, 1, 0)
     >>> field= df.Field(mesh, nvdim=3, value=v_fun, norm=1e6)
     >>> mag2exp.magnetometry.magnetisation(field)
-    (-325269.1193457478, 405269.1193455959, 460000.0)
+    array([-325269.11934575,  405269.1193456 ,  460000.        ])
 
     """
     # TODO: Valid volume

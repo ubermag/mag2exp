@@ -134,7 +134,7 @@ def cross_section(field, /, method, polarisation=(0, 0, 1)):
         >>> field.sel('z').mpl()
         >>> cs = mag2exp.sans.cross_section(field, method='unpol',
         ...                                 polarisation=(0, 0, 1))
-        >>> cs.sel(z=0).real.mpl.scalar()
+        >>> cs.sel(k_z=0).real.mpl.scalar()
 
     .. plot::
         :context: close-figs
@@ -158,7 +158,7 @@ def cross_section(field, /, method, polarisation=(0, 0, 1)):
         >>> field.sel('z').mpl()
         >>> cs = mag2exp.sans.cross_section(field, method='pn',
         ...                                 polarisation=(0, 0, 1))
-        >>> cs.sel(z=0).real.mpl.scalar()
+        >>> cs.sel(k_z=0).real.mpl.scalar()
     """
     cross_s = _cross_section_matrix(field, polarisation=polarisation)
     # TODO: make more efficient!
@@ -233,7 +233,7 @@ def chiral_function(field, /, polarisation=(0, 0, 1)):
         >>> field.sel('z').mpl()
         >>> cf = mag2exp.sans.chiral_function(field,
         ...                                   polarisation=(1, 0, 0))
-        >>> cf.sel(z=0).mpl.scalar()
+        >>> cf.sel(k_z=0).mpl.scalar()
     """
     cross_s = _cross_section_matrix(field, polarisation=polarisation)
     return cross_s.pn - cross_s.np
