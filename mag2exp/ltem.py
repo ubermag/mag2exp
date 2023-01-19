@@ -3,6 +3,8 @@
 Module for calculation of Lorentz Transmission Electron Microscopy related
 quantities.
 """
+import warnings
+
 import discretisedfield as df
 import micromagneticmodel as mm
 import numpy as np
@@ -92,13 +94,17 @@ def phase(field, /, kcx=0.1, kcy=0.1):
     m_int = field.integrate(direction="z")
     m_ft = m_int.fftn()
 
-    k = df.Field(m_ft.mesh, nvdim=3, value=lambda x: (x[0], x[1], 0))
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        k = df.Field(m_ft.mesh, nvdim=3, value=lambda x: (x[0], x[1], 0))
     denom = (k.x**2 + k.y**2) / (
         k.x**2 + k.y**2 + k.mesh.dk_x**2 * kcx**2 + k.mesh.dk_y**2 * kcy**2
     ) ** 2
 
     prefactor = 1j * mm.consts.e * mm.consts.mu0 / mm.consts.h
-    ft_phase = (m_ft & k).ft_z * denom * prefactor
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        ft_phase = (m_ft & k).ft_z * denom * prefactor
     phase = ft_phase.ifftn().real
     phase.mesh.translate(field.mesh.region.center[:2], inplace=True)
     return phase, ft_phase
@@ -213,10 +219,16 @@ def defocus_image(phase, /, cs=0, df_length=0.2e-3, voltage=None, wavelength=Non
 
     """
     ft_wavefn = np.exp(phase * 1j).fftn()
-    k = df.Field(
-        ft_wavefn.mesh, nvdim=3, value=lambda x: (x[0], x[1], 0), dtype=np.complex128
-    )
-    ksquare = k.x**2 + k.y**2
+
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        k = df.Field(
+            ft_wavefn.mesh,
+            nvdim=3,
+            value=lambda x: (x[0], x[1], 0),
+            dtype=np.complex128,
+        )
+        ksquare = k.x**2 + k.y**2
 
     if wavelength is None:
         if voltage is None:
@@ -224,8 +236,10 @@ def defocus_image(phase, /, cs=0, df_length=0.2e-3, voltage=None, wavelength=Non
             raise RuntimeError(msg)
         wavelength = relativistic_wavelength(voltage)
 
-    cts = -df_length + 0.5 * wavelength**2 * cs * ksquare
-    exp = np.exp(np.pi * cts * 1j * ksquare * wavelength)
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        cts = -df_length + 0.5 * wavelength**2 * cs * ksquare
+        exp = np.exp(np.pi * cts * 1j * ksquare * wavelength)
     ft_def_wf_cts = ft_wavefn * exp
     def_wf_cts = ft_def_wf_cts.ifftn()
     intensity_cts = def_wf_cts.conjugate * def_wf_cts

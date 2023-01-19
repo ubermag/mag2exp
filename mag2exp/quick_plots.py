@@ -133,6 +133,7 @@ def x_ray_holography(field, /, fwhm=None):
     holo = x_ray.holography(field, fwhm=fwhm)
     holo.mpl.scalar(
         cmap="RdBu",
+        symmetric_clim=True,
         interpolation="spline16",
         colorbar_label=r"Integrated Magnetisation (A)",
     )
