@@ -400,7 +400,6 @@ def kerr_angle(field, theta, n_0, voight, wavelength):
         nvdim=2,
         value=k_a,
         vdims=["s", "p"],
-        vdim_mapping={},
     )
     return angle
 
@@ -521,7 +520,6 @@ def e_field(field, theta, n_0, voight, wavelength, E_i, mode="reflection"):
         nvdim=2,
         value=E_f,
         vdims=["s", "p"],
-        vdim_mapping={},
     )
 
     return E_f_field
