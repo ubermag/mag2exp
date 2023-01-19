@@ -274,4 +274,5 @@ def _cross_section_matrix(field, /, polarisation):
         nvdim=4,
         vdims=["pp", "np", "pn", "nn"],
         value=cs.reshape([*cs.shape[:3], 4]),
+        vdim_mapping={},
     )
