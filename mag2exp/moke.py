@@ -58,7 +58,7 @@ def _calculate_A(theta_j, nj, voight, field):
     mz_arr = m_arr[..., 2].flatten()
 
     A = []
-    for (mx, my, mz) in zip(mx_arr, my_arr, mz_arr):
+    for mx, my, mz in zip(mx_arr, my_arr, mz_arr):
         A.append(
             [
                 [1, 0, 1, 0],
@@ -134,7 +134,7 @@ def _calculate_D(theta_j, nj, voight, dj, wavelength, field):
     mz_arr = m_arr[..., 2].flatten()
 
     D = []
-    for (mx, my, mz) in zip(mx_arr, my_arr, mz_arr):
+    for mx, my, mz in zip(mx_arr, my_arr, mz_arr):
         gi = mz * a_zj + my * a_yj
         gr = mz * a_zj - my * a_yj
         di = -np.pi * nj * voight * dj * gi / (wavelength * a_zj)
