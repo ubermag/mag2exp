@@ -72,7 +72,7 @@ def ltem_defocus(
         phase, cs=cs, df_length=df_length, voltage=voltage, wavelength=wavelength
     )
     defocus.mpl.scalar(
-        cmap="gray", interpolation="spline16", colorbar_label="Intensity (counts)"
+        cmap="gray", interpolation="spline16", colorbar_label="Normalised Intensity"
     )
 
 
