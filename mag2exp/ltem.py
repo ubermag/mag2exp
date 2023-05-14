@@ -312,7 +312,7 @@ def relativistic_wavelength(voltage):
     The wavelength is calculated using
 
     .. math::
-        \lambda = \frac{h}{2 m_e e U
+        \lambda = \frac{h}{
         \sqrt{2 m_e e U \left(1 + \frac{e U}{2 m_e c^2}\right)}}
 
     where :math:`m_e` and :math:`e` are the mass and charge of an electron
