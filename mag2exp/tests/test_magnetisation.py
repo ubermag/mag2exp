@@ -13,6 +13,21 @@ def test_magnetisation_analytical():
     assert np.isclose(mag, 1).all()
 
 
+def test_magnetisation_analytical_valid():
+    mesh = df.Mesh(p1=(0, 0, 0), p2=(6e-9, 4e-9, 1e-9), cell=(2e-9, 1e-9, 0.5e-9))
+
+    def m_fun(p):
+        _, y, _ = p
+        if y > 2e-9:
+            return (1, 1, 1)
+        else:
+            return (0, 0, 0)
+
+    field = df.Field(mesh, nvdim=3, value=m_fun, valid="norm")
+    mag = mag2exp.magnetometry.magnetisation(field)
+    assert np.isclose(mag, 1).all()
+
+
 def test_torque_analytical_demag():
     mesh = df.Mesh(p1=(0, 0, 0), p2=(6e-9, 4e-9, 1e-9), cell=(2e-9, 1e-9, 0.5e-9))
     field = df.Field(mesh, nvdim=3, value=(0, 1e5, 0))

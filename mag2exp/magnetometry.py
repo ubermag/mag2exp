@@ -58,8 +58,7 @@ def magnetisation(field):
     array([-325269.11934575,  405269.1193456 ,  460000.        ])
 
     """
-    # TODO: Valid volume
-    return field.mean() / field.orientation.norm.mean()
+    return field.mean() / np.mean(field.valid)
 
 
 def torque(field, H):
