@@ -139,6 +139,7 @@ def torque(field, H):
     total_field = mm.consts.mu0 * np.array(H)
     norm_field = df.Field(field.mesh, nvdim=1, value=(field.norm.array != 0))
     volume = norm_field.integrate()
-    moment = field * volume[0]
+    volume = np.sum(field.valid) * field.mesh.dV
+    moment = field * volume
     torque = moment & total_field
     return torque.integrate() / volume**2
