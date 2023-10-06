@@ -15,7 +15,6 @@
 | Description | Badge |
 | --- | --- |
 | Tests | [![Build status](https://github.com/ubermag/mag2exp/workflows/workflow/badge.svg)](https://github.com/ubermag/mag2exp/actions?query=workflow%3Aworkflow) |
-|       | [![conda](https://github.com/ubermag/mag2exp/workflows/conda/badge.svg)](https://github.com/ubermag/mag2exp/actions?query=workflow%3Aconda) |
 | Linting | [![pre-commit.ci status](https://results.pre-commit.ci/badge/github/ubermag/mag2exp/master.svg)](https://results.pre-commit.ci/latest/github/ubermag/mag2exp/master) |
 |         | [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black) |
 | Releases | [![PyPI version](https://badge.fury.io/py/mag2exp.svg)](https://badge.fury.io/py/mag2exp) |
@@ -77,7 +76,7 @@ Licensed under the BSD 3-Clause "New" or "Revised" License. For details, please 
 
 2. M. Beg, R. A. Pepper, and H. Fangohr. User interfaces for computational science: A domain specific language for OOMMF embedded in Python. [*AIP Advances* **7**, 56025](http://aip.scitation.org/doi/10.1063/1.4977225) (2017).
 
-3. Samuel Holt, Martin Lang, James Loudon, Thomas Hicken, Swapneel Amit Pathak, David Cortés Ortuño, Marijan Beg, and Hans Fangohr. mag2exp: Simulate experimental measurements for magnetic materials DOI: [10.5281/zenodo.3539461](http://doi.org/10.5281/zenodo.3539461) (2022).
+3. Samuel Holt, Martin Lang, James Loudon, Thomas Hicken, Swapneel Amit Pathak, David Cortés Ortuño, Marijan Beg, and Hans Fangohr. mag2exp: Simulate experimental measurements for magnetic materials DOI: [10.5281/zenodo.3539461](http://doi.org/10.5281/zenodo.3539461) (2023).
 
 ## Acknowledgements
 
