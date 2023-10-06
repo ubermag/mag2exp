@@ -73,7 +73,7 @@ skip_gitignore = true  # ignores files listed in .gitignore
 # to define additional information we use a custom table
 # see: https://www.python.org/dev/peps/pep-0518/#tool-table
 [tool.ubermag]
-doi = "10.5281/zenodo.3539461"
+doi = "10.5281/zenodo.5564954"
 copyright_holder = "Samuel Holt"
 contributors = [
 ]
