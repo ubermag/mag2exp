@@ -10,6 +10,8 @@ def test_relativistic_wavelength():
     with pytest.warns(RuntimeWarning, match="divide by zero"):
         assert mag2exp.ltem.relativistic_wavelength(0) == float("inf")
 
+    assert np.isclose(mag2exp.ltem.relativistic_wavelength(50000), 5.3408e-12)
+
 
 def test_ltem_phase():
     mesh = df.Mesh(
