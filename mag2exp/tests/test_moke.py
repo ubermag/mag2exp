@@ -5,6 +5,7 @@ import pytest
 import mag2exp
 
 
+@pytest.mark.filterwarnings("ignore:This technique is currently under development")
 def test_moke_e_field():
     mesh = df.Mesh(
         p1=(-5e-9, -4e-9, -2e-9), p2=(5e-9, 4e-9, 6e-9), cell=(2e-9, 1e-9, 2e-9)
@@ -22,6 +23,7 @@ def test_moke_e_field():
         mag2exp.moke.e_field(field, 0, 2, 1, 600e-9, E_i, mode="blah")
 
 
+@pytest.mark.filterwarnings("ignore:This technique is currently under development")
 def test_moke_intensity():
     mesh = df.Mesh(
         p1=(-5e-9, -4e-9, -2e-9), p2=(5e-9, 4e-9, 6e-9), cell=(2e-9, 1e-9, 2e-9)
@@ -42,6 +44,7 @@ def test_moke_intensity():
     mag2exp.moke.intensity(field, 0, 1, 0, 600e-9, E_i, mode="transmission")
 
 
+@pytest.mark.filterwarnings("ignore:This technique is currently under development")
 def test_moke_angle():
     mesh = df.Mesh(
         p1=(-5e-9, -4e-9, -2e-9), p2=(5e-9, 4e-9, 6e-9), cell=(2e-9, 1e-9, 2e-9)
@@ -53,7 +56,7 @@ def test_moke_angle():
     assert angle.array.all() != 0
 
 
-@pytest.mark.xfail()
+@pytest.mark.filterwarnings("ignore:This technique is currently under development")
 def test_moke_fwhm():
     mesh = df.Mesh(
         p1=(-5e-9, -4e-9, -2e-9), p2=(5e-9, 4e-9, 6e-9), cell=(2e-9, 1e-9, 2e-9)
