@@ -260,7 +260,6 @@ def integrated_magnetic_flux_density(phase):
           \partial/\partial x
         \end{array} \right).
 
-    Ask James!!!
 
     This quantity is most closely related to values obtained from electron
     holography.
