@@ -92,7 +92,7 @@ def phase(field, /, kcx=0.1, kcy=0.1):
     """
     # More readable notation, direction arg will be removed soon.
     m_int = field.integrate(direction="z")
-    m_ft = m_int.fftn()
+    m_ft = m_int.fftn(norm="ortho")
 
     with warnings.catch_warnings():
         warnings.simplefilter("ignore")
@@ -105,7 +105,7 @@ def phase(field, /, kcx=0.1, kcy=0.1):
     with warnings.catch_warnings():
         warnings.simplefilter("ignore")
         ft_phase = (m_ft & k).ft_z * denom * prefactor
-    phase = ft_phase.ifftn().real
+    phase = ft_phase.ifftn(norm="ortho").real
     phase.mesh.translate(field.mesh.region.center[:2], inplace=True)
     return phase, ft_phase
 
@@ -218,7 +218,7 @@ def defocus_image(phase, /, cs=0, df_length=0.2e-3, voltage=None, wavelength=Non
         :py:func:`~mag2exp.ltem.relativistic_wavelength`
 
     """
-    ft_wavefn = np.exp(phase * 1j).fftn()
+    ft_wavefn = np.exp(phase * 1j).fftn(norm="ortho")
 
     with warnings.catch_warnings():
         warnings.simplefilter("ignore")
@@ -241,7 +241,7 @@ def defocus_image(phase, /, cs=0, df_length=0.2e-3, voltage=None, wavelength=Non
         cts = -df_length + 0.5 * wavelength**2 * cs * ksquare
         exp = np.exp(np.pi * cts * 1j * ksquare * wavelength)
     ft_def_wf_cts = ft_wavefn * exp
-    def_wf_cts = ft_def_wf_cts.ifftn()
+    def_wf_cts = ft_def_wf_cts.ifftn(norm="ortho")
     intensity_cts = def_wf_cts.conjugate * def_wf_cts
     intensity_cts.mesh.translate(phase.mesh.region.center, inplace=True)
     return intensity_cts.real
