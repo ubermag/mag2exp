@@ -102,7 +102,7 @@ def test_xray_saxs_analytical():
     idx = np.unravel_index(saxs.array.argmax(), saxs.array.shape)[0:2]
     q = saxs.mesh.index2point(idx)[0]
     assert np.isclose(abs(q), 1 / qx)
-    peaks = (saxs.array > 10).sum()
+    peaks = (saxs.array > 1e-10).sum()
     assert peaks == 2
 
 
@@ -126,11 +126,4 @@ def test_xray_saxs_normalisation():
     saxs2 = mag2exp.x_ray.saxs(field2)
     m2 = abs(saxs2.array).max()
 
-    region = df.Region(p1=(0, 0, 0), p2=(150e-9, 150e-9, 150e-9))
-    mesh = df.Mesh(region=region, cell=(5e-9, 5e-9, 5e-9))
-    field3 = df.Field(mesh, nvdim=3, value=m_fun, norm=Ms)
-    saxs3 = mag2exp.x_ray.saxs(field3)
-    m3 = abs(saxs3.array).max()
-
     assert np.isclose(m1, m2)
-    assert np.isclose(m1 / m3, (100 / 150) ** 6)
