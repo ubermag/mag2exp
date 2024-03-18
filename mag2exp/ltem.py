@@ -3,6 +3,7 @@
 Module for calculation of Lorentz Transmission Electron Microscopy related
 quantities.
 """
+
 import warnings
 
 import discretisedfield as df
