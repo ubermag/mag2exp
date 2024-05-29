@@ -4,7 +4,14 @@ import importlib
 
 import pytest
 
-from . import ltem, magnetometry, mfm, moke, quick_plots, sans, util, x_ray
+from . import ltem as ltem
+from . import magnetometry as magnetometry
+from . import mfm as mfm
+from . import moke as moke
+from . import quick_plots as quick_plots
+from . import sans as sans
+from . import util as util
+from . import x_ray as x_ray
 
 __version__ = importlib.metadata.version(__package__)
 
