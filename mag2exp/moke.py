@@ -278,6 +278,9 @@ def intensity(field, theta, n, voight, wavelength, E_i, mode="reflection", fwhm=
 
         1. Visualising the MOKE with ``matplotlib``.
 
+        >>> import warnings
+        >>> warnings.filterwarnings("ignore", "This technique is currently under")
+        ...
         >>> import discretisedfield as df
         >>> import micromagneticmodel as mm
         >>> import numpy as np
@@ -363,6 +366,9 @@ def kerr_angle(field, theta, n_0, voight, wavelength):
 
         1. Visualising the MOKE with ``matplotlib``.
 
+        >>> import warnings
+        >>> warnings.filterwarnings("ignore", "This technique is currently under")
+        ...
         >>> import discretisedfield as df
         >>> import micromagneticmodel as mm
         >>> import numpy as np
@@ -483,6 +489,9 @@ def e_field(field, theta, n_0, voight, wavelength, E_i, mode="reflection"):
         1. Calculating the reflected electric field from a circularly polarised
         wave.
 
+        >>> import warnings
+        >>> warnings.filterwarnings("ignore", "This technique is currently under")
+        ...
         >>> import discretisedfield as df
         >>> import micromagneticmodel as mm
         >>> import numpy as np
