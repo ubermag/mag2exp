@@ -9,6 +9,7 @@ the sample. This is not correct but allows the rough behaviour to be seen
 and we are looking to correct this in future releases. Please feel free to
 contact us or raise an issue if you have any comments on this technique.**
 """
+
 import warnings
 
 import discretisedfield as df
@@ -58,7 +59,7 @@ def _calculate_A(theta_j, nj, voight, field):
     mz_arr = m_arr[..., 2].flatten()
 
     A = []
-    for mx, my, mz in zip(mx_arr, my_arr, mz_arr):
+    for _mx, my, mz in zip(mx_arr, my_arr, mz_arr):
         A.append(
             [
                 [1, 0, 1, 0],
@@ -134,7 +135,7 @@ def _calculate_D(theta_j, nj, voight, dj, wavelength, field):
     mz_arr = m_arr[..., 2].flatten()
 
     D = []
-    for mx, my, mz in zip(mx_arr, my_arr, mz_arr):
+    for _mx, my, mz in zip(mx_arr, my_arr, mz_arr):
         gi = mz * a_zj + my * a_yj
         gr = mz * a_zj - my * a_yj
         di = -np.pi * nj * voight * dj * gi / (wavelength * a_zj)
@@ -277,6 +278,9 @@ def intensity(field, theta, n, voight, wavelength, E_i, mode="reflection", fwhm=
 
         1. Visualising the MOKE with ``matplotlib``.
 
+        >>> import warnings
+        >>> warnings.filterwarnings("ignore", "This technique is currently under")
+        ...
         >>> import discretisedfield as df
         >>> import micromagneticmodel as mm
         >>> import numpy as np
@@ -362,6 +366,9 @@ def kerr_angle(field, theta, n_0, voight, wavelength):
 
         1. Visualising the MOKE with ``matplotlib``.
 
+        >>> import warnings
+        >>> warnings.filterwarnings("ignore", "This technique is currently under")
+        ...
         >>> import discretisedfield as df
         >>> import micromagneticmodel as mm
         >>> import numpy as np
@@ -384,7 +391,8 @@ def kerr_angle(field, theta, n_0, voight, wavelength):
     warnings.warn(
         "This technique is currently under development so results"
         " may not be accurate."
-        " Please see the documentation for further details."
+        " Please see the documentation for further details.",
+        stacklevel=2,
     )
     M = _calculate_M(field, theta, n_0, voight, wavelength)
     m = _M_to_r(M)
@@ -481,6 +489,9 @@ def e_field(field, theta, n_0, voight, wavelength, E_i, mode="reflection"):
         1. Calculating the reflected electric field from a circularly polarised
         wave.
 
+        >>> import warnings
+        >>> warnings.filterwarnings("ignore", "This technique is currently under")
+        ...
         >>> import discretisedfield as df
         >>> import micromagneticmodel as mm
         >>> import numpy as np
@@ -503,7 +514,8 @@ def e_field(field, theta, n_0, voight, wavelength, E_i, mode="reflection"):
     warnings.warn(
         "This technique is currently under development so results"
         " may not be accurate."
-        " Please see the documentation for further details."
+        " Please see the documentation for further details.",
+        stacklevel=2,
     )
     M = _calculate_M(field, theta, n_0, voight, wavelength)
     if mode in ("reflection", "r"):

@@ -2,6 +2,7 @@
 
 Module for calculation of magnetometry based techniques.
 """
+
 import discretisedfield as df
 import micromagneticmodel as mm
 import numpy as np
