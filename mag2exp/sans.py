@@ -42,7 +42,7 @@ def cross_section(field, /, method, polarisation=(0, 0, 1)):
 
     :math:`\hat{\bf q}` is the unit scattering vector and
     :math:`\widetilde{\bf M}` is the Fourier transform of the magnetisation.
-    The magnetic interaction vector is is dependent on the scattering geometry
+    The magnetic interaction vector is dependent on the scattering geometry
     and the scattering vector is defined as
 
     .. math::
