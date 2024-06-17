@@ -90,6 +90,10 @@ def cross_section(field, /, method, polarisation=(0, 0, 1)):
             \frac{d\sum^{--}}{d\Omega} + \frac{d\sum^{-+}}{d\Omega} \right).
         \end{align}
 
+    Note: Similar to the magnetisation, the value of the cross section 
+    exists within the whole cell and therefore will change based on the size
+    of your cell and region in your input field.  
+
     Parameters
     ----------
     field : discretisedfield.field
