@@ -92,7 +92,7 @@ def cross_section(field, /, method, polarisation=(0, 0, 1)):
 
     Note: Similar to the magnetisation, the value of the cross section 
     exists within the whole cell and therefore will change based on the size
-    of your cell and region in your input field.  
+    of the cell and region in the input field.  
 
     Parameters
     ----------
