@@ -6,6 +6,7 @@ quantities.
 
 import discretisedfield as df
 import numpy as np
+from scipy import constants
 from scipy.spatial.transform import Rotation
 
 
@@ -15,14 +16,16 @@ def cross_section(field, /, method, polarisation=(0, 0, 1)):
     The scattering cross sections can be calculated using
 
     .. math::
-        \frac{d\sum}{d\Omega} \sim |{\bf Q} \cdot {\bf \sigma}|^2,
+        \frac{d\sum}{d\Omega} = (\gamma r_e)^2 |{\bf Q} \cdot {\bf \sigma}|^2,
 
-    where :math:`{\bf \sigma}` is the Pauli vector
+    where :math:`\gamma` is the neutron magnetic moment in nuclear magnetons, 
+    :math:`r_e` is the classical electron radius, and :math:`{\bf \sigma}` is the
+    Pauli vector
 
     .. math::
         {\bf \sigma} = \begin{bmatrix} \sigma_x \\
                                        \sigma_y \\
-                                       \sigma_z \end{bmatrix},
+                                       \sigma_z \end{bmatrix}
 
     and
 
@@ -164,20 +167,25 @@ def cross_section(field, /, method, polarisation=(0, 0, 1)):
     cross_s = _cross_section_matrix(field, polarisation=polarisation)
     # TODO: make more efficient!
 
+    factor = (
+        constants.physical_constants["neutron mag. mom. to nuclear magneton ratio"][0]
+        * constants.physical_constants["classical electron radius"][0]
+    ) ** 2
+
     if method in ("polarised_pp", "pp"):
-        return cross_s.pp
+        return factor * cross_s.pp
     elif method in ("polarised_pn", "pn"):
-        return cross_s.pn
+        return factor * cross_s.pn
     elif method in ("polarised_np", "np"):
-        return cross_s.np
+        return factor * cross_s.np
     elif method in ("polarised_nn", "nn"):
-        return cross_s.nn
+        return factor * cross_s.nn
     elif method in ("half_polarised_p", "p"):
-        return cross_s.pp + cross_s.pn
+        return factor * cross_s.pp + cross_s.pn
     elif method in ("half_polarised_n", "n"):
-        return cross_s.nn + cross_s.np
+        return factor * cross_s.nn + cross_s.np
     elif method in ("unpolarised", "unpol"):
-        return 0.5 * (cross_s.pp + cross_s.pn + cross_s.np + cross_s.nn)
+        return 0.5 * factor * (cross_s.pp + cross_s.pn + cross_s.np + cross_s.nn)
     else:
         msg = f"Method {method} is unknown."
         raise ValueError(msg)
@@ -242,7 +250,7 @@ def chiral_function(field, /, polarisation=(0, 0, 1)):
 
 def _cross_section_matrix(field, /, polarisation):
     m_fft = field.fftn()
-    m_fft *= field.mesh.dV * 1e16  # TODO:  Normalisation
+    # m_fft *= field.mesh.dV
     q = df.Field(
         m_fft.mesh,
         nvdim=3,
