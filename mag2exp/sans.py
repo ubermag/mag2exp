@@ -241,8 +241,9 @@ def chiral_function(field, /, polarisation=(0, 0, 1)):
 
 
 def _cross_section_matrix(field, /, polarisation):
-    m_fft = field.fftn()
-    m_fft *= field.mesh.dV * 1e16  # TODO:  Normalisation
+    m_fft = field.fftn(norm="ortho")
+    m_fft *= np.sqrt(field.mesh.dV)  # TODO:  Normalisation
+
     q = df.Field(
         m_fft.mesh,
         nvdim=3,
@@ -269,6 +270,7 @@ def _cross_section_matrix(field, /, polarisation):
     magnetic_interaction_new = np.einsum(
         "ijkl,lbc->ijkbc", magnetic_interaction.array, p_new
     )
+
     cs = np.power(np.abs(magnetic_interaction_new), 2)
     return df.Field(
         mesh=m_fft.mesh,

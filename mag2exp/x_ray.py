@@ -2,6 +2,7 @@
 
 Module for calculation of x-ray based quantities.
 """
+import numpy as np
 
 import mag2exp
 
@@ -131,6 +132,6 @@ def saxs(field):
         >>> xrs.mpl.scalar()
 
     """
-    m_fft = field.fftn().ft_z.sel(k_z=0)
-    m_fft *= field.mesh.dV * 1e16
+    m_fft = field.fftn(norm="ortho").ft_z.sel(k_z=0)
+    m_fft *= np.sqrt(field.mesh.dV)
     return abs(m_fft) ** 2
