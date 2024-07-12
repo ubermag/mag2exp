@@ -131,6 +131,5 @@ def saxs(field):
         >>> xrs.mpl.scalar()
 
     """
-    m_fft = field.fftn().ft_z.sel(k_z=0)
-    m_fft *= field.mesh.dV * 1e16
+    m_fft = field.fftn(norm="ortho").ft_z.sel(k_z=0)
     return abs(m_fft) ** 2

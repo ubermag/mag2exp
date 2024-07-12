@@ -253,7 +253,7 @@ def chiral_function(field, /, polarisation=(0, 0, 1)):
 
 
 def _cross_section_matrix(field, /, polarisation):
-    m_fft = field.fftn()
+    m_fft = field.fftn(norm="ortho")
     # m_fft *= field.mesh.dV
     q = df.Field(
         m_fft.mesh,
