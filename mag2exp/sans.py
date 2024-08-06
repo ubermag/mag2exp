@@ -6,7 +6,6 @@ quantities.
 
 import discretisedfield as df
 import numpy as np
-from scipy import constants
 from scipy.spatial.transform import Rotation
 
 
@@ -16,11 +15,9 @@ def cross_section(field, /, method, polarisation=(0, 0, 1)):
     The scattering cross sections can be calculated using
 
     .. math::
-        \frac{d\sum}{d\Omega} = (\gamma r_e)^2 |{\bf Q} \cdot {\bf \sigma}|^2,
+        \frac{d\sum}{d\Omega} \propto |{\bf Q} \cdot {\bf \sigma}|^2,
 
-    where :math:`\gamma` is the neutron magnetic moment in nuclear magnetons, 
-    :math:`r_e` is the classical electron radius, and :math:`{\bf \sigma}` is the
-    Pauli vector
+    where :math:`{\bf \sigma}` is the Pauli vector
 
     .. math::
         {\bf \sigma} = \begin{bmatrix} \sigma_x \\
@@ -171,10 +168,10 @@ def cross_section(field, /, method, polarisation=(0, 0, 1)):
     cross_s = _cross_section_matrix(field, polarisation=polarisation)
     # TODO: make more efficient!
 
-    factor = (
-        constants.physical_constants["neutron mag. mom. to nuclear magneton ratio"][0]
-        * constants.physical_constants["classical electron radius"][0]
-    ) ** 2
+    # norm_field = df.Field(field.mesh, nvdim=1, value=(field.norm.array != 0))
+    # volume = norm_field.integrate()
+
+    factor = 1  # 8 * np.pi**3 * (2.91e8)**2 / (field.mesh.dV)
 
     if method in ("polarised_pp", "pp"):
         return factor * cross_s.pp
@@ -254,7 +251,7 @@ def chiral_function(field, /, polarisation=(0, 0, 1)):
 
 def _cross_section_matrix(field, /, polarisation):
     m_fft = field.fftn(norm="ortho")
-    # m_fft *= field.mesh.dV
+    m_fft *= field.mesh.dV
     q = df.Field(
         m_fft.mesh,
         nvdim=3,

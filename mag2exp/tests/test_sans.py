@@ -4,6 +4,8 @@ import pytest
 
 import mag2exp
 
+THRESH = 1e-64
+
 
 def test_sans_analytical_parallel_bloch():
     region = df.Region(p1=(-50e-9, -100e-9, 0), p2=(50e-9, 100e-9, 30e-9))
@@ -21,35 +23,35 @@ def test_sans_analytical_parallel_bloch():
     idx = np.unravel_index(sans.array.argmax(), sans.array.shape)[0:2]
     q = sans.mesh.index2point(idx)[0]
     assert np.isclose(abs(q), 1 / qx)
-    peaks = (sans.array > 1e-32).sum()
+    peaks = (sans.array > THRESH).sum()
     assert peaks == 2
 
     sans = mag2exp.sans.cross_section(m, method="pp").sel(k_z=0)
     idx = np.unravel_index(sans.array.argmax(), sans.array.shape)[0:2]
     q = sans.mesh.index2point(idx)[0]
     assert np.isclose(abs(q), 1 / qx)
-    peaks = (sans.array > 1e-32).sum()
+    peaks = (sans.array > THRESH).sum()
     assert peaks == 2
 
     sans = mag2exp.sans.cross_section(m, method="nn").sel(k_z=0)
     idx = np.unravel_index(sans.array.argmax(), sans.array.shape)[0:2]
     q = sans.mesh.index2point(idx)[0]
     assert np.isclose(abs(q), 1 / qx)
-    peaks = (sans.array > 1e-32).sum()
+    peaks = (sans.array > THRESH).sum()
     assert peaks == 2
 
     sans = mag2exp.sans.cross_section(m, method="pn").sel(k_z=0)
     idx = np.unravel_index(sans.array.argmax(), sans.array.shape)[0:2]
     q = sans.mesh.index2point(idx)[0]
     assert np.isclose(abs(q), 1 / qx)
-    peaks = (sans.array > 1e-32).sum()
+    peaks = (sans.array > THRESH).sum()
     assert peaks == 2
 
     sans = mag2exp.sans.cross_section(m, method="np").sel(k_z=0)
     idx = np.unravel_index(sans.array.argmax(), sans.array.shape)[0:2]
     q = sans.mesh.index2point(idx)[0]
     assert np.isclose(abs(q), 1 / qx)
-    peaks = (sans.array > 1e-32).sum()
+    peaks = (sans.array > THRESH).sum()
     assert peaks == 2
 
 
@@ -69,21 +71,21 @@ def test_sans_analytical_parallel_neel():
     idx = np.unravel_index(sans.array.argmax(), sans.array.shape)[0:2]
     q = sans.mesh.index2point(idx)[0]
     assert np.isclose(abs(q), 1 / qx)
-    peaks = (sans.array > 1e-32).sum()
+    peaks = (sans.array > THRESH).sum()
     assert peaks == 2
 
     sans = mag2exp.sans.cross_section(m, method="pp").sel(k_z=0)
     idx = np.unravel_index(sans.array.argmax(), sans.array.shape)[0:2]
     q = sans.mesh.index2point(idx)[0]
     assert np.isclose(abs(q), 1 / qx)
-    peaks = (sans.array > 1e-32).sum()
+    peaks = (sans.array > THRESH).sum()
     assert peaks == 2
 
     sans = mag2exp.sans.cross_section(m, method="nn").sel(k_z=0)
     idx = np.unravel_index(sans.array.argmax(), sans.array.shape)[0:2]
     q = sans.mesh.index2point(idx)[0]
     assert np.isclose(abs(q), 1 / qx)
-    peaks = (sans.array > 1e-32).sum()
+    peaks = (sans.array > THRESH).sum()
     assert peaks == 2
 
     sans = mag2exp.sans.cross_section(m, method="pn").sel(k_z=0)
@@ -110,7 +112,7 @@ def test_sans_analytical_perpendicular_neel():
     idx = np.unravel_index(sans.array.argmax(), sans.array.shape)[0:2]
     q = sans.mesh.index2point(idx)[0]
     assert np.isclose(abs(q), 1 / qx)
-    peaks = (sans.array > 1e-32).sum()
+    peaks = (sans.array > THRESH).sum()
     assert peaks == 2
 
     sans = mag2exp.sans.cross_section(m, polarisation=[1, 0, 0], method="nn").sel(k_z=0)
@@ -123,14 +125,14 @@ def test_sans_analytical_perpendicular_neel():
     idx = np.unravel_index(sans.array.argmax(), sans.array.shape)[0:2]
     q = sans.mesh.index2point(idx)[0]
     assert np.isclose(abs(q), 1 / qx)
-    peaks = (sans.array > 1e-32).sum()
+    peaks = (sans.array > THRESH).sum()
     assert peaks == 2
 
     sans = mag2exp.sans.cross_section(m, polarisation=[1, 0, 0], method="np").sel(k_z=0)
     idx = np.unravel_index(sans.array.argmax(), sans.array.shape)[0:2]
     q = sans.mesh.index2point(idx)[0]
     assert np.isclose(abs(q), 1 / qx)
-    peaks = (sans.array > 10).sum()
+    peaks = (sans.array > THRESH).sum()
     assert peaks == 2
 
 
@@ -151,7 +153,7 @@ def test_sans_analytical_perpendicular_bloch():
     idx = np.unravel_index(sans.array.argmax(), sans.array.shape)[0:2]
     q = sans.mesh.index2point(idx)[0]
     assert np.isclose(abs(q), 1 / qx)
-    peaks = (sans.array > 1e-32).sum()
+    peaks = (sans.array > THRESH).sum()
     assert peaks == 2
 
     sans = mag2exp.sans.cross_section(m, polarisation=[1, 0, 0], method="nn").sel(k_z=0)
@@ -164,14 +166,14 @@ def test_sans_analytical_perpendicular_bloch():
     idx = np.unravel_index(sans.array.argmax(), sans.array.shape)[0:2]
     q = sans.mesh.index2point(idx)[0]
     assert np.isclose(q, 1 / qx)
-    peaks = (sans.array > 1e-32).sum()
+    peaks = (sans.array > THRESH).sum()
     assert peaks == 1
 
     sans = mag2exp.sans.cross_section(m, polarisation=[1, 0, 0], method="np").sel(k_z=0)
     idx = np.unravel_index(sans.array.argmax(), sans.array.shape)[0:2]
     q = sans.mesh.index2point(idx)[0]
     assert np.isclose(q, -1 / qx)
-    peaks = (sans.array > 1e-32).sum()
+    peaks = (sans.array > THRESH).sum()
     assert peaks == 1
 
 
@@ -213,12 +215,12 @@ def test_sans_chiral_perpendicular():
     idx = np.unravel_index(cf.array.argmax(), cf.array.shape)[0:2]
     q = cf.mesh.index2point(idx)[0]
     assert np.isclose(q, 1 / qx)
-    peaks = (cf.array > 10).sum()
+    peaks = (cf.array > THRESH).sum()
     assert peaks == 1
     idx = np.unravel_index(cf.array.argmin(), cf.array.shape)[0:2]
     q = cf.mesh.index2point(idx)[0]
     assert np.isclose(q, -1 / qx)
-    peaks = (cf.array < -10).sum()
+    peaks = (cf.array < -THRESH).sum()
     assert peaks == 1
 
     def m_fun(pos):
@@ -256,8 +258,8 @@ def test_sans_normalisation():
     sans3 = mag2exp.sans.cross_section(field3, method="unpol")
     m3 = abs(sans3.array).max()
 
-    assert np.isclose(m2 / m1, ((4 / 2) ** 3) ** 2)
-    assert np.isclose(m3 / m1, (100 / 80) ** 6)
+    assert np.isclose(m2 / m1, ((2 / 4) ** 3))
+    assert np.isclose(m3 / m1, (100 / 80) ** 3)
 
 
 def test_sans_cross_section_methods():
