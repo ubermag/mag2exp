@@ -336,13 +336,16 @@ def relativistic_wavelength(voltage):
 
     >>> import mag2exp
     >>> mag2exp.ltem.relativistic_wavelength(300e3)
-    np.float64(1.9687489006848795e-12)
+    1.9687489006848795e-12
 
     """
-    return constants.h / np.sqrt(
-        2
-        * constants.m_e
-        * voltage
-        * constants.e
-        * (1 + constants.e * voltage / (2 * constants.m_e * constants.c**2))
-    )
+    return (
+        constants.h
+        / np.sqrt(
+            2
+            * constants.m_e
+            * voltage
+            * constants.e
+            * (1 + constants.e * voltage / (2 * constants.m_e * constants.c**2))
+        )
+    ).item()
