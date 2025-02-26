@@ -77,7 +77,7 @@ def fmr(
     data_xarr = drive_orientation.to_xarray()
 
     if "t" not in data_xarr.coords:
-        raise KeyError("The drive data must have a 't' (time) coordinate.")
+        raise TypeError("The drive data must have a 't' (time) coordinate.")
 
     # Validate time step uniformity
     t_values = data_xarr["t"].values
