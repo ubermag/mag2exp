@@ -7,6 +7,7 @@ quantities.
 from typing import Optional, Tuple
 
 import discretisedfield as df
+import hvplot.xarray  # noqa
 import micromagneticdata as micd
 import numpy as np
 import scipy.fft as fft
@@ -20,7 +21,7 @@ def fmr(
         raise TypeError(
             "The 'drive' parameter must be an instance of micromagneticdata.Drive."
         )
-    if init_field is not None and not isinstance(init_field, micd.Field):
+    if init_field is not None and not isinstance(init_field, df.Field):
         raise TypeError(
             "The 'init_field' parameter must be an instance of "
             "micromagneticdata.Field if provided."
