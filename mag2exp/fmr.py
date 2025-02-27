@@ -7,8 +7,7 @@ quantities.
 from typing import Optional, Tuple
 
 import discretisedfield as df
-import hvplot.xarray  # noqa
-import micromagneticdata as micd
+import micromagneticdata as mdata
 import numpy as np
 import scipy.fft as fft
 import xarray as xr
@@ -18,11 +17,11 @@ def fmr(
     drive: micd.Drive, init_field: Optional[df.Field] = None
 ) -> Tuple[xr.DataArray, xr.DataArray]:
     r"""
-    Computes the Ferromagnetic Resonance (FMR) power and phase spectra.
+    Compute the Ferromagnetic Resonance (FMR) power and phase spectra.
 
     This function extracts the orientation of the magnetisation from the
-    provided drive object, optionally subtracts an initial field orientation
-    (if provided), and applies a Fourier transform to obtain the power
+    provided drive object, optionally subtracts an initial field orientation,
+    and applies a Fourier transform to obtain the power
     and phase spectra.
 
     The Discrete Fourier Transform is computed at each spatial grid point for the
@@ -65,12 +64,12 @@ def fmr(
     """
     if not isinstance(drive, micd.Drive):
         raise TypeError(
-            "The 'drive' parameter must be an instance of micromagneticdata.Drive."
+            f"The 'drive' parameter must be an instance of micromagneticdata.Drive, not {type(drive)=}"
         )
     if init_field is not None and not isinstance(init_field, df.Field):
         raise TypeError(
             "The 'init_field' parameter must be an instance of "
-            "micromagneticdata.Field if provided."
+            f"micromagneticdata.Field if provided, not {type(init_field)=}."
         )
 
     drive_orientation = drive.register_callback(lambda field: field.orientation)

@@ -18,7 +18,7 @@ def simulation_data(tmp_path_factory):
     # Create the system and set up the energy, dynamics, and initial magnetisation.
     system = mm.System(name="test")
     system.energy = mm.Exchange(A=1.3e-11)
-    system.dynamics = mm.Precession(gamma0=2.211e5) + mm.Damping(alpha=0.008)
+    system.dynamics = mm.Precession() + mm.Damping(alpha=0.008)
     system.m = df.Field(mesh, nvdim=3, value=(0, 0, 1), norm=8e5)
 
     # Run the minimisation driver.
