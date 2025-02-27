@@ -1,5 +1,5 @@
 import discretisedfield as df
-import micromagneticdata as micd
+import micromagneticdata as mdata
 import micromagneticmodel as mm
 import numpy as np
 import oommfc as oc
@@ -18,39 +18,42 @@ def simulation_data(tmp_path_factory):
     # Create the system and set up the energy, dynamics, and initial magnetisation.
     system = mm.System(name="test")
     system.energy = mm.Exchange(A=1.3e-11)
-    system.dynamics = mm.Precession() + mm.Damping(alpha=0.008)
+    system.dynamics = mm.Precession(gamma0=2.211e5) + mm.Damping(alpha=0.01)
     system.m = df.Field(mesh, nvdim=3, value=(0, 0, 1), norm=8e5)
 
     # Run the minimisation driver.
     md = oc.MinDriver()
     md.drive(system, dirname=tmp_dir)
 
+    # Add sin wave
+    system.energy += mm.Zeeman(H=(100, 0, 0), func="sin", f=10e9, t0=0)
+
     # Set simulation time parameters and run the time driver.
-    T = 1e-10
-    n = 5
+    T = 1e-9
+    n = 100
     td = oc.TimeDriver()
     td.drive(system, t=T, n=n, dirname=tmp_dir)
 
     # Load the simulation data
-    data = micd.Data(system.name, dirname=str(tmp_dir))
+    data = mdata.Data(system.name, dirname=str(tmp_dir))
 
     # Cleanup is automatic when the temporary directory is removed.
-    yield data
+    return data
 
 
 @pytest.fixture(scope="module")
 def simulation_timedrive(simulation_data):
-    yield simulation_data[-1]
+    return simulation_data[-1]
 
 
 @pytest.fixture(scope="module")
 def simulation_mindrive(simulation_data):
-    yield simulation_data[0]
+    return simulation_data[0]
 
 
 @pytest.fixture(scope="module")
 def simulation_field(simulation_data):
-    yield simulation_data[-1].m0
+    return simulation_data[-1].m0
 
 
 @pytest.mark.parametrize(
@@ -106,3 +109,27 @@ def test_fmr_returns_valid_arrays(simulation_timedrive):
 
     assert phase.min() >= -np.pi, "Phase should be in the domain [-pi, pi]"
     assert phase.max() <= np.pi, "Phase should be in the domain [-pi, pi]"
+
+    # Check largest peak is at zero frequency
+    assert np.allclose(power.mean(dim=("x", "y", "z")).idxmax("freq_t"), 0)
+    assert power.mean(dim=("x", "y", "z")).sel(vdims="z").max("freq_t") > 1e-4
+
+    # Check next largest peak is at excitation frequency
+    assert np.allclose(
+        power.mean(dim=("x", "y", "z")).isel(freq_t=slice(1, None)).idxmax("freq_t"),
+        1e10,
+    )
+
+
+def test_fmr_with_field(simulation_timedrive, simulation_field):
+    power, _ = mag2exp.fmr.fmr(simulation_timedrive, simulation_field)
+
+    # Check largest peak is at zero frequency
+    assert np.allclose(power.mean(dim=("x", "y", "z")).idxmax("freq_t"), 0)
+    assert power.mean(dim=("x", "y", "z")).sel(vdims="z").max("freq_t") < 1e-4
+
+    # Check next largest peak is at excitation frequency
+    assert np.allclose(
+        power.mean(dim=("x", "y", "z")).isel(freq_t=slice(1, None)).idxmax("freq_t"),
+        1e10,
+    )

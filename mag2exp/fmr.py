@@ -7,13 +7,14 @@ quantities.
 from typing import Optional, Tuple
 
 import discretisedfield as df
+import micromagneticdata as mdata
 import numpy as np
 import scipy.fft as fft
 import xarray as xr
 
 
 def fmr(
-    drive: micd.Drive, init_field: Optional[df.Field] = None
+    drive: mdata.Drive, init_field: Optional[df.Field] = None
 ) -> Tuple[xr.DataArray, xr.DataArray]:
     r"""
     Compute the Ferromagnetic Resonance (FMR) power and phase spectra.
@@ -49,7 +50,7 @@ def fmr(
     Parameters
     ----------
     drive : micromagneticdata.Drive
-        A micromagnetic drive signal object containing time-dependent
+        A micromagnetic drive object containing time-dependent
         magnetisation data.
     init_field : discretisedfield.Field, optional
         A reference field whose orientation is subtracted before processing.
@@ -61,9 +62,10 @@ def fmr(
     phase : xr.DataArray
         The computed phase spectrum (FFT phase angle).
     """
-    if not isinstance(drive, micd.Drive):
+    if not isinstance(drive, mdata.Drive):
         raise TypeError(
-            f"The 'drive' parameter must be an instance of micromagneticdata.Drive, not {type(drive)=}"
+            "The 'drive' parameter must be an instance of "
+            f"micromagneticdata.Drive, not {type(drive)=}"
         )
     if init_field is not None and not isinstance(init_field, df.Field):
         raise TypeError(
@@ -71,26 +73,27 @@ def fmr(
             f"micromagneticdata.Field if provided, not {type(init_field)=}."
         )
 
-    drive_orientation = drive.register_callback(lambda field: field.orientation)
-    data_xarr = drive_orientation.to_xarray()
-
-    if "t" not in data_xarr.coords:
+    if drive.x != "t":
         raise TypeError("The drive data must have a 't' (time) coordinate.")
 
     # Validate time step uniformity
-    t_values = data_xarr["t"].values
+    t_values = drive.table.data["t"]
     if t_values.size < 2:
-        raise ValueError("Insufficient time points to compute a time step.")
+        raise ValueError("Insufficient time points to compute a FFT.")
     dt_array = np.diff(t_values)
-    if not np.allclose(dt_array, dt_array[0], atol=1e-12):
+    if not np.allclose(dt_array, dt_array[0], atol=0.01 * dt_array[0]):
         raise ValueError("Time steps in the drive data are not uniform.")
     dt = dt_array[0]
 
+    drive_orientation = drive.register_callback(lambda field: field.orientation)
+    data_xarr = drive_orientation.to_xarray()
+
     if init_field is not None:
+        print("hi")
         data_xarr -= init_field.orientation.to_xarray()
 
     # Compute FFT frequencies and FFT along the time axis
-    # (assumed to be the first dimension).
+    # (The first dimension of drive.to_xarray()).
     num_time_points = data_xarr.shape[0]
     freq = fft.rfftfreq(num_time_points, d=dt)
     fft_values = fft.rfft(data_xarr.values, axis=0, norm="ortho")
@@ -99,10 +102,10 @@ def fmr(
     # Done like this as the names of dims can vary.
     fft_coords = {"freq_t": freq}
     fft_dims = ["freq_t"]
-    for coord in data_xarr.coords:
-        if coord != "t":
-            fft_coords[coord] = data_xarr.coords[coord]
-            fft_dims.append(coord)
+    for dim in data_xarr.dims:
+        if dim != "t":
+            fft_coords[dim] = data_xarr.coords[dim]
+            fft_dims.append(dim)
 
     fft_xarr = xr.DataArray(fft_values, coords=fft_coords, dims=fft_dims, name="fft")
 
