@@ -7,7 +7,6 @@ quantities.
 from typing import Optional, Tuple
 
 import discretisedfield as df
-import micromagneticdata as mdata
 import numpy as np
 import scipy.fft as fft
 import xarray as xr
