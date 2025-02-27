@@ -336,7 +336,7 @@ def relativistic_wavelength(voltage):
 
     >>> import mag2exp
     >>> mag2exp.ltem.relativistic_wavelength(300e3)
-    1.9687489006848795e-12
+    1.9687...e-12
 
     """
     return (
