@@ -20,8 +20,8 @@ def ringdown(
     Compute the Ferromagnetic Resonance (FMR) power and phase spectra
     using the ringdown method.
 
-    This function extracts the orientation of the magnetisation from the
-    provided drive object, optionally subtracts an initial field orientation,
+    This function extracts the magnetisation from the
+    provided drive object, optionally subtracts an initial field,
     and applies a Fourier transform to obtain the power
     and phase spectra.
 
@@ -62,6 +62,63 @@ def ringdown(
         The computed power spectrum (squared magnitude of the FFT).
     phase : xr.DataArray
         The computed phase spectrum (FFT phase angle).
+
+    Example
+    -------
+    .. plot::
+        :context: close-figs
+
+        1. Calculating the FMR power and phase using
+        the ringdown method.
+
+        >>> import discretisedfield as df
+        >>> import micromagneticmodel as mm
+        >>> import oommfc as oc
+        >>> import mag2exp
+        >>> mesh = df.Mesh(p1=(0, 0, 0),
+        ...                p2=(2e-9, 2e-9, 2e-9),
+        ...                n=(2, 2, 2))
+        >>> system = mm.System(name="test")
+        >>> system.energy = (mm.Exchange(A=1.3e-11)
+        ...    + mm.Zeeman(H=(100, 0, 0), func="sin", f=10e9, t0=0))
+        >>> system.dynamics = (mm.Precession(gamma0=2.211e5)
+        ...                    + mm.Damping(alpha=0.01))
+        >>> system.m = df.Field(mesh, nvdim=3,
+        ...                     value=(0, 0, 1), norm=8e5)
+        >>> td = oc.TimeDriver()
+        >>> td.drive(system, t=1e-9, n=100)
+        Running OOMMF ...
+        >>> drive = mdata.Data(system.name)[-1]
+        >>> power, phase = mag2exp.fmr.ringdown(drive)
+
+    .. plot::
+        :context: close-figs
+
+        2. Use the orientation to calculate the FMR power
+        and phase using the ringdown method.
+
+        >>> import discretisedfield as df
+        >>> import micromagneticmodel as mm
+        >>> import oommfc as oc
+        >>> import mag2exp
+        >>> mesh = df.Mesh(p1=(0, 0, 0),
+        ...                p2=(2e-9, 2e-9, 2e-9),
+        ...                n=(2, 2, 2))
+        >>> system = mm.System(name="test")
+        >>> system.energy = (mm.Exchange(A=1.3e-11)
+        ...    + mm.Zeeman(H=(100, 0, 0), func="sin", f=10e9, t0=0))
+        >>> system.dynamics = (mm.Precession(gamma0=2.211e5)
+        ...                    + mm.Damping(alpha=0.01))
+        >>> system.m = df.Field(mesh, nvdim=3,
+        ...                     value=(0, 0, 1), norm=8e5)
+        >>> td = oc.TimeDriver()
+        >>> td.drive(system, t=1e-9, n=100)
+        Running OOMMF ...
+        >>> drive = mdata.Data(system.name)[-1]
+        >>> drive = drive.register_callback(
+        ...    lambda field: field.orientation)
+        >>> power, phase = mag2exp.fmr.ringdown(drive)
+
     """
     if not isinstance(drive, mdata.Drive):
         raise TypeError(
@@ -86,11 +143,10 @@ def ringdown(
         raise ValueError("Time steps in the drive data are not uniform.")
     dt = dt_array[0]
 
-    drive_orientation = drive.register_callback(lambda field: field.orientation)
-    data_xarr = drive_orientation.to_xarray()
+    data_xarr = drive.to_xarray()
 
     if init_field is not None:
-        data_xarr -= init_field.orientation.to_xarray()
+        data_xarr -= init_field.to_xarray()
 
     # Compute FFT frequencies and FFT along the time axis
     # (The first dimension of drive.to_xarray()).

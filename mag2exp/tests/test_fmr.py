@@ -112,7 +112,7 @@ def test_fmr_returns_valid_arrays(simulation_timedrive):
 
     # Check largest peak is at zero frequency
     assert np.allclose(power.mean(dim=("x", "y", "z")).idxmax("freq_t"), 0)
-    assert power.mean(dim=("x", "y", "z")).sel(vdims="z").max("freq_t") > 1e-4
+    assert power.mean(dim=("x", "y", "z")).sel(vdims="z").max("freq_t") > 1e4
 
     # Check next largest peak is at excitation frequency
     assert np.allclose(
@@ -126,7 +126,7 @@ def test_fmr_with_field(simulation_timedrive, simulation_field):
 
     # Check largest peak is at zero frequency
     assert np.allclose(power.mean(dim=("x", "y", "z")).idxmax("freq_t"), 0)
-    assert power.mean(dim=("x", "y", "z")).sel(vdims="z").max("freq_t") < 1e-4
+    assert power.mean(dim=("x", "y", "z")).sel(vdims="z").max("freq_t") < 1e4
 
     # Check next largest peak is at excitation frequency
     assert np.allclose(
@@ -163,7 +163,7 @@ def test_fmr_returns_valid_arrays_2d(simulation_timedrive):
 
     # Check largest peak is at zero frequency
     assert np.allclose(power.mean(dim=("x", "y")).idxmax("freq_t"), 0)
-    assert power.mean(dim=("x", "y")).sel(vdims="z").max("freq_t") > 1e-4
+    assert power.mean(dim=("x", "y")).sel(vdims="z").max("freq_t") > 1e4
 
     # Check next largest peak is at excitation frequency
     assert np.allclose(
