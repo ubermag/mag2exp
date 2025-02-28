@@ -133,3 +133,40 @@ def test_fmr_with_field(simulation_timedrive, simulation_field):
         power.mean(dim=("x", "y", "z")).isel(freq_t=slice(1, None)).idxmax("freq_t"),
         1e10,
     )
+
+
+def test_fmr_returns_valid_arrays_2d(simulation_timedrive):
+    simulation_timedrive = simulation_timedrive.register_callback(
+        lambda field: field.sel("z")
+    )
+    power, phase = mag2exp.fmr.fmr(simulation_timedrive)
+
+    assert isinstance(power, xr.DataArray), "power is not an xarray.DataArray."
+    assert isinstance(phase, xr.DataArray), "phase is not an xarray.DataArray."
+
+    expected_dims = {"freq_t", "x", "y", "vdims"}
+    assert set(power.dims) == expected_dims, "power dimensions mismatch."
+    assert set(phase.dims) == expected_dims, "phase dimensions mismatch."
+
+    expected_shape = (
+        simulation_timedrive.n // 2 + 1,
+        *simulation_timedrive.m0.sel("z").array.shape,
+    )
+    assert expected_shape == power.shape, "shape of power not as expected"
+    assert expected_shape == phase.shape, "shape of phase not as expected"
+
+    assert np.all(np.isreal(power.values)), "Power array contains non-real values."
+    assert np.all(np.isreal(phase.values)), "Phase array contains non-real values."
+
+    assert phase.min() >= -np.pi, "Phase should be in the domain [-pi, pi]"
+    assert phase.max() <= np.pi, "Phase should be in the domain [-pi, pi]"
+
+    # Check largest peak is at zero frequency
+    assert np.allclose(power.mean(dim=("x", "y")).idxmax("freq_t"), 0)
+    assert power.mean(dim=("x", "y")).sel(vdims="z").max("freq_t") > 1e-4
+
+    # Check next largest peak is at excitation frequency
+    assert np.allclose(
+        power.mean(dim=("x", "y")).isel(freq_t=slice(1, None)).idxmax("freq_t"),
+        1e10,
+    )

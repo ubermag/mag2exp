@@ -1,6 +1,6 @@
 """FMR submodule.
 
-Module for calculation of Ferromagnetic Resonance related
+Module for calculation of ferromagnetic resonance related
 quantities.
 """
 
@@ -17,7 +17,8 @@ def fmr(
     drive: mdata.Drive, init_field: Optional[df.Field] = None
 ) -> Tuple[xr.DataArray, xr.DataArray]:
     r"""
-    Compute the Ferromagnetic Resonance (FMR) power and phase spectra.
+    Compute the Ferromagnetic Resonance (FMR) power and phase spectra
+    using the ringdown method.
 
     This function extracts the orientation of the magnetisation from the
     provided drive object, optionally subtracts an initial field orientation,
@@ -89,14 +90,13 @@ def fmr(
     data_xarr = drive_orientation.to_xarray()
 
     if init_field is not None:
-        print("hi")
         data_xarr -= init_field.orientation.to_xarray()
 
     # Compute FFT frequencies and FFT along the time axis
     # (The first dimension of drive.to_xarray()).
     num_time_points = data_xarr.shape[0]
     freq = fft.rfftfreq(num_time_points, d=dt)
-    fft_values = fft.rfft(data_xarr.values, axis=0, norm="ortho")
+    fft_values = fft.rfft(data_xarr.data, axis=0, norm="ortho")
 
     # Keep all coordinates except the time coordinate ('t') to the FFT output.
     # Done like this as the names of dims can vary.
