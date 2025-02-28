@@ -4,6 +4,7 @@ import importlib
 
 import pytest
 
+from . import fmr as fmr
 from . import ltem as ltem
 from . import magnetometry as magnetometry
 from . import mfm as mfm
