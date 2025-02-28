@@ -62,12 +62,12 @@ def simulation_field(simulation_data):
 )
 def test_invalid_drive_type(invalid_drive):
     with pytest.raises(TypeError):
-        mag2exp.fmr.fmr(invalid_drive)
+        mag2exp.fmr.ringdown(invalid_drive)
 
 
 def test_MinDrive(simulation_data):
     with pytest.raises(TypeError):
-        mag2exp.fmr.fmr(simulation_data[0])
+        mag2exp.fmr.ringdown(simulation_data[0])
 
 
 @pytest.mark.parametrize(
@@ -84,11 +84,11 @@ def test_MinDrive(simulation_data):
 )
 def test_invalid_init_field_type(simulation_data, invalid_field):
     with pytest.raises(TypeError):
-        mag2exp.fmr.fmr(simulation_data, init_field=invalid_field)
+        mag2exp.fmr.ringdown(simulation_data, init_field=invalid_field)
 
 
 def test_fmr_returns_valid_arrays(simulation_timedrive):
-    power, phase = mag2exp.fmr.fmr(simulation_timedrive)
+    power, phase = mag2exp.fmr.ringdown(simulation_timedrive)
 
     assert isinstance(power, xr.DataArray), "power is not an xarray.DataArray."
     assert isinstance(phase, xr.DataArray), "phase is not an xarray.DataArray."
@@ -122,7 +122,7 @@ def test_fmr_returns_valid_arrays(simulation_timedrive):
 
 
 def test_fmr_with_field(simulation_timedrive, simulation_field):
-    power, _ = mag2exp.fmr.fmr(simulation_timedrive, simulation_field)
+    power, _ = mag2exp.fmr.ringdown(simulation_timedrive, simulation_field)
 
     # Check largest peak is at zero frequency
     assert np.allclose(power.mean(dim=("x", "y", "z")).idxmax("freq_t"), 0)
@@ -139,7 +139,7 @@ def test_fmr_returns_valid_arrays_2d(simulation_timedrive):
     simulation_timedrive = simulation_timedrive.register_callback(
         lambda field: field.sel("z")
     )
-    power, phase = mag2exp.fmr.fmr(simulation_timedrive)
+    power, phase = mag2exp.fmr.ringdown(simulation_timedrive)
 
     assert isinstance(power, xr.DataArray), "power is not an xarray.DataArray."
     assert isinstance(phase, xr.DataArray), "phase is not an xarray.DataArray."

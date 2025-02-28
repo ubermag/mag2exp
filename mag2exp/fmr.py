@@ -13,7 +13,7 @@ import scipy.fft as fft
 import xarray as xr
 
 
-def fmr(
+def ringdown(
     drive: mdata.Drive, init_field: Optional[df.Field] = None
 ) -> Tuple[xr.DataArray, xr.DataArray]:
     r"""
