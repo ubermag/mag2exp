@@ -111,7 +111,9 @@ def phase(field, /, kcx=0.1, kcy=0.1):
     return phase, ft_phase
 
 
-def defocus_image(phase, /, cs=0, df_length=0.2e-3, voltage=None, wavelength=None):
+def defocus_image(
+    phase, /, cs=0, df_length=0.2e-3, voltage=None, wavelength=None, ca2=0, phia2=0
+):
     r"""Calculating the defocused image.
 
     The wavefunction of the electrons is created from the magnetic phase shift
@@ -230,17 +232,24 @@ def defocus_image(phase, /, cs=0, df_length=0.2e-3, voltage=None, wavelength=Non
             dtype=np.complex128,
         )
         ksquare = k.x**2 + k.y**2
+        phi = df.Field(phase.mesh, nvdim=1, value=lambda x: np.arctan2(x[1], x[0]))
 
     if wavelength is None:
         if voltage is None:
-            msg = "Either `wavelength` or acceleration `voltage` needsto be specified."
+            msg = "Either `wavelength` or acceleration `voltage` needs to be specified."
             raise RuntimeError(msg)
         wavelength = relativistic_wavelength(voltage)
 
     with warnings.catch_warnings():
         warnings.simplefilter("ignore")
-        cts = -df_length + 0.5 * wavelength**2 * cs * ksquare
-        exp = np.exp(np.pi * cts * 1j * ksquare * wavelength)
+        # cts = -df_length + 0.5 * wavelength**2 * cs * ksquare
+        # exp = np.exp(np.pi * cts * 1j * ksquare * wavelength)
+        cts = (
+            -np.pi * df_length * wavelength * ksquare
+            + 0.5 * np.pi * cs * wavelength**3 * ksquare**2
+            + np.pi * ca2 * wavelength * ksquare * np.sin(2 * (phi.array - phia2))
+        )
+        exp = np.exp(-1j * cts)
     ft_def_wf_cts = ft_wavefn * exp
     def_wf_cts = ft_def_wf_cts.ifftn(norm="ortho")
     intensity_cts = def_wf_cts.conjugate * def_wf_cts
