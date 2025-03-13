@@ -242,8 +242,6 @@ def defocus_image(
 
     with warnings.catch_warnings():
         warnings.simplefilter("ignore")
-        # cts = -df_length + 0.5 * wavelength**2 * cs * ksquare
-        # exp = np.exp(np.pi * cts * 1j * ksquare * wavelength)
         cts = (
             -np.pi * df_length * wavelength * ksquare
             + 0.5 * np.pi * cs * wavelength**3 * ksquare**2
