@@ -7,7 +7,7 @@ name = "mag2exp"
 version = "0.63.0"
 description = "Simulate experimental measurements for magnetic materials"
 readme = "README.md"
-requires-python = ">=3.8"
+requires-python = ">=3.9"
 license = {file = "LICENSE"}
 
 authors = [
@@ -50,7 +50,8 @@ dev = [
     "nbval",
     "pre-commit",
     "pytest-cov",
-    "twine"
+    "twine",
+    "tomli; python_version < '3.11'",
 ]
 
 [project.urls]
