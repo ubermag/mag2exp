@@ -4,7 +4,7 @@ Module for calculation of ferromagnetic resonance related
 quantities.
 """
 
-from typing import Optional, Tuple
+from typing import Optional
 
 import discretisedfield as df
 import micromagneticdata as mdata
@@ -15,7 +15,7 @@ import xarray as xr
 
 def ringdown(
     drive: mdata.Drive, init_field: Optional[df.Field] = None
-) -> Tuple[xr.DataArray, xr.DataArray]:
+) -> tuple[xr.DataArray, xr.DataArray]:
     r"""
     Compute the Ferromagnetic Resonance (FMR) power and phase spectra
     using the ringdown method.
